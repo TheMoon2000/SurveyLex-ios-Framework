@@ -7,21 +7,52 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39736DE68188A44E97FA2F5C /* Pods_SurveyLex_Demo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 953F6676BCD8B7E2133D6C2F /* Pods_SurveyLex_Demo.framework */; };
 		CC333BFF2286528500B5D8C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BFE2286528500B5D8C9 /* AppDelegate.swift */; };
-		CC333C012286528500B5D8C9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333C002286528500B5D8C9 /* ViewController.swift */; };
 		CC333C042286528500B5D8C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC333C022286528500B5D8C9 /* Main.storyboard */; };
 		CC333C062286528700B5D8C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC333C052286528700B5D8C9 /* Assets.xcassets */; };
 		CC333C092286528700B5D8C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC333C072286528700B5D8C9 /* LaunchScreen.storyboard */; };
+		CCE1E653228653500011D142 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E652228653500011D142 /* Constants.swift */; };
+		CCE1E655228653620011D142 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E654228653620011D142 /* Recorder.swift */; };
+		CCE1E657228653690011D142 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E656228653690011D142 /* MainTabBarController.swift */; };
+		CCE1E659228653720011D142 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E658228653720011D142 /* RecordButton.swift */; };
+		CCE1E65B228653980011D142 /* SurveyIDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E65A228653980011D142 /* SurveyIDViewController.swift */; };
+		CCE1E65D2286539C0011D142 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E65C2286539C0011D142 /* RecordViewController.swift */; };
+		CCE1E68822865D1C0011D142 /* SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE1E68722865D1C0011D142 /* SurveyLex.framework */; };
+		CCE1E68922865D1C0011D142 /* SurveyLex.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCE1E68722865D1C0011D142 /* SurveyLex.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		CCE1E665228654F80011D142 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CCE1E68922865D1C0011D142 /* SurveyLex.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		1E21BA35407F2DDE6009F4DC /* Pods-SurveyLex Demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex Demo.release.xcconfig"; path = "Pods/Target Support Files/Pods-SurveyLex Demo/Pods-SurveyLex Demo.release.xcconfig"; sourceTree = "<group>"; };
+		4FF5A6D7193A47BB0FF3E336 /* Pods-SurveyLex Demo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex Demo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SurveyLex Demo/Pods-SurveyLex Demo.debug.xcconfig"; sourceTree = "<group>"; };
+		953F6676BCD8B7E2133D6C2F /* Pods_SurveyLex_Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SurveyLex_Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC333BFB2286528500B5D8C9 /* SurveyLex Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SurveyLex Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC333BFE2286528500B5D8C9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CC333C002286528500B5D8C9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		CC333C032286528500B5D8C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CC333C052286528700B5D8C9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC333C082286528700B5D8C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CC333C0A2286528700B5D8C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CCE1E652228653500011D142 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		CCE1E654228653620011D142 /* Recorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
+		CCE1E656228653690011D142 /* MainTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
+		CCE1E658228653720011D142 /* RecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
+		CCE1E65A228653980011D142 /* SurveyIDViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SurveyIDViewController.swift; sourceTree = "<group>"; };
+		CCE1E65C2286539C0011D142 /* RecordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
+		CCE1E68722865D1C0011D142 /* SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +60,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCE1E68822865D1C0011D142 /* SurveyLex.framework in Frameworks */,
+				39736DE68188A44E97FA2F5C /* Pods_SurveyLex_Demo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		67F0E65787DD3F5C76CD54FE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				953F6676BCD8B7E2133D6C2F /* Pods_SurveyLex_Demo.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		CC333BF22286528500B5D8C9 = {
 			isa = PBXGroup;
 			children = (
+				CCE1E68722865D1C0011D142 /* SurveyLex.framework */,
 				CC333BFD2286528500B5D8C9 /* SurveyLex Demo */,
 				CC333BFC2286528500B5D8C9 /* Products */,
+				ED9845E46E20658DF1483EC7 /* Pods */,
+				67F0E65787DD3F5C76CD54FE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -55,13 +99,27 @@
 			isa = PBXGroup;
 			children = (
 				CC333BFE2286528500B5D8C9 /* AppDelegate.swift */,
-				CC333C002286528500B5D8C9 /* ViewController.swift */,
+				CCE1E65C2286539C0011D142 /* RecordViewController.swift */,
+				CCE1E65A228653980011D142 /* SurveyIDViewController.swift */,
+				CCE1E654228653620011D142 /* Recorder.swift */,
+				CCE1E658228653720011D142 /* RecordButton.swift */,
+				CCE1E656228653690011D142 /* MainTabBarController.swift */,
+				CCE1E652228653500011D142 /* Constants.swift */,
 				CC333C022286528500B5D8C9 /* Main.storyboard */,
 				CC333C052286528700B5D8C9 /* Assets.xcassets */,
 				CC333C072286528700B5D8C9 /* LaunchScreen.storyboard */,
 				CC333C0A2286528700B5D8C9 /* Info.plist */,
 			);
 			path = "SurveyLex Demo";
+			sourceTree = "<group>";
+		};
+		ED9845E46E20658DF1483EC7 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4FF5A6D7193A47BB0FF3E336 /* Pods-SurveyLex Demo.debug.xcconfig */,
+				1E21BA35407F2DDE6009F4DC /* Pods-SurveyLex Demo.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,9 +129,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC333C0D2286528700B5D8C9 /* Build configuration list for PBXNativeTarget "SurveyLex Demo" */;
 			buildPhases = (
+				E04A5ED68ADED83573E55391 /* [CP] Check Pods Manifest.lock */,
 				CC333BF72286528500B5D8C9 /* Sources */,
 				CC333BF82286528500B5D8C9 /* Frameworks */,
 				CC333BF92286528500B5D8C9 /* Resources */,
+				AC8CE00362D40F47E4AAF4A7 /* [CP] Embed Pods Frameworks */,
+				CCE1E665228654F80011D142 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -130,13 +191,65 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		AC8CE00362D40F47E4AAF4A7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-SurveyLex Demo/Pods-SurveyLex Demo-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SurveyLex Demo/Pods-SurveyLex Demo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E04A5ED68ADED83573E55391 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SurveyLex Demo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		CC333BF72286528500B5D8C9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC333C012286528500B5D8C9 /* ViewController.swift in Sources */,
 				CC333BFF2286528500B5D8C9 /* AppDelegate.swift in Sources */,
+				CCE1E659228653720011D142 /* RecordButton.swift in Sources */,
+				CCE1E65D2286539C0011D142 /* RecordViewController.swift in Sources */,
+				CCE1E657228653690011D142 /* MainTabBarController.swift in Sources */,
+				CCE1E653228653500011D142 /* Constants.swift in Sources */,
+				CCE1E655228653620011D142 /* Recorder.swift in Sources */,
+				CCE1E65B228653980011D142 /* SurveyIDViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,7 +326,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -268,7 +381,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -280,11 +393,14 @@
 		};
 		CC333C0E2286528700B5D8C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4FF5A6D7193A47BB0FF3E336 /* Pods-SurveyLex Demo.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GR353CPP2V;
 				INFOPLIST_FILE = "SurveyLex Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -298,11 +414,14 @@
 		};
 		CC333C0F2286528700B5D8C9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1E21BA35407F2DDE6009F4DC /* Pods-SurveyLex Demo.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GR353CPP2V;
 				INFOPLIST_FILE = "SurveyLex Demo/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
