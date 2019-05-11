@@ -17,7 +17,7 @@ class RecordViewController: UIViewController {
         super.viewDidLoad()
         
         // Tab bar setup
-        title = "Record Demo"
+        title = "Record Button"
         
         // View setup
         button = makeButton()
