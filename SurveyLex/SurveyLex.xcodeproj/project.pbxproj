@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		574FB97B3F483D76F4B281E5 /* Pods_SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */; };
+		CC31C96B228A1670009C0E44 /* FragmentTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC31C96A228A1670009C0E44 /* FragmentTableController.swift */; };
 		CC333BA822854C7400B5D8C9 /* SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC333B9E22854C7400B5D8C9 /* SurveyLex.framework */; };
 		CC333BAD22854C7400B5D8C9 /* QuestionElementsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BAC22854C7400B5D8C9 /* QuestionElementsTest.swift */; };
 		CC333BAF22854C7400B5D8C9 /* SurveyLex.h in Headers */ = {isa = PBXBuildFile; fileRef = CC333BA122854C7400B5D8C9 /* SurveyLex.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -21,6 +22,11 @@
 		CC333BD1228608D000B5D8C9 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BD0228608D000B5D8C9 /* Audio.swift */; };
 		CC333BE6228615D300B5D8C9 /* SurveyDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BE5228615D300B5D8C9 /* SurveyDataTests.swift */; };
 		CC333BEF22864D6000B5D8C9 /* Survey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BEE22864D6000B5D8C9 /* Survey.swift */; };
+		CC90E804228A7CC40040F990 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC90E803228A7CC40040F990 /* Recorder.swift */; };
+		CC90E806228A7CC70040F990 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC90E805228A7CC70040F990 /* RecordButton.swift */; };
+		CC90E80B228A87580040F990 /* FragmentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC90E80A228A87580040F990 /* FragmentViewController.swift */; };
+		CCE1E68B2286771D0011D142 /* SurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E68A2286771D0011D142 /* SurveyViewController.swift */; };
+		CCE1E69222867BB70011D142 /* SurveyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E69122867BB70011D142 /* SurveyNavigationController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +43,7 @@
 		538E653F372C3A5753CBABA5 /* Pods-SurveyLex.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SurveyLex/Pods-SurveyLex.debug.xcconfig"; sourceTree = "<group>"; };
 		578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2FD99A7CC1792DBA5F99176 /* Pods-SurveyLex.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SurveyLex/Pods-SurveyLex.release.xcconfig"; sourceTree = "<group>"; };
+		CC31C96A228A1670009C0E44 /* FragmentTableController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentTableController.swift; sourceTree = "<group>"; };
 		CC333B9E22854C7400B5D8C9 /* SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC333BA122854C7400B5D8C9 /* SurveyLex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SurveyLex.h; sourceTree = "<group>"; };
 		CC333BA222854C7400B5D8C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -53,7 +60,11 @@
 		CC333BD0228608D000B5D8C9 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		CC333BE5228615D300B5D8C9 /* SurveyDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyDataTests.swift; sourceTree = "<group>"; };
 		CC333BEE22864D6000B5D8C9 /* Survey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Survey.swift; sourceTree = "<group>"; };
-		CCE1E682228659740011D142 /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC90E803228A7CC40040F990 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
+		CC90E805228A7CC70040F990 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
+		CC90E80A228A87580040F990 /* FragmentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentViewController.swift; sourceTree = "<group>"; };
+		CCE1E68A2286771D0011D142 /* SurveyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyViewController.swift; sourceTree = "<group>"; };
+		CCE1E69122867BB70011D142 /* SurveyNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyNavigationController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +121,7 @@
 			children = (
 				CC333BA122854C7400B5D8C9 /* SurveyLex.h */,
 				CC333BA222854C7400B5D8C9 /* Info.plist */,
+				CCE1E68C228677240011D142 /* Interfaces */,
 				CC333BC822854FA300B5D8C9 /* Data Types */,
 			);
 			path = SurveyLex;
@@ -131,6 +143,8 @@
 				CC333BEE22864D6000B5D8C9 /* Survey.swift */,
 				CC333BB822854CCC00B5D8C9 /* SurveyData.swift */,
 				CC333BC222854DB900B5D8C9 /* Fragment.swift */,
+				CC31C96A228A1670009C0E44 /* FragmentTableController.swift */,
+				CC90E80A228A87580040F990 /* FragmentViewController.swift */,
 				CC333BCB2285F26700B5D8C9 /* Elements */,
 			);
 			path = "Data Types";
@@ -143,19 +157,37 @@
 				CC333BBE22854D6200B5D8C9 /* RadioGroup.swift */,
 				CC333BC92285505000B5D8C9 /* Text.swift */,
 				CC333BD0228608D000B5D8C9 /* Audio.swift */,
+				CC90E809228A84380040F990 /* Audio support files */,
 				CC333BCC2285F34500B5D8C9 /* Rating.swift */,
 				CC333BCE2286020100B5D8C9 /* Consent.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
 		};
+		CC90E809228A84380040F990 /* Audio support files */ = {
+			isa = PBXGroup;
+			children = (
+				CC90E803228A7CC40040F990 /* Recorder.swift */,
+				CC90E805228A7CC70040F990 /* RecordButton.swift */,
+			);
+			path = "Audio support files";
+			sourceTree = "<group>";
+		};
 		CCE1E681228659740011D142 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CCE1E682228659740011D142 /* SwiftyJSON.framework */,
 				578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CCE1E68C228677240011D142 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				CCE1E68A2286771D0011D142 /* SurveyViewController.swift */,
+				CCE1E69122867BB70011D142 /* SurveyNavigationController.swift */,
+			);
+			path = Interfaces;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -295,12 +327,18 @@
 			files = (
 				CC333BEF22864D6000B5D8C9 /* Survey.swift in Sources */,
 				CC333BD1228608D000B5D8C9 /* Audio.swift in Sources */,
+				CC90E804228A7CC40040F990 /* Recorder.swift in Sources */,
 				CC333BCD2285F34500B5D8C9 /* Rating.swift in Sources */,
+				CCE1E69222867BB70011D142 /* SurveyNavigationController.swift in Sources */,
 				CC333BC122854D6F00B5D8C9 /* Question.swift in Sources */,
+				CCE1E68B2286771D0011D142 /* SurveyViewController.swift in Sources */,
 				CC333BCF2286020100B5D8C9 /* Consent.swift in Sources */,
 				CC333BCA2285505000B5D8C9 /* Text.swift in Sources */,
 				CC333BC322854DB900B5D8C9 /* Fragment.swift in Sources */,
+				CC90E80B228A87580040F990 /* FragmentViewController.swift in Sources */,
+				CC90E806228A7CC70040F990 /* RecordButton.swift in Sources */,
 				CC333BB922854CCC00B5D8C9 /* SurveyData.swift in Sources */,
+				CC31C96B228A1670009C0E44 /* FragmentTableController.swift in Sources */,
 				CC333BBF22854D6200B5D8C9 /* RadioGroup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

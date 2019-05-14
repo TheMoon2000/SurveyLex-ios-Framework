@@ -18,8 +18,8 @@
 		CCE1E659228653720011D142 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E658228653720011D142 /* RecordButton.swift */; };
 		CCE1E65B228653980011D142 /* SurveyIDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E65A228653980011D142 /* SurveyIDViewController.swift */; };
 		CCE1E65D2286539C0011D142 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E65C2286539C0011D142 /* RecordViewController.swift */; };
-		CCE1E68822865D1C0011D142 /* SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE1E68722865D1C0011D142 /* SurveyLex.framework */; };
-		CCE1E68922865D1C0011D142 /* SurveyLex.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCE1E68722865D1C0011D142 /* SurveyLex.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CCE1E68F22867A320011D142 /* SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE1E68D228679880011D142 /* SurveyLex.framework */; };
+		CCE1E69022867A320011D142 /* SurveyLex.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCE1E68D228679880011D142 /* SurveyLex.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,7 +29,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CCE1E68922865D1C0011D142 /* SurveyLex.framework in Embed Frameworks */,
+				CCE1E69022867A320011D142 /* SurveyLex.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -52,7 +52,7 @@
 		CCE1E658228653720011D142 /* RecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
 		CCE1E65A228653980011D142 /* SurveyIDViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SurveyIDViewController.swift; sourceTree = "<group>"; };
 		CCE1E65C2286539C0011D142 /* RecordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
-		CCE1E68722865D1C0011D142 /* SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCE1E68D228679880011D142 /* SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCE1E68822865D1C0011D142 /* SurveyLex.framework in Frameworks */,
+				CCE1E68F22867A320011D142 /* SurveyLex.framework in Frameworks */,
 				39736DE68188A44E97FA2F5C /* Pods_SurveyLex_Demo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +71,7 @@
 		67F0E65787DD3F5C76CD54FE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CCE1E68D228679880011D142 /* SurveyLex.framework */,
 				953F6676BCD8B7E2133D6C2F /* Pods_SurveyLex_Demo.framework */,
 			);
 			name = Frameworks;
@@ -79,7 +80,6 @@
 		CC333BF22286528500B5D8C9 = {
 			isa = PBXGroup;
 			children = (
-				CCE1E68722865D1C0011D142 /* SurveyLex.framework */,
 				CC333BFD2286528500B5D8C9 /* SurveyLex Demo */,
 				CC333BFC2286528500B5D8C9 /* Products */,
 				ED9845E46E20658DF1483EC7 /* Pods */,
@@ -99,11 +99,11 @@
 			isa = PBXGroup;
 			children = (
 				CC333BFE2286528500B5D8C9 /* AppDelegate.swift */,
+				CCE1E656228653690011D142 /* MainTabBarController.swift */,
 				CCE1E65C2286539C0011D142 /* RecordViewController.swift */,
 				CCE1E65A228653980011D142 /* SurveyIDViewController.swift */,
 				CCE1E654228653620011D142 /* Recorder.swift */,
 				CCE1E658228653720011D142 /* RecordButton.swift */,
-				CCE1E656228653690011D142 /* MainTabBarController.swift */,
 				CCE1E652228653500011D142 /* Constants.swift */,
 				CC333C022286528500B5D8C9 /* Main.storyboard */,
 				CC333C052286528700B5D8C9 /* Assets.xcassets */,

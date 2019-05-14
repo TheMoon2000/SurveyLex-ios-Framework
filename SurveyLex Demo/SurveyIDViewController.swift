@@ -25,8 +25,44 @@ class SurveyIDViewController: UIViewController {
         textView = makeTextView() // 2
         lookupButton = makeLookupButton() // 3
         
-        textView.text = "41e8abf0-62b9-11e9-a454-f5b21638e785"
+        
+//        textView.text = "41e8abf0-62b9-11e9-a454-f5b21638e785"
+        textView.text = "5f108ef0-5d23-11e9-8d7e-bb5f7e5229ff"
     }
+    
+    
+    /// Make keyboard accessory view
+    private func makeAccessoryView() -> UIView {
+        let button = UIButton(type: .system)
+        button.setTitle("Done", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        button.addTarget(self, action: #selector(dismissKeyboard), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        let signButton = UIButton(type: .system)
+        signButton.setTitle("–", for: .normal)
+        signButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        signButton.addTarget(self, action: #selector(dash), for: .touchUpInside)
+        signButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 45))
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor(white: 0.92, alpha: 1).cgColor
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(button)
+        view.addSubview(signButton)
+        view.backgroundColor = UIColor(white: 0.95, alpha: 0.9)
+        
+        NSLayoutConstraint.activate([
+            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            signButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            signButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            signButton.widthAnchor.constraint(equalToConstant: 30)
+            ])
+        return view
+    }
+    
     
     /// Make a text view!
     
@@ -38,6 +74,7 @@ class SurveyIDViewController: UIViewController {
         txv.allowsEditingTextAttributes = false
         txv.textColor = UIColor(white: 0.1, alpha: 1)
         txv.autocapitalizationType = .none
+        txv.keyboardType = .asciiCapable
         txv.textAlignment = .center
         txv.autocorrectionType = .no
         txv.layer.borderWidth = 1
@@ -84,53 +121,34 @@ class SurveyIDViewController: UIViewController {
     }
     
     
-    /// Make keyboard accessory view
-    
-    private func makeAccessoryView() -> UIView {
-        let button = UIButton(type: .system)
-        button.setTitle("Done", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-        button.addTarget(self, action: #selector(dismissKeyboard), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        let signButton = UIButton(type: .system)
-        signButton.setTitle("–", for: .normal)
-        signButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
-        signButton.addTarget(self, action: #selector(dash), for: .touchUpInside)
-        signButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 45))
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor(white: 0.92, alpha: 1).cgColor
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(button)
-        view.addSubview(signButton)
-        view.backgroundColor = UIColor(white: 0.95, alpha: 0.9)
-        
-        NSLayoutConstraint.activate([
-            button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            signButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            signButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            signButton.widthAnchor.constraint(equalToConstant: 30)
-            ])
-        return view
-    }
-    
-    
     @objc private func dismissKeyboard() {
         textView.endEditing(true)
     }
     
     @objc private func dash() {
-        print("dash")
+        textView.insertText("-")
     }
     
     @objc func lookup(_ sender: UIButton) {
-        let survey = Survey(surveyID: "41e8abf0-62b9-11e9-a454-f5b21638e785") {
-            status in
-            print(status)
+        let survey = Survey(surveyID: textView.text,
+                            target: self)
+        
+        survey.presentWhenReady { status in
+            switch status {
+            case .error:
+                self.invalidSurveyWarning()
+            default:
+                break
+            }
         }
+    }
+    
+    private func invalidSurveyWarning() {
+        let alert = UIAlertController(title: "Survey Not Found",
+                                      message: "Please check that the survey ID you provided is valid.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     private func presentSurvey(survey: SurveyData) {
