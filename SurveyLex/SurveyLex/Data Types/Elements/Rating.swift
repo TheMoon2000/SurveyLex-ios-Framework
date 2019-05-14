@@ -9,12 +9,12 @@
 import UIKit
 import SwiftyJSON
 
-struct Rating : Question, CustomStringConvertible {
+class Rating : Question, CustomStringConvertible {
     let title: String
     var isRequired = false
     var options = [(value: String, text: String)]()
     
-    init(json: JSON) {
+    required init(json: JSON) {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,
@@ -48,4 +48,11 @@ struct Rating : Question, CustomStringConvertible {
         let choices = "\(options.first?.text ?? "")...\(options.last?.text ?? "")"
         return "\(title):\n  <\(choices)> (\(options.count) choices total)"
     }
+    
+    var contentCell: UITableViewCell {
+        let cell = UITableViewCell()
+        cell.backgroundColor = UIColor(red: 0.8, green: 0.9, blue: 0.91, alpha: 1)
+        return cell
+    }
+    
 }

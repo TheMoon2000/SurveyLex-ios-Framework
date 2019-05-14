@@ -9,13 +9,16 @@
 import UIKit
 import SwiftyJSON
 
-public protocol Question: CustomStringConvertible {
+protocol Question: CustomStringConvertible {
     init(json: JSON)
     var type: ResponseType { get }
     var isRequired: Bool { get }
+    
+    /// The view of this particular question, as displayed to the user.
+    var contentCell: UITableViewCell { get }
 }
 
-public enum ResponseType: String {
+enum ResponseType: String {
     case text = "text"
     case rating = "rating"
     case radioGroup = "radiogroup"

@@ -9,12 +9,12 @@
 import UIKit
 import SwiftyJSON
 
-struct RadioGroup: Question, CustomStringConvertible {
+class RadioGroup: Question, CustomStringConvertible {
     let title: String
     var isRequired = false
     var choices = [String]()
     
-    init(json: JSON) {
+    required init(json: JSON) {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,
@@ -39,4 +39,11 @@ struct RadioGroup: Question, CustomStringConvertible {
     var description: String {
         return "Radio group: <" + choices.map {$0.description}.joined(separator: ", ") + ">"
     }
+    
+    var contentCell: UITableViewCell {
+        let cell = UITableViewCell()
+        cell.backgroundColor = UIColor(red: 1, green: 0.9, blue: 1, alpha: 1)
+        return cell
+    }
+    
 }

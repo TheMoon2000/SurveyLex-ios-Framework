@@ -9,11 +9,11 @@
 import UIKit
 import SwiftyJSON
 
-struct Text: Question, CustomStringConvertible {
+class Text: Question, CustomStringConvertible {
     let title: String
     var isRequired = false
     
-    init(json: JSON) {
+    required init(json: JSON) {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string else {
@@ -33,5 +33,12 @@ struct Text: Question, CustomStringConvertible {
     
     var description: String {
         return "Text response: <\(title)>"
+    }
+    
+    var contentCell: UITableViewCell {
+        let cell = UITableViewCell()
+        cell.backgroundColor = .white
+        
+        return cell
     }
 }
