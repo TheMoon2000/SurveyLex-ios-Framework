@@ -9,14 +9,15 @@
 import UIKit
 import SwiftyJSON
 
-struct Fragment: CustomStringConvertible {
-    private var id = ""
+class Fragment: CustomStringConvertible {
+    internal var id = ""
     var type: FragmentType
     
     /// An order list of all the questions that appear in this fragment
     var questions = [Question]()
+    let index: Int
     
-    public init(json: JSON) {
+    public init(json: JSON, index: Int) {
         let dictionary = json.dictionaryValue
         
         guard let fragmentId = dictionary["fragmentId"]?.string,
@@ -28,10 +29,13 @@ struct Fragment: CustomStringConvertible {
         }
         
         self.id = fragmentId
+        self.index = index
         self.type = FragmentType(rawValue: type)!
         
         if self.type == .audio {
-            questions.append(Audio(json: data))
+            let a = Audio(json: data)
+            a.fragmentId = self.id
+            questions.append(a)
         } else if self.type == .consent {
             questions.append(Consent(json: data))
         } else { // must be text questions
@@ -58,6 +62,7 @@ struct Fragment: CustomStringConvertible {
         }
     }
     
+    /// The category that a fragment belongs to.
     public enum FragmentType: String {
         case consent = "CONSENT"
         case textSurvey = "TEXT_SURVEYJS"
@@ -70,5 +75,11 @@ struct Fragment: CustomStringConvertible {
             $0.description.replacingOccurrences(of: "\n", with: "\n  ")
         }
         return "Fragment <\(idParts[0])...\(idParts[4])>: \n  " + questionsDescription.joined(separator: "\n  ")
+    }
+    
+    var contentVC: FragmentViewController {
+        let fragmentTable = FragmentTableController()
+        fragmentTable.fragmentData = self
+        return fragmentTable
     }
 }

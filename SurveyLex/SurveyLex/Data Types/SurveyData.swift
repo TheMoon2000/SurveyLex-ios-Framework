@@ -9,14 +9,14 @@
 import UIKit
 import SwiftyJSON
 
-public struct SurveyData: CustomStringConvertible {
+public class SurveyData: CustomStringConvertible {
     let title: String
     let creator: String
     let surveyId: String
     let published: Bool
     var fragments = [Fragment]()
     
-    /// Creates a new survey form using a JSON summary of the survey from NeuroLex's api.
+    /// Creates a new survey form using a JSON summary of the survey.
     public init(json: JSON) {
         let dictionary = json.dictionaryValue
         
@@ -35,7 +35,10 @@ public struct SurveyData: CustomStringConvertible {
         self.surveyId = surveyId
         self.published = published
         
-        self.fragments = fragments.map {Fragment(json: $0)}
+        for i in 0..<fragments.count {
+            let new_fragment = Fragment(json: fragments[i], index: i)
+            self.fragments.append(new_fragment)
+        }
     }
     
     /// Constructs a blank SurveyData object
