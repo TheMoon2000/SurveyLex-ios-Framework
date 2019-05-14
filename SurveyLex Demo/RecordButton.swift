@@ -59,28 +59,25 @@ class RecordButton: UIButton {
                        action: #selector(record),
                        for: .touchUpInside)
         
+        
         self.addTarget(self,
                        action: #selector(buttonPressed),
                        for: .touchDown)
         
         self.addTarget(self,
                        action: #selector(buttonLifted),
-                       for: [.touchUpInside, .touchUpOutside])
+                       for: [.touchUpInside,
+                             .touchUpOutside,
+                             .touchCancel,
+                             .touchDragExit,
+                             .touchDragOutside])
         
         self.setNeedsDisplay()
     }
     
     @objc private func buttonPressed() {
-        let animation = {
-            self.setTitleColor(UIColor(white: 0.93, alpha: 1), for: .normal)
-            self.layer.borderColor = BUTTON_LIGHT_TINT.cgColor
-        }
-        
-        UIView.transition(with: self,
-                          duration: 0.05,
-                          options: .transitionCrossDissolve,
-                          animations: animation,
-                          completion: nil)
+        self.setTitleColor(UIColor(white: 0.93, alpha: 1), for: .normal)
+        self.layer.borderColor = BUTTON_LIGHT_TINT.cgColor
     }
     
     @objc private func buttonLifted() {
