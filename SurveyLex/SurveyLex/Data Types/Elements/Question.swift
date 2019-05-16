@@ -9,13 +9,16 @@
 import UIKit
 import SwiftyJSON
 
-protocol Question: CustomStringConvertible {
-    init(json: JSON)
+protocol Question: class, CustomStringConvertible {
+    init(json: JSON, fragment: Fragment)
     var type: ResponseType { get }
+    var fragment: Fragment { get }
     var isRequired: Bool { get }
-    
-    /// The view of this particular question, as displayed to the user.
-    var contentCell: UITableViewCell { get }
+    var completed: Bool { get }
+    var parentView: SurveyViewController? { get set }
+
+    /// The view of this particular UI element, as displayed to the user.
+    func makeContentCell() -> UITableViewCell
 }
 
 enum ResponseType: String {

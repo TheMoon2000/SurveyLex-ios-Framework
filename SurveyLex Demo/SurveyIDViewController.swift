@@ -32,6 +32,7 @@ class SurveyIDViewController: UIViewController {
     
     
     /// Make keyboard accessory view
+    
     private func makeAccessoryView() -> UIView {
         let button = UIButton(type: .system)
         button.setTitle("Done", for: .normal)
@@ -137,8 +138,10 @@ class SurveyIDViewController: UIViewController {
             switch status {
             case .error:
                 self.invalidSurveyWarning()
-            default:
-                break
+            case .cancelled:
+                print("survey closed halfway")
+            case .submitted:
+                print("submitted")
             }
         }
     }
@@ -149,10 +152,6 @@ class SurveyIDViewController: UIViewController {
                                       preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
-    }
-    
-    private func presentSurvey(survey: SurveyData) {
-        print(survey)
     }
     
     /*

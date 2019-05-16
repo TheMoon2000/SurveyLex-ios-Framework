@@ -8,18 +8,24 @@
 
 import UIKit
 
-let BUTTON_LIGHT_TINT = UIColor(red: 0.75, green: 0.89, blue: 1, alpha: 1)
-let BUTTON_DEEP_BLUE = UIColor(red: 0.49, green: 0.7, blue: 0.94, alpha: 1)
-let BUTTON_TINT = UIColor(red: 0.7, green: 0.85, blue: 1, alpha: 1)
-let RECORD_TINT = UIColor(red: 1, green: 0.6, blue: 0.6, alpha: 1)
-
 class RecordButton: UIButton {
     
-    private var recorder: Recorder!
-    var duration: CGFloat = 0
-    let shapeLayer = CAShapeLayer()
-    private var startTime = 0
+    var delegate: RecordingDelegate?
+    
+    internal var recorder: Recorder!
+    internal var duration: CGFloat = 0
+    private let shapeLayer = CAShapeLayer()
+    private var finishTime = Date()
+    
+    /// When recording, represents the number of seconds left
+    var timeRemaining: TimeInterval {
+        return finishTime.timeIntervalSinceNow
+    }
     private var timer: Timer?
+    
+    var saveURL: URL {
+        return recorder!.audioFilename
+    }
     
     override var buttonType: UIButton.ButtonType {
         return .custom
@@ -33,10 +39,12 @@ class RecordButton: UIButton {
         self.layer.borderColor = tintColor.cgColor
     }
     
-    init(duration: Int, radius: CGFloat, recorder: Recorder) {
+    init(duration: Double, radius: CGFloat, recorder: Recorder) {
+
         super.init(frame: .zero)
         
-        self.duration = CGFloat(duration)
+        // If the given duration is too short, bound it below by 10 seconds
+        self.duration = max(CGFloat(duration), 10.0)
         self.recorder = recorder
         
         // Apply layout constraints
@@ -87,24 +95,37 @@ class RecordButton: UIButton {
                           completion: nil)
     }
     
-    func stopRecording() {
-        recorder.stopRecording()
-        timer?.invalidate()
+    private func stopRecording(interrupted: Bool) {
+        
+        recorder.stopRecording() // Saves the file if possible
         setTitle("Record", for: .normal)
         shapeLayer.removeAllAnimations()
         shapeLayer.removeFromSuperlayer()
-        print("Recording saved to \(recorder.audioFilename.path).")
+        timer?.invalidate()
+        
+        if interrupted {
+            delegate?.didFailToRecord(self, error: .interrupted)
+            return
+        }
+        
+        let elapsed = Double(duration) - finishTime.timeIntervalSinceNow
 
-//        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "Stopped recording"), object: self)
+        do {
+            let _ = try Data(contentsOf: recorder.audioFilename)
+            delegate?.didFinishRecording(self, duration: elapsed)
+        } catch {
+            delegate?.didFailToRecord(self, error: .fileWrite)
+        }
+        
     }
 
     @objc private func record() {
         if recorder.audioRecorder.isRecording {
-            stopRecording()
+            stopRecording(interrupted: false)
         } else {
             let progress = UIBezierPath(arcCenter: CGPoint(x: bounds.maxX / 2,
                                                            y: bounds.maxY / 2),
-                                        radius: self.frame.width / 2,
+                                        radius: self.frame.width / 2 - 3,
                                         startAngle: .pi * 1.5,
                                         endAngle: -.pi * 0.5,
                                         clockwise: false)
@@ -112,7 +133,7 @@ class RecordButton: UIButton {
             let addAnimation = {
                 self.shapeLayer.path = progress.cgPath
                 self.shapeLayer.strokeColor = RECORD_TINT.cgColor
-                self.shapeLayer.lineWidth = 10
+                self.shapeLayer.lineWidth = 4
                 self.shapeLayer.fillColor = UIColor.clear.cgColor
                 self.layer.addSublayer(self.shapeLayer)
                 self.shapeLayer.strokeEnd = 0.0
@@ -129,24 +150,27 @@ class RecordButton: UIButton {
                 
                 // No access, gives alert message
                 if !status {
-//                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "No mic permission"), object: self)
+                    self.delegate?.didFailToRecord(self, error: .micAccess)
                     return
                 }
                 
                 // Has mic access, continue to record
                 
-//                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "Started recording"), object: self)
+                self.finishTime = Date().addingTimeInterval(Double(self.duration))
+                self.delegate?.didBeginRecording(self)
                 
                 addAnimation()
-                let finishTime = Date().addingTimeInterval(Double(self.duration))
+                
                 self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
-                    if (Date().timeIntervalSince(finishTime) > 0 || self.shapeLayer.animation(forKey: "drawCircleAnimation") == nil) { // User interrupted recording
+                    if (self.shapeLayer.animation(forKey: "drawCircleAnimation") == nil) { // User interrupted recording
                         timer.invalidate()
-                        self.record()
+                        self.stopRecording(interrupted: true)
                         return;
+                    } else if self.timeRemaining <= 0 {
+                        timer.invalidate()
+                        self.stopRecording(interrupted: false)
+                        return
                     }
-                    let remaining = finishTime.timeIntervalSince(Date())
-//                    self.setTitle(String(Int(remaining)), for: .normal)
                     self.setTitle("Stop", for: .normal)
                 }
                 self.timer?.fire()

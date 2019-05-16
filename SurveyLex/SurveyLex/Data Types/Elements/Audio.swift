@@ -10,12 +10,17 @@ import UIKit
 import SwiftyJSON
 
 class Audio: Question, CustomStringConvertible {
-    let prompt: String
-    var isRequired = false
-    var duration = 60.0 // Length of the audio response
-    var fragmentId = "default"
     
-    required init(json: JSON) {
+    let prompt: String
+    let fragment: Fragment
+    var isRequired = true
+    var completed = false
+    var duration = 30.0 // Length of the audio response
+    var fragmentId = "default"
+    var parentView: SurveyViewController?
+    private var lengthOfMostRecentRecording = 0.0
+    
+    required init(json: JSON, fragment: Fragment) {
         let dictionary = json.dictionaryValue
         
         guard let prompt = dictionary["prompt"]?.string else {
@@ -28,6 +33,7 @@ class Audio: Question, CustomStringConvertible {
         }
         
         self.prompt = prompt
+        self.fragment = fragment
     }
     
     var type: ResponseType {
@@ -38,55 +44,20 @@ class Audio: Question, CustomStringConvertible {
         return "Audio question: <\(prompt)>"
     }
     
-    var contentCell: UITableViewCell {
-        let cell = UITableViewCell()
-        cell.backgroundColor = .white
+    func makeContentCell() -> UITableViewCell {
+        let cell = AudioResponseCell(audioQuestion: self)
+        cell.title = prompt
+        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("Recordings", isDirectory: true)
         
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .medium)
-        label.text = prompt
-        label.numberOfLines = 100
-        label.adjustsFontSizeToFitWidth = true
-        label.lineBreakMode = .byWordWrapping
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        cell.addSubview(label)
-        label.leftAnchor.constraint(equalTo: cell.leftAnchor,
-                                    constant: 30).isActive = true
-        label.rightAnchor.constraint(equalTo: cell.rightAnchor,
-                                     constant: -30).isActive = true
-        label.topAnchor.constraint(equalTo: cell.topAnchor,
-                                   constant: 40).isActive = true
+        do {
+            try FileManager().createDirectory(at: url,
+                                              withIntermediateDirectories: true,
+                                              attributes: nil)
+        } catch {
+            preconditionFailure("No write permission to write audio.")
+        }
         
-        
-        let recorder = Recorder(filename: fragmentId)
-        
-        let button = RecordButton(duration: 30,
-                                  radius: 55,
-                                  recorder: recorder)
-        
-        button.tintColor = BUTTON_TINT
-        cell.addSubview(button)
-        button.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
-        button.topAnchor.constraint(greaterThanOrEqualTo: label.bottomAnchor, constant: 120).isActive = true
-        
-        let skip = UIButton(type: .system)
-        skip.tintColor = BUTTON_DEEP_BLUE
-        skip.titleLabel?.font = .systemFont(ofSize: 16.8, weight: .medium)
-        skip.setTitle("Skip", for: .normal)
-        skip.translatesAutoresizingMaskIntoConstraints = false
-        cell.addSubview(skip)
-        skip.widthAnchor.constraint(equalTo: button.widthAnchor, constant: -5).isActive = true
-        skip.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
-        skip.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 20).isActive = true
-        skip.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -45).isActive = true
-        skip.isHidden = isRequired
-        
-        
-        // 60 is the constant height of the navigation bar & status bar
-        cell.heightAnchor.constraint(greaterThanOrEqualToConstant: UIScreen.main.bounds.height - 60 - UIApplication.shared.keyWindow!.safeAreaInsets.bottom).isActive = true
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(recordingError), name: NSNotification.Name(rawValue: "No mic permission"), object: nil)
+        cell.saveURL = url.appendingPathComponent(fragmentId /* + ".m4a" */)
         
         
         return cell
@@ -94,11 +65,36 @@ class Audio: Question, CustomStringConvertible {
     
     // Cell actions
     
-    @objc func recordingError(_ sender: RecordButton) {
-        let alert = UIAlertController(title: "No Mic Access",
-                                      message: "Please enable microphone access in Settings",
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-//        self.present(alert, animated: true, completion: nil)
+    func didBeginRecording(_ sender: RecordButton) {
+        print("begin recording")
     }
+    
+    func didFailToRecord(_ sender: RecordButton, error: Recorder.Error) {
+        switch error {
+        case .micAccess:
+            let alert = UIAlertController(title: "No Mic Access",
+                                          message: "Please enable microphone access in Settings.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            parentView?.present(alert, animated: true, completion: nil)
+        case .fileWrite:
+            let alert = UIAlertController(title: "No Write Permission",
+                                          message: "Internal error.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            parentView?.present(alert, animated: true, completion: nil)
+        case .interrupted:
+            let alert = UIAlertController(title: "Recording Interrupted",
+                                          message: "Please do not close close or leave this screen while recording.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Try Again", style: .default, handler: nil))
+            parentView?.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    
+    @objc func flipPage() {
+        parentView?.nextPage()
+    }
+    
 }

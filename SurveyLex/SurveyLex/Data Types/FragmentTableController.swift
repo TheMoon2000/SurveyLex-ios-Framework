@@ -8,22 +8,37 @@
 
 import UIKit
 
-class FragmentTableController: UITableViewController, FragmentViewController {
+class FragmentTableController: UITableViewController {
     
     var fragmentData: Fragment!
-    
+    var surveyViewController: SurveyViewController?
     var contentCells = [UITableViewCell]()
+    var completed = false
+    
+    /// A boolean array with the completion status of each survey element.
+    /// This information is distributed to individual survey elements.
+    /// - Parameters:
+    private var completion: [(completed: Bool, required: Bool)] {
+        return fragmentData.questions.map { ($0.completed, $0.isRequired) }
+    }
+    
+    /// Whether the user can swipe right and proceed with the next page.
+    var unlocked: Bool {
+        return !fragmentData.questions.contains { !$0.completed && $0.isRequired }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         precondition(fragmentData != nil)
         
-        contentCells = fragmentData.questions.map { $0.contentCell }
-
+        contentCells = fragmentData.questions.map { $0.makeContentCell() }
+        fragmentData.questions.forEach { $0.parentView = surveyViewController }
+                
         tableView.allowsSelection = false
         tableView.separatorStyle = .none
-        tableView.tableFooterView = nil
+        tableView.tableFooterView = UIView(frame: .zero)
+        
         
         view.backgroundColor = UIColor(white: 0.94, alpha: 1)
     }
@@ -38,26 +53,20 @@ class FragmentTableController: UITableViewController, FragmentViewController {
         return contentCells.count
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return contentCells[indexPath.row].intrinsicContentSize.height
-    }
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        // Not very memory efficient, but we can assume that a survey
+        // will never have too many question on the same page.
+        
         return contentCells[indexPath.row]
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     var fragmentIndex: Int {
         return fragmentData.index
+    }
+    
+    func updateCompletionStatusByQuestions() {
+        self.completed = unlocked
     }
 
 }

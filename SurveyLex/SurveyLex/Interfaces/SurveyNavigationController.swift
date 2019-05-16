@@ -14,8 +14,9 @@ class SurveyNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationBar.barTintColor = UIColor(white: 0.9, alpha: 1)
-
+        navigationBar.barTintColor = UIColor(white: 1, alpha: 1)
+        navigationBar.isTranslucent = false
+        navigationBar.shadowImage = UIImage()
     }
 
 }

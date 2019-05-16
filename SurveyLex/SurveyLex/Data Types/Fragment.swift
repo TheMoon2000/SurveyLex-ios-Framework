@@ -33,11 +33,11 @@ class Fragment: CustomStringConvertible {
         self.type = FragmentType(rawValue: type)!
         
         if self.type == .audio {
-            let a = Audio(json: data)
+            let a = Audio(json: data, fragment: self)
             a.fragmentId = self.id
             questions.append(a)
         } else if self.type == .consent {
-            questions.append(Consent(json: data))
+            questions.append(Consent(json: data, fragment: self))
         } else { // must be text questions
             guard let questionJSONList = data.dictionary?["surveyjs"]? .dictionaryValue["questions"]?.array else {
                 preconditionFailure("Malformed text question:")
@@ -52,11 +52,11 @@ class Fragment: CustomStringConvertible {
     private func match(_ json: JSON) -> Question {
         switch json.dictionaryValue["type"]?.stringValue ?? "" {
         case "rating":
-            return Rating(json: json)
+            return Rating(json: json, fragment: self)
         case "text":
-            return Text(json: json)
+            return Text(json: json, fragment: self)
         case "radiogroup":
-            return RadioGroup(json: json)
+            return RadioGroup(json: json, fragment: self)
         default:
             preconditionFailure("Unmatched question type: '\(json.dictionaryValue["type"]?.stringValue ?? "")'")
         }
@@ -77,7 +77,7 @@ class Fragment: CustomStringConvertible {
         return "Fragment <\(idParts[0])...\(idParts[4])>: \n  " + questionsDescription.joined(separator: "\n  ")
     }
     
-    var contentVC: FragmentViewController {
+    var contentVC: FragmentTableController {
         let fragmentTable = FragmentTableController()
         fragmentTable.fragmentData = self
         return fragmentTable

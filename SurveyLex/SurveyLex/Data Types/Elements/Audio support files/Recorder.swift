@@ -14,10 +14,11 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
     var metertimer : Timer? = nil
     var hasMicPermission: Bool = false
     
-    init(filename: String) {
+    init(fileURL: URL) {
         super.init()
         self.recordingSession = AVAudioSession.sharedInstance()
-        self.audioFilename = audioFilename.appendingPathComponent(filename + ".m4a")
+        
+        self.audioFilename = fileURL
         self.createRecorder()
         do {
             try self.recordingSession.setCategory(AVAudioSession.Category.record)
@@ -37,11 +38,10 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
         }
         
         // then we check if we have mic permission
-        if (!self.hasMicPermission){
+        if (!self.hasMicPermission) {
             // if not, we ask it
             requestPermission(completion:{(allowed: Bool) -> Void in
                 if (!allowed) {
-                    // if permission wasn't given, we let the webapp now
                     self.hasMicPermission = false
                     enabledAccess(false)
                 } else {
@@ -124,5 +124,11 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
                 // failed to record!
             }
         }
+    }
+    
+    enum Error {
+        case micAccess
+        case fileWrite
+        case interrupted
     }
 }

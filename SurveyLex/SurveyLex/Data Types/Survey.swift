@@ -49,7 +49,6 @@ public class Survey {
             do {
                 let json = try JSON(data: data!)
                 self.surveyData = SurveyData(json: json)
-                print(self.surveyData!.description)
                 DispatchQueue.main.async {
                     self.presentSurvey(handler)
                 }

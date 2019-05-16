@@ -11,10 +11,13 @@ import SwiftyJSON
 
 class RadioGroup: Question, CustomStringConvertible {
     let title: String
+    let fragment: Fragment
+    let choices: [String]
     var isRequired = false
-    var choices = [String]()
+    var completed = false
+    var parentView: SurveyViewController?
     
-    required init(json: JSON) {
+    required init(json: JSON, fragment: Fragment) {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,
@@ -30,6 +33,7 @@ class RadioGroup: Question, CustomStringConvertible {
         
         self.title = title
         self.choices = questionData
+        self.fragment = fragment
     }
     
     var type: ResponseType {
@@ -40,10 +44,10 @@ class RadioGroup: Question, CustomStringConvertible {
         return "Radio group: <" + choices.map {$0.description}.joined(separator: ", ") + ">"
     }
     
-    var contentCell: UITableViewCell {
+    func makeContentCell() -> UITableViewCell {
         let cell = UITableViewCell()
         cell.backgroundColor = UIColor(red: 1, green: 0.9, blue: 1, alpha: 1)
         return cell
     }
-    
+
 }

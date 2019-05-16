@@ -11,9 +11,12 @@ import SwiftyJSON
 
 class Text: Question, CustomStringConvertible {
     let title: String
+    let fragment: Fragment
     var isRequired = false
+    var completed = false
+    var parentView: SurveyViewController?
     
-    required init(json: JSON) {
+    required init(json: JSON, fragment: Fragment) {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string else {
@@ -25,6 +28,7 @@ class Text: Question, CustomStringConvertible {
             self.isRequired = isRequired
         }
         self.title = title
+        self.fragment = fragment
     }
     
     var type: ResponseType {
@@ -35,10 +39,11 @@ class Text: Question, CustomStringConvertible {
         return "Text response: <\(title)>"
     }
     
-    var contentCell: UITableViewCell {
+    func makeContentCell() -> UITableViewCell {
         let cell = UITableViewCell()
         cell.backgroundColor = .white
         
         return cell
     }
+
 }

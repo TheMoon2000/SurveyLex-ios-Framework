@@ -11,11 +11,16 @@ import SwiftyJSON
 
 class Consent: Question, CustomStringConvertible {
     let title: String
+    let fragment: Fragment
     let consentText: String
+    var completed = false
     let prompt: String
+    var parentView: SurveyViewController?
     var isRequired = true
     
-    required init(json: JSON) {
+    let AGREE_PRESSED = UIColor(red: 0.39, green: 0.59, blue: 0.88, alpha: 1)
+    
+    required init(json: JSON, fragment: Fragment) {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,
@@ -33,6 +38,7 @@ class Consent: Question, CustomStringConvertible {
         self.title = title
         self.consentText = consentText
         self.prompt = prompt
+        self.fragment = fragment
     }
     
     
@@ -44,7 +50,7 @@ class Consent: Question, CustomStringConvertible {
         return "Consent form <\(title)>"
     }
     
-    var contentCell: UITableViewCell {
+    func makeContentCell() -> UITableViewCell {
         let cell = UITableViewCell()
         cell.backgroundColor = .white
         
@@ -58,9 +64,9 @@ class Consent: Question, CustomStringConvertible {
         titleLabel.topAnchor.constraint(equalTo: cell.topAnchor,
                                         constant: 40).isActive = true
         titleLabel.leftAnchor.constraint(equalTo: cell.leftAnchor,
-                                         constant: 30).isActive = true
+                                         constant: 32).isActive = true
         titleLabel.rightAnchor.constraint(equalTo: cell.rightAnchor,
-                                          constant: -30).isActive = true
+                                          constant: -32).isActive = true
         
         let separatorLine = UIView()
         separatorLine.translatesAutoresizingMaskIntoConstraints = false
@@ -72,34 +78,66 @@ class Consent: Question, CustomStringConvertible {
         separatorLine.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20).isActive = true
         
         let consentLabel = UILabel()
-        consentLabel.text = consentText
         consentLabel.lineBreakMode = .byWordWrapping
         consentLabel.numberOfLines = 1000
         consentLabel.textAlignment = .left
-        consentLabel.font = .systemFont(ofSize: 18)
-        let attrTxt = NSMutableAttributedString(attributedString: consentLabel.attributedText!)
-        let pgStyle = NSMutableParagraphStyle()
-        pgStyle.lineSpacing = 2
-        attrTxt.addAttributes([.kern: 0.5, .paragraphStyle: pgStyle], range: NSMakeRange(0, consentText.count))
+        let attrTxt = TextFormatter.formatted(consentText, type: .consentText)
         consentLabel.attributedText = attrTxt
         consentLabel.translatesAutoresizingMaskIntoConstraints = false
         cell.addSubview(consentLabel)
         
         consentLabel.leftAnchor.constraint(equalTo: cell.leftAnchor,
-                                           constant: 30).isActive = true
+                                           constant: 32).isActive = true
         consentLabel.rightAnchor.constraint(equalTo: cell.rightAnchor,
-                                            constant: -30).isActive = true
+                                            constant: -32).isActive = true
         consentLabel.topAnchor.constraint(equalTo: separatorLine.bottomAnchor,
                                           constant: 20).isActive = true
-        consentLabel.bottomAnchor.constraint(equalTo: cell.bottomAnchor,
-                                             constant: -50).isActive = true
         
-//        cell.heightAnchor.constraint(greaterThanOrEqualToConstant: UIScreen.main.bounds.height - 60 - UIApplication.shared.keyWindow!.safeAreaInsets.bottom).isActive = true
+        let agreeButton = makeAgreeButton()
+        cell.addSubview(agreeButton)
+        agreeButton.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
+        agreeButton.topAnchor.constraint(equalTo: consentLabel.bottomAnchor, constant: 32).isActive = true
+        agreeButton.bottomAnchor.constraint(equalTo: cell.bottomAnchor,
+                                            constant: -40).isActive = true
+        
         
         return cell
     }
     
-    var cellHeight: CGFloat {
-        return 800
+    private func makeAgreeButton() -> UIButton {
+        let button = UIButton()
+        button.setTitle("Agree & Continue", for: .normal)
+        button.layer.cornerRadius = 4
+        button.backgroundColor = BLUE_TINT
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitleColor(.white, for: .normal)
+        button.heightAnchor.constraint(equalToConstant: 49).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 210).isActive = true
+        
+        button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
+        button.addTarget(self,
+                         action: #selector(buttonLifted(_:)),
+                         for: [.touchCancel, .touchUpInside, .touchUpOutside, .touchDragExit])
+        button.addTarget(self, action: #selector(agreed(_:)), for: .touchUpInside)
+        
+        return button
+    }
+    
+    @objc private func buttonPressed(_ sender: UIButton) {
+        sender.backgroundColor = self.AGREE_PRESSED
+    }
+    
+    @objc private func buttonLifted(_ sender: UIButton) {
+        UIView.transition(with: sender,
+                          duration: 0.15,
+                          options: .transitionCrossDissolve,
+                          animations: {
+                            sender.backgroundColor = BLUE_TINT},
+                          completion: nil)
+    }
+    
+    @objc private func agreed(_ sender: UIButton) {
+        self.completed = true
+        parentView?.nextPage()
     }
 }
