@@ -72,9 +72,11 @@ class FragmentTableController: UITableViewController {
     
     /// Fixes the bug with device rotation by resetting the content offset
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        let currentOffset = tableView.contentOffset.y
+        let spaceBelow = tableView.contentSize.height - tableView.contentOffset.y
+        let upwardOffset = max(0, size.height - spaceBelow)
+        let proposedOffset = max(0, tableView.contentOffset.y - upwardOffset)
         coordinator.animate(alongsideTransition: {context in
-            self.tableView.contentOffset = CGPoint(x: 0.0, y: currentOffset)
+            self.tableView.contentOffset = CGPoint(x: 0.0, y: proposedOffset)
         }, completion: nil)
     }
 
