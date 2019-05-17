@@ -27,7 +27,6 @@ class TextFormatter {
                 let components = matchString.components(separatedBy: ["(", ")"])
                 let link = components[components.count - 2]
                 newString = newString.replacingOccurrences(of: matchString, with: link)
-                print(newString)
                 match = linkDetector.firstMatch(in: newString, options: .init(), range: NSMakeRange(0, newString.count))
             }
         } catch {
