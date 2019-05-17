@@ -11,12 +11,12 @@ import SwiftyJSON
 
 class Text: Question, CustomStringConvertible {
     let title: String
-    let fragment: Fragment
+    var fragment: Fragment?
     var isRequired = false
     var completed = false
     var parentView: SurveyViewController?
     
-    required init(json: JSON, fragment: Fragment) {
+    required init(json: JSON, fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string else {

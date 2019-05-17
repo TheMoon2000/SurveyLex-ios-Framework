@@ -10,13 +10,13 @@ import UIKit
 import SwiftyJSON
 
 protocol Question: class, CustomStringConvertible {
-    init(json: JSON, fragment: Fragment)
+    init(json: JSON, fragment: Fragment?)
     
     /// An enum that classifies the question by its response type
     var type: ResponseType { get }
     
     /// The parent fragment which the question belongs to
-    var fragment: Fragment { get }
+    var fragment: Fragment? { get }
     
     /// A boolean indicating whether the question requires a response in order for the user to proceed.
     var isRequired: Bool { get }
@@ -30,6 +30,14 @@ protocol Question: class, CustomStringConvertible {
     /// The view of this particular UI element, as displayed to the user.
     func makeContentCell() -> UITableViewCell
 }
+
+/// Gives default argument for the init method
+extension Question {
+    init(json: JSON, fragment: Fragment? = nil) {
+        self.init(json: json, fragment: fragment)
+    }
+}
+
 
 enum ResponseType: String {
     

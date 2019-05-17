@@ -11,7 +11,7 @@ import SwiftyJSON
 
 class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     let title: String
-    let fragment: Fragment
+    var fragment: Fragment?
     var isRequired = false
     var completed = false
     var parentView: SurveyViewController?
@@ -23,7 +23,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     /// Stores the user's response, which will be accessed during survey submission
     var currentSelections = [Int]()
     
-    required init(json: JSON, fragment: Fragment) {
+    required init(json: JSON, fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,

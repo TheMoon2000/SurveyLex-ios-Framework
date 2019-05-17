@@ -13,7 +13,7 @@ import SwiftyJSON
 class Audio: Question, CustomStringConvertible {
     
     let prompt: String
-    let fragment: Fragment
+    var fragment: Fragment?
     var isRequired = true
     var completed = false
     var duration = 30.0 // Length of the audio response
@@ -21,7 +21,7 @@ class Audio: Question, CustomStringConvertible {
     var parentView: SurveyViewController?
     private var lengthOfMostRecentRecording = 0.0
     
-    required init(json: JSON, fragment: Fragment) {
+    required init(json: JSON, fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
         guard let prompt = dictionary["prompt"]?.string else {

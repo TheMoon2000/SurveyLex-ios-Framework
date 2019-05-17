@@ -11,7 +11,7 @@ import SwiftyJSON
 
 class Consent: Question, CustomStringConvertible {
     let title: String
-    let fragment: Fragment
+    var fragment: Fragment?
     let consentText: String
     var completed = false
     let prompt: String
@@ -20,7 +20,7 @@ class Consent: Question, CustomStringConvertible {
     
     let AGREE_PRESSED = UIColor(red: 0.39, green: 0.59, blue: 0.88, alpha: 1)
     
-    required init(json: JSON, fragment: Fragment) {
+    required init(json: JSON, fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,
