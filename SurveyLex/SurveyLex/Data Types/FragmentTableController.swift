@@ -35,7 +35,7 @@ class FragmentTableController: UITableViewController {
         
         contentCells = fragmentData.questions.map { $0.makeContentCell() }
         fragmentData.questions.forEach { $0.parentView = surveyViewController }
-                
+        
         tableView.allowsSelection = false
         tableView.separatorStyle = .none
         tableView.tableFooterView = UIView(frame: .zero)
@@ -68,6 +68,14 @@ class FragmentTableController: UITableViewController {
     
     func updateCompletionStatusByQuestions() {
         self.completed = unlocked
+    }
+    
+    /// Fixes the bug with device rotation by resetting the content offset
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        let currentOffset = tableView.contentOffset.y
+        coordinator.animate(alongsideTransition: {context in
+            self.tableView.contentOffset = CGPoint(x: 0.0, y: currentOffset)
+        }, completion: nil)
     }
 
 }
