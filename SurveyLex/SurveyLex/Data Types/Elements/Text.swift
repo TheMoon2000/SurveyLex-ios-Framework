@@ -29,6 +29,8 @@ class Text: Question, CustomStringConvertible {
         }
         self.title = title
         self.fragment = fragment
+        
+        self.isRequired = false // debugging
     }
     
     var type: ResponseType {

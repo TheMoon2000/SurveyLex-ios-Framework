@@ -9,6 +9,7 @@
 import UIKit
 import SwiftyJSON
 
+/// The root class of survey elements, which encapsulates the data for an entire survey form. A `SurveyData` object contains a list of `Fragment`s.
 public class SurveyData: CustomStringConvertible {
     let title: String
     let creator: String
@@ -49,6 +50,7 @@ public class SurveyData: CustomStringConvertible {
         self.creator = ""
     }
     
+    /// Customized description that is more debug-friendly
     public var description: String {
         let idParts = surveyId.components(separatedBy: "-")
         let fragmentDescription = fragments.map {

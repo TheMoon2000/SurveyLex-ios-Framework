@@ -10,7 +10,7 @@ import UIKit
 import SwiftyJSON
 import SurveyLex
 
-class SurveyIDViewController: UIViewController {
+class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
     
     private var lookupButton: UIButton!
     private var textView: UITextView!
@@ -131,18 +131,36 @@ class SurveyIDViewController: UIViewController {
     }
     
     @objc func lookup(_ sender: UIButton) {
+//         test()
         let survey = Survey(surveyID: textView.text,
                             target: self)
+        survey.delegate = self
+        survey.load()
+    }
+    
+    // Survey response delegate methods
+    
+    func surveyDidLoad(_ survey: Survey) {
+        survey.present()
+    }
+    
+    func surveyDidPresent(_ survey: Survey) {
         
-        survey.presentWhenReady { status in
-            switch status {
-            case .error:
-                self.invalidSurveyWarning()
-            case .cancelled:
-                print("survey closed halfway")
-            case .submitted:
-                print("submitted")
-            }
+    }
+    
+    func surveyReturnedResponse(_ survey: Survey, response: Survey.Response) {
+        switch response {
+        case .invalidRequest:
+            self.invalidSurveyWarning()
+        case .connectionError:
+            self.noInternetConnectionWarning()
+        case .cancelled:
+            print("survey closed halfway")
+        case .submitted:
+            print("submitted")
+        default:
+            print(response)
+            break
         }
     }
     
@@ -154,16 +172,99 @@ class SurveyIDViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func noInternetConnectionWarning() {
+        let alert = UIAlertController(title: "Network Failure",
+                                      message: "We were unable to establish connection to the server. Please check your internet connection.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
-    */
+    
+    func test() {
+        let input = """
+{
+  "audioResponseSamples": [
+    "nlx-913a2700-6d41-11e9-9606-77a8c7579692",
+    "nlx-0d459fb0-6d87-11e9-9606-77a8c7579692"
+  ],
+  "textQuestionsResponses": [],
+  "fragments": [
+    {
+      "fragmentId": "533cdc00-62b9-11e9-a454-f5b21638e785",
+      "type": "TEXT_SURVEYJS",
+      "data": {
+        "surveyjs": {
+          "questions": [
+            {
+              "type": "rating",
+              "rateValues": [
+                { "value": "1 Ineffective", "text": "This cell is intended to be very very long in order to test the appearance of the rating UI." },
+                2,
+                3,
+                4,
+                { "value": "5 Effective", "text": "5 Effective" }
+              ],
+              "title": "Did you feel effective today?",
+              "isRequired": true
+            },
+            {
+              "type": "rating",
+              "rateValues": [
+                { "value": "No", "text": "No" },
+                { "value": "Not Really", "text": "Not Really" },
+                { "value": "Somewhat", "text": "Somewhat" },
+                { "value": "Mostly", "text": "Mostly" },
+                { "value": "Yes", "text": "Yes" }
+              ],
+              "title": "Did you do what you planned on doing?",
+              "isRequired": true
+            },
+            {
+              "type": "radiogroup",
+              "choices": ["Yes", "No"],
+              "title": "Is this for yesterday? (Or another day?)",
+              "isRequired": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "fragmentId": "536ff9f0-62b9-11e9-a454-f5b21638e785",
+      "type": "AUDIO_STANDARD",
+      "data": {
+        "prompt": "What happened today?",
+        "isRequired": true
+      }
+    }
+  ],
+  "viewNum": 0,
+  "published": true,
+  "archived": false,
+  "_id": "5cb9ec43faddfa5f7bb65d3b",
+  "surveyId": "41e8abf0-62b9-11e9-a454-f5b21638e785",
+  "__v": 0,
+  "textQuestions": [],
+  "createdDate": "2019-04-19T15:41:55.852Z",
+  "logoUrl": "",
+  "voiceQuestionPrompts": [
+    {
+      "_id": "5cb9ec43faddfa7173b65d3a",
+      "prompt": "What happened today?",
+      "lengthInSeconds": 30
+    }
+  ],
+  "title": "Post Day Diary",
+  "creator": "53123c80-a80f-11e8-bac6-81a4b6c08649",
+  "sessions": null,
+  "id": "5cb9ec43faddfa5f7bb65d3b"
+}
 
+"""
+        let json = JSON(parseJSON: input)
+        let survey = Survey(json: json, target: self)
+        survey.present()
+    }
 }
 /*
 extension UITextView {

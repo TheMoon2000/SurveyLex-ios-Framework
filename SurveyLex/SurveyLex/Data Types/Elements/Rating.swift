@@ -16,6 +16,9 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     var completed = false
     var parentView: SurveyViewController?
     var options = [(value: String, text: String)]()
+    var choices: [String] {
+        return options.map { $0.text }
+    }
     
     /// Stores the user's response, which will be accessed during survey submission
     var currentSelections = [Int]()
@@ -58,17 +61,17 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     
     func makeContentCell() -> UITableViewCell {
         let cell = UITableViewCell()
-        cell.backgroundColor = .white
         
         let textView = makeTextView(cell)
-        makeChoiceTable(cell, textView)
-        
+        let table = makeChoiceTable(cell)
+        table.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 30).isActive = true
         return cell
     }
     
     private func makeTextView(_ cell: UITableViewCell) -> UITextView {
         let textView = UITextView()
-        textView.attributedText = TextFormatter.formatted(title, type: .body)
+        textView.attributedText = TextFormatter.formatted(title,
+                                                          type: .body)
         textView.textAlignment = .center
         textView.isEditable = false
         textView.dataDetectorTypes = .link
@@ -77,29 +80,31 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
         textView.translatesAutoresizingMaskIntoConstraints = false
         cell.addSubview(textView)
         
-        textView.topAnchor.constraint(equalTo: cell.topAnchor,
+        textView.topAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.topAnchor,
                                       constant: 30).isActive = true
-        textView.leftAnchor.constraint(equalTo: cell.leftAnchor,
+        textView.leftAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.leftAnchor,
                                        constant: 30).isActive = true
-        textView.rightAnchor.constraint(equalTo: cell.rightAnchor,
+        textView.rightAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.rightAnchor,
                                         constant: -30).isActive = true
-        
         return textView
     }
     
-    private func makeChoiceTable(_ cell: UITableViewCell, _ text: UITextView) {
-        let choiceTable = MultipleChoiceView(choices: options.map {$0.text},
+    private func makeChoiceTable(_ cell: UITableViewCell) -> UITableView {
+        let choiceTable = MultipleChoiceView(ratingQuestion: self,
                                              delegate: self)
         choiceTable.translatesAutoresizingMaskIntoConstraints = false
+        choiceTable.isScrollEnabled = false
         cell.addSubview(choiceTable)
         
-        choiceTable.leftAnchor.constraint(equalTo: cell.leftAnchor).isActive = true
-        choiceTable.rightAnchor.constraint(equalTo: cell.rightAnchor).isActive = true
-        choiceTable.bottomAnchor.constraint(equalTo: cell.bottomAnchor,
+        choiceTable.leftAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.leftAnchor).isActive = true
+        choiceTable.rightAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.rightAnchor).isActive = true
+        choiceTable.bottomAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.bottomAnchor,
                                             constant: -30).isActive = true
-        choiceTable.topAnchor.constraint(equalTo: text.bottomAnchor,
-                                         constant: 25).isActive = true
-        choiceTable.heightAnchor.constraint(equalToConstant: CGFloat(options.count * 60)).isActive = true
+//        choiceTable.contentSize.width = UIScreen.main.bounds.width
+//        choiceTable.layoutSubviews()
+//        choiceTable.heightAnchor.constraint(greaterThanOrEqualToConstant: choiceTable.contentSize.height).isActive = true
+        
+        return choiceTable
     }
     
     
@@ -107,8 +112,10 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     
     func didSelectRow(row: Int) {
         currentSelections = [row]
-        self.completed = true
-        parentView?.nextPage()
+        if !self.completed {
+            self.completed = true
+            parentView?.nextPage()
+        }
     }
     
 }

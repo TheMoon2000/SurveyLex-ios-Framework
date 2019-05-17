@@ -16,8 +16,10 @@ public class Survey {
     private static let BASE_URL = "https://api.neurolex.ai/1.0/object/surveys/"
     
     private(set) var surveyID = ""
+    private var isAlreadyLoading = false
     private var targetVC: UIViewController?
     private(set) var surveyData: SurveyData?
+    public var delegate: SurveyResponseDelegate?
     
     /**
      Initializes a new `Survey` front-end by providing a JSON data source.
@@ -25,9 +27,10 @@ public class Survey {
      - Parameters:
         - json: The input json source object to display.
      */
-    public init(json: JSON) {
+    public init(json: JSON, target: UIViewController) {
         self.surveyData = SurveyData(json: json)
         self.surveyID = self.surveyData!.surveyId
+        self.targetVC = target
     }
     
     /**
@@ -43,20 +46,31 @@ public class Survey {
     }
     
     
-    /**
-     Displays the survey to the user.
-    
-     - Parameters:
-        - handler: An optional function that handles the survey status.
-    */
-    public func presentWhenReady(_ handler: ((_ status: Response) -> ())?) {
+    private func load(_ completion: @escaping () -> ()) {
+        if isAlreadyLoading { return } // An instance is already running
         let address = Survey.BASE_URL + surveyID
-        let lookupURL = URL(string: address)!
-        let task = URLSession.shared.dataTask(with: lookupURL) {
+        guard let lookupURL = URL(string: address) else {
+            delegate?.surveyReturnedResponse(self, response: .invalidRequest)
+            return
+        }
+
+        let urlRequest = URLRequest(url: lookupURL)
+        
+        let sessionConfig = URLSessionConfiguration.default
+        sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
+        sessionConfig.urlCache = nil
+        sessionConfig.timeoutIntervalForRequest = 5.0
+        let customSession = URLSession(configuration: sessionConfig)
+        
+        let task = customSession.dataTask(with: urlRequest) {
             data, response, error in
             
+            self.isAlreadyLoading = false
+            
             guard error == nil else {
-                handler?(.connectionError)
+                DispatchQueue.main.async {
+                    self.delegate?.surveyReturnedResponse(self, response: .connectionError)
+                }
                 return
             }
             
@@ -64,12 +78,12 @@ public class Survey {
                 let json = try JSON(data: data!)
                 self.surveyData = SurveyData(json: json)
                 DispatchQueue.main.async {
-                    self.presentSurvey(handler)
+                    completion()
                 }
-            } catch let err {
-                // Unable to parse JSON from url data
+            } catch {
+                // Unable to parse JSON from url data, although connection to the server was established
                 DispatchQueue.main.async {
-                    handler?(.serverError)
+                    self.delegate?.surveyReturnedResponse(self, response: .invalidRequest)
                 }
             }
         }
@@ -77,17 +91,36 @@ public class Survey {
         task.resume()
     }
     
-    /// Private method to present the survey.
-    private func presentSurvey(_ handler: ((Response) -> ())?) {
-        // surveyData is guaranteed to be non-nil
+    /// Load (or reload if have been loaded previously) the survey but do not present it yet. *Requires internet connection*.
+    public func load() {
+        surveyData = nil // Clear the cache if the survey has been previously loaded
+        self.load { self.delegate?.surveyDidLoad(self) }
+    }
+    
+    /// Load the survey and present it to the user when it is ready. *Requires internet connection*.
+    public func loadAndPresent() {
+        self.load { self.present() }
+    }
+
+    
+    /// Present the survey, provided that is has been loaded from the server.
+    public func present() {
         
-        if surveyData?.fragments.count == 0 {
-            handler?(.emptySurvey)
+        guard surveyData != nil else { return }
+        
+        guard surveyData!.fragments.count > 0 else {
+            delegate?.surveyReturnedResponse(self, response: .emptySurvey)
+            return
         }
         
+        
         let mySurvey = SurveyViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        mySurvey.surveyData = self.surveyData!
-        mySurvey.completionHandler = handler
+        
+        mySurvey.survey = self
+        
+        // The reason we copy both the survey and the survey data is to prevent the possiblity of setting survey.surveyData = nil during the survey's presentation to the user.
+        mySurvey.surveyData = surveyData!
+        
         let nav = SurveyNavigationController(rootViewController: mySurvey)
         self.targetVC?.present(nav, animated: true, completion: nil)
     }
@@ -106,8 +139,8 @@ extension Survey {
         /// The survey was successfully submitted.
         case submitted = 1
         
-        /// Invalid survey ID or some other server-side errors.
-        case serverError = -1
+        /// An invalid / malformatted survey ID was provided.
+        case invalidRequest = -1
         
         /// The user does not have a valid internet connection.
         case connectionError = -2

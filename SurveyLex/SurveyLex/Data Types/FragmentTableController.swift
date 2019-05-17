@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A subclass of `UITableViewController` designed to present a single survey fragment (page).
 class FragmentTableController: UITableViewController {
     
     var fragmentData: Fragment!

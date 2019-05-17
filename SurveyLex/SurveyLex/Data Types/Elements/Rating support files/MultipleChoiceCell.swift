@@ -38,6 +38,9 @@ class MultipleChoiceCell: UITableViewCell {
         makeRadioCircle()
         makeLabel()
         contentView.backgroundColor = .white
+        backgroundView = UIView()
+        selectedBackgroundView = backgroundView
+        backgroundView?.backgroundColor = .green
     }
 
     private func makeRadioCircle() {
@@ -64,7 +67,10 @@ class MultipleChoiceCell: UITableViewCell {
         
         label.leftAnchor.constraint(equalTo: self.leftAnchor,
                                     constant: 20).isActive = true
-        label.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        label.topAnchor.constraint(equalTo: self.topAnchor,
+                                   constant: 20).isActive = true
+        label.bottomAnchor.constraint(equalTo: self.bottomAnchor,
+                                      constant: -20).isActive = true
         label.rightAnchor.constraint(equalTo: radioCircle.leftAnchor,
                                      constant: -30).isActive = true
         titleLabel = label
