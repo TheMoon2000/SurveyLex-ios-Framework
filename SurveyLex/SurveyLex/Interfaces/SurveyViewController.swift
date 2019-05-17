@@ -13,11 +13,11 @@ class SurveyViewController: UIPageViewController,
                             UIPageViewControllerDataSource,
                             UIPageViewControllerDelegate {
     
+    /// Stores the `Survey` instance that called this view controller.
+    internal var survey: Survey!
+    
     /// The data for the survey that the controller is presenting.
     var surveyData: SurveyData!
-    
-    /// Optional handler for survey response, specified by the framework user.
-    var completionHandler: ((Survey.Response) -> ())?
     
     /// The current page of the survey (a survey can have multiple pages).
     /// Updates the navigation bar according to the survey progress made by
@@ -72,6 +72,12 @@ class SurveyViewController: UIPageViewController,
         navigationItem.rightBarButtonItem = cancelButton
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        survey.delegate?.surveyDidPresent(survey!)
+    }
+    
     private func addProgressBar() -> UIProgressView {
         let bar = UIProgressView(progressViewStyle: .bar)
         bar.progress = 0
@@ -88,7 +94,7 @@ class SurveyViewController: UIPageViewController,
     }
     
     @objc private func surveyCancelled() {
-        completionHandler?(Survey.Response.cancelled)
+        survey.delegate?.surveyReturnedResponse(survey, response: .cancelled)
         dismiss(animated: true, completion: nil)
     }
     
