@@ -9,6 +9,7 @@
 import UIKit
 import SwiftyJSON
 
+/// Represents an audio response question as a survey element. One single audio response takes up an entire fragment.
 class Audio: Question, CustomStringConvertible {
     
     let prompt: String
