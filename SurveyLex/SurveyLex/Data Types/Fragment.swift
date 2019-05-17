@@ -9,6 +9,7 @@
 import UIKit
 import SwiftyJSON
 
+/// Second class of survey objects. A `Fragment` is a collection of individual survey elements, intended to be presented together.
 class Fragment: CustomStringConvertible {
     internal var id = ""
     var type: FragmentType
@@ -69,6 +70,7 @@ class Fragment: CustomStringConvertible {
         case audio = "AUDIO_STANDARD"
     }
     
+    /// Customized description that is more debug-friendly
     var description: String {
         let idParts = id.components(separatedBy: "-")
         let questionsDescription = questions.map {
@@ -77,6 +79,7 @@ class Fragment: CustomStringConvertible {
         return "Fragment <\(idParts[0])...\(idParts[4])>: \n  " + questionsDescription.joined(separator: "\n  ")
     }
     
+    /// Returns a `FragmentTableController` object to be used for the survey UI.
     var contentVC: FragmentTableController {
         let fragmentTable = FragmentTableController()
         fragmentTable.fragmentData = self
