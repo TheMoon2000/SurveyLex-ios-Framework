@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		454CB171A24EF71993E18BFA /* Pods_SurveyLexTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39C87D2EF893B02158465308 /* Pods_SurveyLexTests.framework */; };
 		574FB97B3F483D76F4B281E5 /* Pods_SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */; };
 		CC31C96B228A1670009C0E44 /* FragmentTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC31C96A228A1670009C0E44 /* FragmentTableController.swift */; };
 		CC333BA822854C7400B5D8C9 /* SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC333B9E22854C7400B5D8C9 /* SurveyLex.framework */; };
@@ -49,8 +50,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		38F9876B93254F59554E1694 /* Pods-SurveyLexTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLexTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests.release.xcconfig"; sourceTree = "<group>"; };
+		39C87D2EF893B02158465308 /* Pods_SurveyLexTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SurveyLexTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		538E653F372C3A5753CBABA5 /* Pods-SurveyLex.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SurveyLex/Pods-SurveyLex.debug.xcconfig"; sourceTree = "<group>"; };
 		578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A42C5F253CF2553EF18104D4 /* Pods-SurveyLexTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLexTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B2FD99A7CC1792DBA5F99176 /* Pods-SurveyLex.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SurveyLex/Pods-SurveyLex.release.xcconfig"; sourceTree = "<group>"; };
 		CC31C96A228A1670009C0E44 /* FragmentTableController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentTableController.swift; sourceTree = "<group>"; };
 		CC333B9E22854C7400B5D8C9 /* SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +104,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC333BA822854C7400B5D8C9 /* SurveyLex.framework in Frameworks */,
+				454CB171A24EF71993E18BFA /* Pods_SurveyLexTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +116,8 @@
 			children = (
 				538E653F372C3A5753CBABA5 /* Pods-SurveyLex.debug.xcconfig */,
 				B2FD99A7CC1792DBA5F99176 /* Pods-SurveyLex.release.xcconfig */,
+				A42C5F253CF2553EF18104D4 /* Pods-SurveyLexTests.debug.xcconfig */,
+				38F9876B93254F59554E1694 /* Pods-SurveyLexTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -213,6 +220,7 @@
 			children = (
 				CCC3812F228E486E003864A5 /* SwiftyJSON.framework */,
 				578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */,
+				39C87D2EF893B02158465308 /* Pods_SurveyLexTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -263,9 +271,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC333BB522854C7400B5D8C9 /* Build configuration list for PBXNativeTarget "SurveyLexTests" */;
 			buildPhases = (
+				82A2F466BB4CB3E7F88BFFD9 /* [CP] Check Pods Manifest.lock */,
 				CC333BA322854C7400B5D8C9 /* Sources */,
 				CC333BA422854C7400B5D8C9 /* Frameworks */,
 				CC333BA522854C7400B5D8C9 /* Resources */,
+				605B1E59547236AFF386BA9E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -332,6 +342,50 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		605B1E59547236AFF386BA9E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/../Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON-iOS11/SwiftyJSON.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		82A2F466BB4CB3E7F88BFFD9 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SurveyLexTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		E86947A699910D24B2E82E0B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -586,6 +640,7 @@
 		};
 		CC333BB622854C7400B5D8C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A42C5F253CF2553EF18104D4 /* Pods-SurveyLexTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -605,6 +660,7 @@
 		};
 		CC333BB722854C7400B5D8C9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 38F9876B93254F59554E1694 /* Pods-SurveyLexTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

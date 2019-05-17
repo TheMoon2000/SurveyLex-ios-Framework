@@ -56,7 +56,7 @@ class QuestionElementsTest: XCTestCase {
         }
         """
         let jsonData = JSON(parseJSON: textQuestionInput)
-        let fragment = Fragment(json: jsonData)
+        let fragment = Fragment(json: jsonData, index: 0)
         print(fragment)
         XCTAssertEqual(fragment.questions.map {($0 as! Text).title},
                        ["Name", "Email", "Location", "LinkedIn URL", "GitHub URL"])
@@ -75,7 +75,7 @@ class QuestionElementsTest: XCTestCase {
         }
         """
         let jsonData = JSON(parseJSON: fragmentInput)
-        let fragment = Fragment(json: jsonData)
+        let fragment = Fragment(json: jsonData, index: 0)
         print(fragment)
         
         let consentForm = fragment.questions[0] as! Consent
@@ -94,7 +94,7 @@ class QuestionElementsTest: XCTestCase {
         }
         """
         let jsonData = JSON(parseJSON: fragmentInput)
-        let fragment = Fragment(json: jsonData)
+        let fragment = Fragment(json: jsonData, index: 0)
         print(fragment)
         XCTAssertEqual(fragment.questions[0].type, .audio)
         XCTAssertTrue(fragment.questions[0].isRequired)

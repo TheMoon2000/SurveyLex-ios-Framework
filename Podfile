@@ -20,3 +20,8 @@ target 'SurveyLex' do
   use_frameworks!
   pod 'SwiftyJSON'
 end
+
+target 'SurveyLexTests' do
+    use_frameworks!
+    pod 'SwiftyJSON'
+end
