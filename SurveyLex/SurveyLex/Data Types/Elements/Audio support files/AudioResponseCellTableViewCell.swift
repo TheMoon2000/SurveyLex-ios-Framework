@@ -134,7 +134,6 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         } else if duration >= 1.5 {
             self.finishMessage.text = "Recording was too short!"
             recordButton.setTitle("Record", for: .normal)
-            audioQuestion.completed = false
             audioQuestion.parentView?.updateCompletionRate(false)
             shouldCancelCaptionReset = false
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -149,12 +148,12 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
             }
         } else {
             recordButton.setTitle("Record", for: .normal)
-            audioQuestion.completed = false
             audioQuestion.parentView?.updateCompletionRate(false)
             skipButton.isHidden = audioQuestion.isRequired
-            finishMessage.text = ""
             if audioQuestion.isRequired {
                 finishMessage.text = timeLimitString
+            } else {
+                finishMessage.text = ""
             }
         }
     }
@@ -179,10 +178,20 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         timer!.fire()
         skipButton.isHidden = true
         shouldCancelCaptionReset = true
+        audioQuestion.completed = false
+        audioQuestion.parentView?.updateCompletionRate(false)
     }
     
     /// Error handling is implemented in Audio.swift, so we delegate the error to it
     func didFailToRecord(_ sender: RecordButton, error: Recorder.Error) {
+        timer?.invalidate()
+        skipButton.isHidden = audioQuestion.isRequired
+        if audioQuestion.isRequired {
+            finishMessage.text = timeLimitString
+        } else {
+            finishMessage.text = ""
+        }
+        audioQuestion.completed = false
         audioQuestion.didFailToRecord(sender, error: error)
     }
     
