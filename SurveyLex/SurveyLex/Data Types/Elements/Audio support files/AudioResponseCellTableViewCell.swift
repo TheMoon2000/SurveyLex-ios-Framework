@@ -26,7 +26,7 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         }
     }
     
-    /// Initialize a audio response table cell view
+    /// Initialize an audio response table cell.
     required init(audioQuestion: Audio) {
         super.init(style: .default, reuseIdentifier: nil)
         self.backgroundColor = .white
@@ -41,7 +41,7 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         self.heightAnchor.constraint(greaterThanOrEqualToConstant: UIScreen.main.bounds.height - 60 - UIApplication.shared.keyWindow!.safeAreaInsets.bottom).isActive = true
     }
     
-    
+    /// UI setup (1).
     private func makeLabel() -> UILabel {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .medium)
@@ -61,6 +61,7 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         return label
     }
     
+    /// UI setup (2).
     private func makeRecordButton() -> RecordButton {
         let recorder = Recorder(fileURL: saveURL)
         let button = RecordButton(duration: audioQuestion!.duration,
@@ -74,6 +75,7 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         return button
     }
     
+    /// UI setup (3).
     private func makeSkipButton() -> UIButton {
         let skip = UIButton(type: .system)
         skip.tintColor = BUTTON_DEEP_BLUE
@@ -94,6 +96,7 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         return skip
     }
     
+    /// UI setup (4).
     private func makeFinishMessage() -> UILabel {
         let caption = UILabel()
         caption.textColor = UIColor(white: 0.35, alpha: 1)
@@ -113,12 +116,14 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         return caption
     }
     
+    /// Produces a formatted string that displays the time limit of the audio question.
     var timeLimitString: String {
         return "Time limit: \(Int(audioQuestion.duration))s"
     }
 
     // Delegate methods for recorder
     
+    /// Because we reset `finishMessage.text` after a two-second delay, we need to make sure that we abort the process if the user has started to record again. If set to `true`, it means that we do not reset `finishMessage.text` to "Recording was too short" after the 2 seconds are over.
     var shouldCancelCaptionReset = false
     
     func didFinishRecording(_ sender: RecordButton, duration: Double) {
@@ -126,39 +131,62 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         timer?.invalidate()
         recordButton.setTitle("Record", for: .normal)
         if duration >= min(7.0, Double(sender.duration)) {
+            
+            // We treat duration ≥ 7 arbitrarily as a successful recording.
+            
             skipButton.isHidden = true
             finishMessage.text = "Your audio response was captured."
+            
+            // This is the only place where the audio question's `completion` property is set to true.
             audioQuestion.completed = true
+            
+            // Flip the page to the next question is there is one.
             audioQuestion.parentView?.nextPage()
+            
+            // Let the new title of the recording button be “Again”.
             recordButton.setTitle("Again", for: .normal)
-        } else if duration >= 1.5 {
+        } else if duration >= 2 {
+            
+            // If the user records something between 2 and 8 seconds
+            
             self.finishMessage.text = "Recording was too short!"
             recordButton.setTitle("Record", for: .normal)
+            
+            // Update the progress bar in `SurveyViewController` to reflect that the current audio question is not (or no longer) completed
             audioQuestion.parentView?.updateCompletionRate(false)
+            
+            // Default to false, which means that we do reset the caption
             shouldCancelCaptionReset = false
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 if !self.shouldCancelCaptionReset {
                     if self.audioQuestion.isRequired {
                         self.finishMessage.text = self.timeLimitString
+                        self.skipButton.isHidden = true
                     } else {
                         self.finishMessage.text = ""
+                        self.skipButton.isHidden = false
                     }
-                    self.skipButton.isHidden = self.audioQuestion.isRequired
                 }
             }
         } else {
+           
+            // Called when the duration is shorter than 2 seconds
+            
             recordButton.setTitle("Record", for: .normal)
             audioQuestion.parentView?.updateCompletionRate(false)
-            skipButton.isHidden = audioQuestion.isRequired
             if audioQuestion.isRequired {
                 finishMessage.text = timeLimitString
+                skipButton.isHidden = true
             } else {
                 finishMessage.text = ""
+                skipButton.isHidden = false
             }
         }
     }
     
-    var timer: Timer?
+    /// A local instance variable that manages the countdown timer
+    private var timer: Timer?
     
     func didBeginRecording(_ sender: RecordButton) {
         let df = DateComponentsFormatter()
@@ -167,7 +195,7 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         df.unitsStyle = .abbreviated
         df.zeroFormattingBehavior = .dropLeading
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
             let timeRemaining = ceil(self.recordButton.timeRemaining)
             if timeRemaining <= 0 {
                 timer.invalidate()
@@ -175,14 +203,18 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
                 self.finishMessage.text = df.string(from: timeRemaining)
             }
         }
-        timer!.fire()
-        skipButton.isHidden = true
+        timer!.fire() // start the countdown
+        skipButton.isHidden = true // The countdown text replaces the skip button
+        
+        // Since we restarted recording, the previous 2-second delayed reset should be invalidated.
         shouldCancelCaptionReset = true
+        
+        // Update completion status and display
         audioQuestion.completed = false
         audioQuestion.parentView?.updateCompletionRate(false)
     }
     
-    /// Error handling is implemented in Audio.swift, so we delegate the error to it
+    /// Error handling is implemented in Audio.swift, so we reset the UI and then delegate the error to the Audio instance for more actions
     func didFailToRecord(_ sender: RecordButton, error: Recorder.Error) {
         timer?.invalidate()
         skipButton.isHidden = audioQuestion.isRequired
@@ -191,7 +223,6 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         } else {
             finishMessage.text = ""
         }
-        audioQuestion.completed = false
         audioQuestion.didFailToRecord(sender, error: error)
     }
     
