@@ -139,11 +139,12 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
             shouldCancelCaptionReset = false
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 if !self.shouldCancelCaptionReset {
-                    self.skipButton.isHidden = self.audioQuestion.isRequired
                     if self.audioQuestion.isRequired {
-                        self.finishMessage.text = "Time limit: \(self.timeLimitString)s"
+                        self.finishMessage.text = self.timeLimitString
+                    } else {
+                        self.finishMessage.text = ""
                     }
-                    self.finishMessage.text = ""
+                    self.skipButton.isHidden = self.audioQuestion.isRequired
                 }
             }
         } else {
@@ -153,7 +154,7 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
             skipButton.isHidden = audioQuestion.isRequired
             finishMessage.text = ""
             if audioQuestion.isRequired {
-                finishMessage.text = "Time limit: \(timeLimitString))s"
+                finishMessage.text = timeLimitString
             }
         }
     }
@@ -167,7 +168,7 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         df.unitsStyle = .abbreviated
         df.zeroFormattingBehavior = .dropLeading
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
             let timeRemaining = ceil(self.recordButton.timeRemaining)
             if timeRemaining <= 0 {
                 timer.invalidate()
