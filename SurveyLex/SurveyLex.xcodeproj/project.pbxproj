@@ -10,7 +10,6 @@
 		574FB97B3F483D76F4B281E5 /* Pods_SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */; };
 		CC31C96B228A1670009C0E44 /* FragmentTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC31C96A228A1670009C0E44 /* FragmentTableController.swift */; };
 		CC333BA822854C7400B5D8C9 /* SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC333B9E22854C7400B5D8C9 /* SurveyLex.framework */; };
-		CC333BAD22854C7400B5D8C9 /* QuestionElementsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BAC22854C7400B5D8C9 /* QuestionElementsTest.swift */; };
 		CC333BAF22854C7400B5D8C9 /* SurveyLex.h in Headers */ = {isa = PBXBuildFile; fileRef = CC333BA122854C7400B5D8C9 /* SurveyLex.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CC333BB922854CCC00B5D8C9 /* SurveyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BB822854CCC00B5D8C9 /* SurveyData.swift */; };
 		CC333BBF22854D6200B5D8C9 /* RadioGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BBE22854D6200B5D8C9 /* RadioGroup.swift */; };
@@ -31,6 +30,9 @@
 		CC588D15228CB85C00665D00 /* RatingResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC588D14228CB85C00665D00 /* RatingResponseDelegate.swift */; };
 		CC90E804228A7CC40040F990 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC90E803228A7CC40040F990 /* Recorder.swift */; };
 		CC90E806228A7CC70040F990 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC90E805228A7CC70040F990 /* RecordButton.swift */; };
+		CCC3812E228E1F24003864A5 /* SurveyResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC3812D228E1F24003864A5 /* SurveyResponseDelegate.swift */; };
+		CCC38130228E486E003864A5 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC3812F228E486E003864A5 /* SwiftyJSON.framework */; };
+		CCC38132228E48B2003864A5 /* QuestionElementsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BAC22854C7400B5D8C9 /* QuestionElementsTest.swift */; };
 		CCE1E68B2286771D0011D142 /* SurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E68A2286771D0011D142 /* SurveyViewController.swift */; };
 		CCE1E69222867BB70011D142 /* SurveyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E69122867BB70011D142 /* SurveyNavigationController.swift */; };
 		CCFAC9AC228D343500F92CB4 /* AudioResponseCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCFAC9AB228D343500F92CB4 /* AudioResponseCellTableViewCell.swift */; };
@@ -76,6 +78,8 @@
 		CC588D14228CB85C00665D00 /* RatingResponseDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingResponseDelegate.swift; sourceTree = "<group>"; };
 		CC90E803228A7CC40040F990 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		CC90E805228A7CC70040F990 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
+		CCC3812D228E1F24003864A5 /* SurveyResponseDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyResponseDelegate.swift; sourceTree = "<group>"; };
+		CCC3812F228E486E003864A5 /* SwiftyJSON.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftyJSON.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE1E68A2286771D0011D142 /* SurveyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyViewController.swift; sourceTree = "<group>"; };
 		CCE1E69122867BB70011D142 /* SurveyNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyNavigationController.swift; sourceTree = "<group>"; };
 		CCFAC9AB228D343500F92CB4 /* AudioResponseCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioResponseCellTableViewCell.swift; sourceTree = "<group>"; };
@@ -86,6 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCC38130228E486E003864A5 /* SwiftyJSON.framework in Frameworks */,
 				574FB97B3F483D76F4B281E5 /* Pods_SurveyLex.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -155,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				CC333BEE22864D6000B5D8C9 /* Survey.swift */,
+				CCC3812D228E1F24003864A5 /* SurveyResponseDelegate.swift */,
 				CC333BB822854CCC00B5D8C9 /* SurveyData.swift */,
 				CC333BC222854DB900B5D8C9 /* Fragment.swift */,
 				CC31C96A228A1670009C0E44 /* FragmentTableController.swift */,
@@ -205,6 +211,7 @@
 		CCE1E681228659740011D142 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CCC3812F228E486E003864A5 /* SwiftyJSON.framework */,
 				578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */,
 			);
 			name = Frameworks;
@@ -360,6 +367,7 @@
 				CC55C62C228B4B71002BF123 /* Delegate.swift in Sources */,
 				CC90E804228A7CC40040F990 /* Recorder.swift in Sources */,
 				CC588D15228CB85C00665D00 /* RatingResponseDelegate.swift in Sources */,
+				CCC3812E228E1F24003864A5 /* SurveyResponseDelegate.swift in Sources */,
 				CC55C632228C79D4002BF123 /* MultipleChoice.swift in Sources */,
 				CC588D11228C7ADE00665D00 /* MultipleChoiceCell.swift in Sources */,
 				CC333BCD2285F34500B5D8C9 /* Rating.swift in Sources */,
@@ -383,7 +391,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC333BAD22854C7400B5D8C9 /* QuestionElementsTest.swift in Sources */,
+				CCC38132228E48B2003864A5 /* QuestionElementsTest.swift in Sources */,
 				CC333BE6228615D300B5D8C9 /* SurveyDataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
