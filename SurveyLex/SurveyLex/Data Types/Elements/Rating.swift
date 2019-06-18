@@ -51,7 +51,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     }
     
     var type: ResponseType {
-        return .text
+        return .rating
     }
     
     var description: String {
@@ -70,8 +70,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     
     private func makeTextView(_ cell: UITableViewCell) -> UITextView {
         let textView = UITextView()
-        textView.attributedText = TextFormatter.formatted(title,
-                                                          type: .body)
+        textView.attributedText = TextFormatter.formatted(title, type: .body)
         textView.textAlignment = .center
         textView.isEditable = false
         textView.dataDetectorTypes = .link
@@ -90,8 +89,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     }
     
     private func makeChoiceTable(_ cell: UITableViewCell) -> UITableView {
-        let choiceTable = MultipleChoiceView(ratingQuestion: self,
-                                             delegate: self)
+        let choiceTable = MultipleChoiceView(rateInfo: options, delegate: self)
         choiceTable.translatesAutoresizingMaskIntoConstraints = false
         choiceTable.isScrollEnabled = false
         cell.addSubview(choiceTable)

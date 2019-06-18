@@ -9,12 +9,13 @@
 import UIKit
 import SwiftyJSON
 
-class RadioGroup: Question, CustomStringConvertible {
+class RadioGroup: Question, CustomStringConvertible, RatingResponseDelegate {
     let title: String
     var fragment: Fragment?
     let choices: [String]
     var isRequired = false
     var completed = false
+    var selection = -1
     var parentView: SurveyViewController?
     
     required init(json: JSON, fragment: Fragment? = nil) {
@@ -46,8 +47,52 @@ class RadioGroup: Question, CustomStringConvertible {
     
     func makeContentCell() -> UITableViewCell {
         let cell = UITableViewCell()
-        cell.backgroundColor = UIColor(red: 1, green: 0.9, blue: 1, alpha: 1)
+        let textView = makeTextView(cell)
+        let table = makeChoiceTable(cell)
+        table.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 30).isActive = true
         return cell
+    }
+    
+    private func makeTextView(_ cell: UITableViewCell) -> UITextView {
+        let textView = UITextView()
+        textView.attributedText = TextFormatter.formatted(title, type: .body)
+        textView.textAlignment = .center
+        textView.isEditable = false
+        textView.dataDetectorTypes = .link
+        textView.linkTextAttributes[.foregroundColor] = BLUE_TINT
+        textView.isScrollEnabled = false
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        cell.addSubview(textView)
+        
+        textView.topAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.topAnchor,
+                                      constant: 30).isActive = true
+        textView.leftAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.leftAnchor,
+                                       constant: 30).isActive = true
+        textView.rightAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.rightAnchor,
+                                        constant: -30).isActive = true
+        return textView
+    }
+    
+    private func makeChoiceTable(_ cell: UITableViewCell) -> UITableView {
+        let rateInfo = choices.map { ($0, $0) }
+        let choiceTable = MultipleChoiceView(rateInfo: rateInfo, delegate: self)
+        choiceTable.translatesAutoresizingMaskIntoConstraints = false
+        choiceTable.isScrollEnabled = false
+        cell.addSubview(choiceTable)
+        
+        choiceTable.leftAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.leftAnchor).isActive = true
+        choiceTable.rightAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.rightAnchor).isActive = true
+        choiceTable.bottomAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.bottomAnchor,
+                                            constant: -30).isActive = true
+        return choiceTable
+    }
+    
+    func didSelectRow(row: Int) {
+        selection = row
+        if !self.completed {
+            self.completed = true
+            parentView?.nextPage()
+        }
     }
 
 }

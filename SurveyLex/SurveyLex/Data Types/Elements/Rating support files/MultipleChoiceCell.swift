@@ -32,8 +32,8 @@ class MultipleChoiceCell: UITableViewCell {
     }
     
     
-    init() {
-        super.init(style: .default, reuseIdentifier: nil)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         makeRadioCircle()
         makeLabel()
