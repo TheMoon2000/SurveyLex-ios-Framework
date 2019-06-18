@@ -14,6 +14,7 @@ class Text: Question, CustomStringConvertible {
     var fragment: Fragment?
     var isRequired = false
     var completed = false
+    var response = ""
     var parentView: SurveyViewController?
     
     required init(json: JSON, fragment: Fragment? = nil) {
