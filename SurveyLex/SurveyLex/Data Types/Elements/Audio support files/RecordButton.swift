@@ -72,7 +72,7 @@ class RecordButton: UIButton {
         
         self.addTarget(self,
                        action: #selector(buttonLifted),
-                       for: [.touchUpInside, .touchUpOutside])
+                       for: [.touchUpInside, .touchUpOutside, .touchDragOutside])
         
         self.setNeedsDisplay()
     }
@@ -123,6 +123,7 @@ class RecordButton: UIButton {
         if recorder.audioRecorder.isRecording {
             stopRecording(interrupted: false)
         } else {
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
             let progress = UIBezierPath(arcCenter: CGPoint(x: bounds.maxX / 2,
                                                            y: bounds.maxY / 2),
                                         radius: self.frame.width / 2 - 3,

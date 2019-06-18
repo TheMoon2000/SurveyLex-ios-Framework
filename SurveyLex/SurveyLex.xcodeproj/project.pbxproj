@@ -22,7 +22,7 @@
 		CC333BD1228608D000B5D8C9 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BD0228608D000B5D8C9 /* Audio.swift */; };
 		CC333BE6228615D300B5D8C9 /* SurveyDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BE5228615D300B5D8C9 /* SurveyDataTests.swift */; };
 		CC333BEF22864D6000B5D8C9 /* Survey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BEE22864D6000B5D8C9 /* Survey.swift */; };
-		CC55C62C228B4B71002BF123 /* Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC55C62B228B4B71002BF123 /* Delegate.swift */; };
+		CC55C62C228B4B71002BF123 /* RecordingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC55C62B228B4B71002BF123 /* RecordingDelegate.swift */; };
 		CC55C62E228BD0B0002BF123 /* TextFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC55C62D228BD0B0002BF123 /* TextFormatter.swift */; };
 		CC55C630228BFBB0002BF123 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC55C62F228BFBB0002BF123 /* Constants.swift */; };
 		CC55C632228C79D4002BF123 /* MultipleChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC55C631228C79D4002BF123 /* MultipleChoice.swift */; };
@@ -56,7 +56,7 @@
 		578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A42C5F253CF2553EF18104D4 /* Pods-SurveyLexTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLexTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B2FD99A7CC1792DBA5F99176 /* Pods-SurveyLex.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SurveyLex/Pods-SurveyLex.release.xcconfig"; sourceTree = "<group>"; };
-		CC31C96A228A1670009C0E44 /* FragmentTableController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentTableController.swift; sourceTree = "<group>"; };
+		CC31C96A228A1670009C0E44 /* FragmentTableController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FragmentTableController.swift; path = "../Data Types/FragmentTableController.swift"; sourceTree = "<group>"; };
 		CC333B9E22854C7400B5D8C9 /* SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC333BA122854C7400B5D8C9 /* SurveyLex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SurveyLex.h; sourceTree = "<group>"; };
 		CC333BA222854C7400B5D8C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -73,7 +73,7 @@
 		CC333BD0228608D000B5D8C9 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		CC333BE5228615D300B5D8C9 /* SurveyDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyDataTests.swift; sourceTree = "<group>"; };
 		CC333BEE22864D6000B5D8C9 /* Survey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Survey.swift; sourceTree = "<group>"; };
-		CC55C62B228B4B71002BF123 /* Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Delegate.swift; sourceTree = "<group>"; };
+		CC55C62B228B4B71002BF123 /* RecordingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDelegate.swift; sourceTree = "<group>"; };
 		CC55C62D228BD0B0002BF123 /* TextFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFormatter.swift; sourceTree = "<group>"; };
 		CC55C62F228BFBB0002BF123 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CC55C631228C79D4002BF123 /* MultipleChoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleChoice.swift; sourceTree = "<group>"; };
@@ -149,6 +149,7 @@
 				CC333BA222854C7400B5D8C9 /* Info.plist */,
 				CCE1E68C228677240011D142 /* Interfaces */,
 				CC333BC822854FA300B5D8C9 /* Data Types */,
+				CC333BCB2285F26700B5D8C9 /* Elements */,
 			);
 			path = SurveyLex;
 			sourceTree = "<group>";
@@ -170,8 +171,6 @@
 				CCC3812D228E1F24003864A5 /* SurveyResponseDelegate.swift */,
 				CC333BB822854CCC00B5D8C9 /* SurveyData.swift */,
 				CC333BC222854DB900B5D8C9 /* Fragment.swift */,
-				CC31C96A228A1670009C0E44 /* FragmentTableController.swift */,
-				CC333BCB2285F26700B5D8C9 /* Elements */,
 			);
 			path = "Data Types";
 			sourceTree = "<group>";
@@ -180,26 +179,27 @@
 			isa = PBXGroup;
 			children = (
 				CC333BC022854D6F00B5D8C9 /* Question.swift */,
-				CC333BBE22854D6200B5D8C9 /* RadioGroup.swift */,
 				CC333BC92285505000B5D8C9 /* Text.swift */,
 				CC333BD0228608D000B5D8C9 /* Audio.swift */,
 				CC90E809228A84380040F990 /* Audio support files */,
 				CC333BCC2285F34500B5D8C9 /* Rating.swift */,
+				CC333BBE22854D6200B5D8C9 /* RadioGroup.swift */,
 				CC588D0F228C7AAF00665D00 /* Rating support files */,
 				CC333BCE2286020100B5D8C9 /* Consent.swift */,
 				CC55C62D228BD0B0002BF123 /* TextFormatter.swift */,
 				CC55C62F228BFBB0002BF123 /* Constants.swift */,
 			);
-			path = Elements;
+			name = Elements;
+			path = "Data Types/Elements";
 			sourceTree = "<group>";
 		};
 		CC588D0F228C7AAF00665D00 /* Rating support files */ = {
 			isa = PBXGroup;
 			children = (
-				CC588D14228CB85C00665D00 /* RatingResponseDelegate.swift */,
 				CC55C631228C79D4002BF123 /* MultipleChoice.swift */,
 				CC588D10228C7ADE00665D00 /* MultipleChoiceCell.swift */,
 				CC588D12228C84B600665D00 /* RadioCircle.swift */,
+				CC588D14228CB85C00665D00 /* RatingResponseDelegate.swift */,
 			);
 			path = "Rating support files";
 			sourceTree = "<group>";
@@ -210,7 +210,7 @@
 				CCFAC9AB228D343500F92CB4 /* AudioResponseCellTableViewCell.swift */,
 				CC90E803228A7CC40040F990 /* Recorder.swift */,
 				CC90E805228A7CC70040F990 /* RecordButton.swift */,
-				CC55C62B228B4B71002BF123 /* Delegate.swift */,
+				CC55C62B228B4B71002BF123 /* RecordingDelegate.swift */,
 			);
 			path = "Audio support files";
 			sourceTree = "<group>";
@@ -230,6 +230,7 @@
 			children = (
 				CCE1E68A2286771D0011D142 /* SurveyViewController.swift */,
 				CCE1E69122867BB70011D142 /* SurveyNavigationController.swift */,
+				CC31C96A228A1670009C0E44 /* FragmentTableController.swift */,
 			);
 			path = Interfaces;
 			sourceTree = "<group>";
@@ -418,7 +419,7 @@
 				CC333BEF22864D6000B5D8C9 /* Survey.swift in Sources */,
 				CC55C630228BFBB0002BF123 /* Constants.swift in Sources */,
 				CC333BD1228608D000B5D8C9 /* Audio.swift in Sources */,
-				CC55C62C228B4B71002BF123 /* Delegate.swift in Sources */,
+				CC55C62C228B4B71002BF123 /* RecordingDelegate.swift in Sources */,
 				CC90E804228A7CC40040F990 /* Recorder.swift in Sources */,
 				CC588D15228CB85C00665D00 /* RatingResponseDelegate.swift in Sources */,
 				CCC3812E228E1F24003864A5 /* SurveyResponseDelegate.swift in Sources */,

@@ -13,12 +13,13 @@ import SwiftyJSON
 public class Survey {
     
     /// The NeuroLex API URL prefix
-    private static let BASE_URL = "https://api.neurolex.ai/1.0/object/surveys/"
+    private static let BASE_URL = "https://api.neurolex.ai/1.0/object/surveys/taker/"
     
     private(set) var surveyID = ""
     private var isAlreadyLoading = false
     private var targetVC: UIViewController?
     private(set) var surveyData: SurveyData?
+    
     public var delegate: SurveyResponseDelegate?
     
     /**
@@ -28,7 +29,7 @@ public class Survey {
         - json: The input json source object to display.
      */
     public init(json: JSON, target: UIViewController) {
-        self.surveyData = SurveyData(json: json)
+        self.surveyData = try! SurveyData(json: json)
         self.surveyID = self.surveyData!.surveyId
         self.targetVC = target
     }
@@ -42,7 +43,7 @@ public class Survey {
     */
     public init(surveyID: String, target: UIViewController) {
         self.surveyID = surveyID
-        targetVC = target
+        self.targetVC = target
     }
     
     
@@ -50,7 +51,7 @@ public class Survey {
         if isAlreadyLoading { return } // An instance is already running
         let address = Survey.BASE_URL + surveyID
         guard let lookupURL = URL(string: address) else {
-            delegate?.surveyReturnedResponse(self, response: .invalidRequest)
+            delegate?.surveyReturnedResponse(self, response: .invalidRequest, message: nil)
             return
         }
 
@@ -69,21 +70,28 @@ public class Survey {
             
             guard error == nil else {
                 DispatchQueue.main.async {
-                    self.delegate?.surveyReturnedResponse(self, response: .connectionError)
+                    self.delegate?.surveyReturnedResponse(self, response: .connectionError, message: error!.localizedDescription)
                 }
                 return
             }
             
             do {
                 let json = try JSON(data: data!)
-                self.surveyData = SurveyData(json: json)
+                self.surveyData = try SurveyData(json: json) // Might be invalid
                 DispatchQueue.main.async {
                     completion()
                 }
             } catch {
                 // Unable to parse JSON from url data, although connection to the server was established
+                
+                var msg: String?
+                if let json = try? JSON(data: data!) {
+                    msg = json.dictionary?["message"]?.string
+                }
                 DispatchQueue.main.async {
-                    self.delegate?.surveyReturnedResponse(self, response: .invalidRequest)
+                    self.delegate?.surveyReturnedResponse(self,
+                                                          response: .invalidRequest,
+                                                          message: msg)
                 }
             }
         }
@@ -106,10 +114,13 @@ public class Survey {
     /// Present the survey, provided that is has been loaded from the server.
     public func present() {
         
-        guard surveyData != nil else { return }
+        guard surveyData != nil else {
+            delegate?.surveyReturnedResponse(self, response: .invalidRequest, message: nil)
+            return
+        }
         
         guard surveyData!.fragments.count > 0 else {
-            delegate?.surveyReturnedResponse(self, response: .emptySurvey)
+            delegate?.surveyReturnedResponse(self, response: .emptySurvey, message: nil)
             return
         }
         
@@ -139,7 +150,7 @@ extension Survey {
         /// The survey was successfully submitted.
         case submitted = 1
         
-        /// An invalid / malformatted survey ID was provided.
+        /// An invalid survey ID or authorization header was provided.
         case invalidRequest = -1
         
         /// The user does not have a valid internet connection.

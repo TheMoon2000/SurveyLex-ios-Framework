@@ -26,8 +26,8 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
         lookupButton = makeLookupButton() // 3
         
         
-//        textView.text = "41e8abf0-62b9-11e9-a454-f5b21638e785"
-        textView.text = "5f108ef0-5d23-11e9-8d7e-bb5f7e5229ff"
+        textView.text = "41e8abf0-62b9-11e9-a454-f5b21638e785"
+//        textView.text = "5f108ef0-5d23-11e9-8d7e-bb5f7e5229ff"
     }
     
     
@@ -131,7 +131,7 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
     }
     
     @objc func lookup(_ sender: UIButton) {
-//         test()
+        // test
         let survey = Survey(surveyID: textView.text,
                             target: self)
         survey.delegate = self
@@ -148,7 +148,7 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
         
     }
     
-    func surveyReturnedResponse(_ survey: Survey, response: Survey.Response) {
+    func surveyReturnedResponse(_ survey: Survey, response: Survey.Response, message: String?) {
         switch response {
         case .invalidRequest:
             self.invalidSurveyWarning()

@@ -94,7 +94,7 @@ class SurveyViewController: UIPageViewController,
     }
     
     @objc private func surveyCancelled() {
-        survey.delegate?.surveyReturnedResponse(survey, response: .cancelled)
+        survey.delegate?.surveyReturnedResponse(survey, response: .cancelled, message: nil)
         dismiss(animated: true, completion: nil)
     }
     

@@ -12,27 +12,28 @@ import SwiftyJSON
 /// The root class of survey elements, which encapsulates the data for an entire survey form. A `SurveyData` object contains a list of `Fragment`s.
 public class SurveyData: CustomStringConvertible {
     let title: String
-    let creator: String
+    // let creator: String
     let surveyId: String
     let published: Bool
     var fragments = [Fragment]()
     
     /// Creates a new survey form using a JSON summary of the survey.
-    public init(json: JSON) {
+    public init(json: JSON) throws {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,
-              let creator = dictionary["creator"]?.string,
+              // let creator = dictionary["creator"]?.string,
               let surveyId = dictionary["surveyId"]?.string,
               let published = dictionary["published"]?.bool,
               let fragments = dictionary["fragments"]?.array
         else {
-            print(json)
-            preconditionFailure("Malformed survey data")
+            print("Error parsing JSON survey data:", dictionary)
+            throw Errors.invalid
+//            preconditionFailure("Malformed survey data")
         }
         
         self.title = title
-        self.creator = creator
+        // self.creator = creator
         self.surveyId = surveyId
         self.published = published
         
@@ -47,7 +48,7 @@ public class SurveyData: CustomStringConvertible {
         self.title = ""
         self.surveyId = ""
         self.published = false
-        self.creator = ""
+        // self.creator = ""
     }
     
     /// Customized description that is more debug-friendly
@@ -59,4 +60,10 @@ public class SurveyData: CustomStringConvertible {
         return "Survey <\(idParts[0])...\(idParts[4])> (\(fragments.count)): \n  " + fragmentDescription.joined(separator: "\n  ")
     }
     
+}
+
+extension SurveyData {
+    enum Errors: Error {
+        case invalid
+    }
 }

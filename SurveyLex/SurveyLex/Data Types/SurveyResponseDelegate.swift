@@ -13,7 +13,7 @@ public protocol SurveyResponseDelegate {
     /// Called when the `Survey` instance established a connection to the server and retrieved all necessary information about the survey.
     func surveyDidLoad(_ survey: Survey)
     
-    func surveyReturnedResponse(_ survey: Survey, response: Survey.Response)
+    func surveyReturnedResponse(_ survey: Survey, response: Survey.Response, message: String?)
     
     /// Called when the survey is presented to the user.
     func surveyDidPresent(_ survey: Survey)

@@ -104,6 +104,7 @@ class RecordButton: UIButton {
     }
 
     @objc private func record() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         if recorder.audioRecorder.isRecording {
             stopRecording()
         } else {
@@ -147,7 +148,7 @@ class RecordButton: UIButton {
                 self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
                     if (Date().timeIntervalSince(finishTime) > 0 || self.shapeLayer.animation(forKey: "drawCircleAnimation") == nil) {
                         timer.invalidate()
-                        self.record()
+                        self.stopRecording()
                         return;
                     }
                     let remaining = finishTime.timeIntervalSince(Date())
