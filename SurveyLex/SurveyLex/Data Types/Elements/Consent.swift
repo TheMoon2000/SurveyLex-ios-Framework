@@ -54,57 +54,69 @@ class Consent: Question, CustomStringConvertible {
         let cell = UITableViewCell()
         cell.backgroundColor = .white
         
-        let titleLabel = UILabel()
-        titleLabel.text = title
-        titleLabel.textAlignment = .center
-        titleLabel.font = .systemFont(ofSize: 22, weight: .medium)
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        cell.addSubview(titleLabel)
-        
-        titleLabel.topAnchor.constraint(equalTo: cell.topAnchor,
-                                        constant: 40).isActive = true
-        titleLabel.leftAnchor.constraint(equalTo: cell.leftAnchor,
-                                         constant: 32).isActive = true
-        titleLabel.rightAnchor.constraint(equalTo: cell.rightAnchor,
-                                          constant: -32).isActive = true
-        
-        let separatorLine = UIView()
-        separatorLine.translatesAutoresizingMaskIntoConstraints = false
-        separatorLine.backgroundColor = UIColor(white: 0.8, alpha: 1)
-        cell.addSubview(separatorLine)
-        separatorLine.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        separatorLine.widthAnchor.constraint(equalToConstant: 60).isActive = true
-        separatorLine.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
-        separatorLine.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20).isActive = true
-        
-        let consentLabel = UILabel()
-        consentLabel.lineBreakMode = .byWordWrapping
-        consentLabel.numberOfLines = 1000
-        consentLabel.textAlignment = .left
-        let attrTxt = TextFormatter.formatted(consentText, type: .consentText)
-        consentLabel.attributedText = attrTxt
-        consentLabel.translatesAutoresizingMaskIntoConstraints = false
-        cell.addSubview(consentLabel)
-        
-        consentLabel.leftAnchor.constraint(equalTo: cell.leftAnchor,
-                                           constant: 32).isActive = true
-        consentLabel.rightAnchor.constraint(equalTo: cell.rightAnchor,
-                                            constant: -32).isActive = true
-        consentLabel.topAnchor.constraint(equalTo: separatorLine.bottomAnchor,
-                                          constant: 20).isActive = true
-        
-        let agreeButton = makeAgreeButton()
-        cell.addSubview(agreeButton)
-        agreeButton.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
-        agreeButton.topAnchor.constraint(equalTo: consentLabel.bottomAnchor, constant: 32).isActive = true
-        agreeButton.bottomAnchor.constraint(equalTo: cell.bottomAnchor,
-                                            constant: -40).isActive = true
-        
+        let titleText = makeTitle(cell)
+        let separator = makeSeparator(cell, topView: titleText)
+        let consent = makeConsentText(cell, topView: separator)
+        makeAgreeButton(cell, topView: consent)
         
         return cell
     }
     
-    private func makeAgreeButton() -> UIButton {
+    
+    private func makeTitle(_ cell: UITableViewCell) -> UITextView {
+        let titleText = UITextView()
+        titleText.isScrollEnabled = false
+        titleText.attributedText = TextFormatter.formatted(title, type: .title)
+        titleText.translatesAutoresizingMaskIntoConstraints = false
+        cell.addSubview(titleText)
+        
+        titleText.topAnchor.constraint(equalTo: cell.topAnchor,
+                                        constant: 40).isActive = true
+        titleText.leftAnchor.constraint(equalTo: cell.leftAnchor,
+                                         constant: 32).isActive = true
+        titleText.rightAnchor.constraint(equalTo: cell.rightAnchor,
+                                          constant: -32).isActive = true
+        
+        return titleText
+    }
+    
+    private func makeSeparator(_ cell: UITableViewCell, topView: UIView) -> UIView {
+        let separatorLine = UIView()
+        separatorLine.backgroundColor = UIColor(white: 0.8, alpha: 1)
+        separatorLine.translatesAutoresizingMaskIntoConstraints = false
+        cell.addSubview(separatorLine)
+        
+        separatorLine.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        separatorLine.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        separatorLine.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
+        separatorLine.topAnchor.constraint(equalTo: topView.bottomAnchor,
+                                           constant: 20).isActive = true
+        
+        return separatorLine
+    }
+    
+    private func makeConsentText(_ cell: UITableViewCell, topView: UIView) -> UITextView {
+        let consent = UITextView()
+        consent.attributedText = TextFormatter.formatted(consentText, type: .consentText)
+        consent.textAlignment = .left
+        consent.isEditable = false
+        consent.dataDetectorTypes = .link
+        consent.linkTextAttributes[.foregroundColor] = BLUE_TINT
+        consent.isScrollEnabled = false
+        consent.translatesAutoresizingMaskIntoConstraints = false
+        cell.addSubview(consent)
+        
+        consent.topAnchor.constraint(equalTo: topView.bottomAnchor,
+                                     constant: 20).isActive = true
+        consent.leftAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.leftAnchor,
+                                      constant: 30).isActive = true
+        consent.rightAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.rightAnchor,
+                                       constant: -30).isActive = true
+        
+        return consent
+    }
+    
+    private func makeAgreeButton(_ cell: UITableViewCell, topView: UIView) {
         let button = UIButton()
         button.setTitle("Agree & Continue", for: .normal)
         button.layer.cornerRadius = 4
@@ -120,7 +132,13 @@ class Consent: Question, CustomStringConvertible {
                          for: [.touchCancel, .touchUpInside, .touchUpOutside, .touchDragExit])
         button.addTarget(self, action: #selector(agreed(_:)), for: .touchUpInside)
         
-        return button
+        cell.addSubview(button)
+        
+        button.centerXAnchor.constraint(equalTo: cell.centerXAnchor).isActive = true
+        button.topAnchor.constraint(equalTo: topView.bottomAnchor,
+                                    constant: 32).isActive = true
+        button.bottomAnchor.constraint(equalTo: cell.bottomAnchor,
+                                       constant: -40).isActive = true
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {
