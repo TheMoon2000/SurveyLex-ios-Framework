@@ -39,7 +39,7 @@ class FragmentTableController: UITableViewController {
         tableView.allowsSelection = false
         tableView.separatorStyle = .none
         tableView.tableFooterView = UIView(frame: .zero)
-        
+        tableView.keyboardDismissMode = .interactive
         
         view.backgroundColor = UIColor(white: 0.94, alpha: 1)
     }
