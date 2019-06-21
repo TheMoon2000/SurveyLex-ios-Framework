@@ -79,13 +79,9 @@ class MultipleChoiceCell: UITableViewCell {
             self.contentView.backgroundColor = selected ? SELECTION : UIColor.white
         }
         
-        if animated {
-            UIView.transition(with: self, duration: 0.2, options: .curveEaseOut, animations: {
-                transition()
-            }, completion: nil)
-        } else {
+        UIView.transition(with: self, duration: 0.2, options: .curveEaseOut, animations: {
             transition()
-        }
+        }, completion: nil)
         
     }
     
