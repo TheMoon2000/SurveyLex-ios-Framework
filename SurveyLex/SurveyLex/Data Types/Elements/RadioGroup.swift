@@ -48,15 +48,14 @@ class RadioGroup: Question, CustomStringConvertible, RatingResponseDelegate {
     func makeContentCell() -> UITableViewCell {
         let cell = UITableViewCell()
         let textView = makeTextView(cell)
-        let table = makeChoiceTable(cell)
-        table.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 30).isActive = true
+        makeChoiceTable(cell, topView: textView)
         return cell
     }
     
     private func makeTextView(_ cell: UITableViewCell) -> UITextView {
         let textView = UITextView()
-        textView.attributedText = TextFormatter.formatted(title, type: .body)
-        textView.textAlignment = .center
+        textView.attributedText = TextFormatter.formatted(title, type: .title)
+        textView.textAlignment = .left
         textView.isEditable = false
         textView.dataDetectorTypes = .link
         textView.linkTextAttributes[.foregroundColor] = BLUE_TINT
@@ -67,31 +66,47 @@ class RadioGroup: Question, CustomStringConvertible, RatingResponseDelegate {
         textView.topAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.topAnchor,
                                       constant: 30).isActive = true
         textView.leftAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.leftAnchor,
-                                       constant: 30).isActive = true
+                                       constant: 18).isActive = true
         textView.rightAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.rightAnchor,
-                                        constant: -30).isActive = true
+                                        constant: -18).isActive = true
         return textView
     }
     
-    private func makeChoiceTable(_ cell: UITableViewCell) -> UITableView {
+    private func makeChoiceTable(_ cell: UITableViewCell, topView: UIView) {
         let rateInfo = choices.map { ($0, $0) }
         let choiceTable = MultipleChoiceView(rateInfo: rateInfo, delegate: self)
         choiceTable.translatesAutoresizingMaskIntoConstraints = false
         choiceTable.isScrollEnabled = false
+        
         cell.addSubview(choiceTable)
         
         choiceTable.leftAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.leftAnchor).isActive = true
         choiceTable.rightAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.rightAnchor).isActive = true
         choiceTable.bottomAnchor.constraint(equalTo: cell.safeAreaLayoutGuide.bottomAnchor,
                                             constant: -30).isActive = true
-        return choiceTable
+        choiceTable.topAnchor.constraint(equalTo: topView.bottomAnchor,
+                                         constant: 20).isActive = true
+
+//        choiceTable.contentSize.width = UIScreen.main.bounds.width
+//        choiceTable.layoutSubviews()
+        
+        /*
+        let heights = Array(0..<choiceTable.numberOfRows(inSection: 0)).map { (row) -> CGFloat in
+            let cell = choiceTable.cellForRow(at: IndexPath(row: row, section: 0))!
+            print(cell.frame.width)
+            return cell.preferredHeight()
+        }
+        
+        print(heights)
+        */
+        
     }
     
     func didSelectRow(row: Int) {
         selection = row
         if !self.completed {
             self.completed = true
-            parentView?.nextPage()
+            parentView?.updateCompletionRate(true)
         }
     }
 
