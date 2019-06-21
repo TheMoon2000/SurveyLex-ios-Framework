@@ -75,7 +75,7 @@ class SurveyViewController: UIPageViewController,
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        survey.delegate?.surveyDidPresent(survey!)
+        survey.delegate?.surveyDidPresent(survey)
     }
     
     private func addProgressBar() -> UIProgressView {
