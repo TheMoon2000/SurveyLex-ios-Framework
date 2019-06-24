@@ -38,8 +38,8 @@ public class SurveyData: CustomStringConvertible {
         self.published = published
         
         for i in 0..<fragments.count {
-            let new_fragment = Fragment(json: fragments[i], index: i)
-            self.fragments.append(new_fragment)
+            let newFragment = Fragment(json: fragments[i], index: i)
+            self.fragments.append(newFragment)
         }
     }
     

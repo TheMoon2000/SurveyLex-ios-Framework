@@ -10,7 +10,7 @@ import UIKit
 import SwiftyJSON
 
 protocol Question: class, CustomStringConvertible {
-    init(json: JSON, fragment: Fragment?)
+    init(json: JSON, order: (Int, Int), fragment: Fragment?)
     
     /// An enum that classifies the question by its response type
     var type: ResponseType { get }
@@ -24,17 +24,20 @@ protocol Question: class, CustomStringConvertible {
     /// A boolean indicating whether the question has received a response.
     var completed: Bool { get }
     
+    /// Indicating the order of the question in the survey.
+    var order: (fragment: Int, question: Int) { get set }
+    
     /// The overarching `SurveyViewController` front-end object that contains the entire survey.
     var parentView: SurveyViewController? { get set }
 
     /// The view of this particular UI element, as displayed to the user.
-    func makeContentCell() -> UITableViewCell
+    func makeContentCell() -> SurveyElementCell
 }
 
 /// Gives default argument for the init method
 extension Question {
-    init(json: JSON, fragment: Fragment? = nil) {
-        self.init(json: json, fragment: fragment)
+    init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
+        self.init(json: json, order: (1, 1), fragment: fragment)
     }
 }
 

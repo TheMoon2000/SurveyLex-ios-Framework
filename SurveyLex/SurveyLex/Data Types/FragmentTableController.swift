@@ -13,12 +13,60 @@ class FragmentTableController: UITableViewController {
     
     var fragmentData: Fragment!
     var surveyViewController: SurveyViewController?
-    var contentCells = [UITableViewCell]()
+    var contentCells = [SurveyElementCell]()
     var completed = false
     
-    /// A boolean array with the completion status of each survey element.
-    /// This information is distributed to individual survey elements.
-    /// - Parameters:
+    private var focusedRowResponse = true
+    var focusedRow = -1 {
+        didSet (oldValue) {
+            if !focusedRowResponse { return }
+            if focusedRow == oldValue { return }
+            if focusedRow != -1 {
+                let index = IndexPath(row: focusedRow, section: 0)
+                if focusedRow < tableView.numberOfRows(inSection: 0) {
+                    var pos = UITableView.ScrollPosition.middle
+                    let cell = contentCells[focusedRow]
+                    if cell.frame.height > tableView.frame.height {
+                        pos = .top
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        self.tableView.scrollToRow(at: index, at: pos, animated: true)
+                    }
+                }
+                if let cell = tableView.cellForRow(at: index) as? SurveyElementCell {
+                    UIView.animate(withDuration: 0.2) { cell.focus() }
+                } else if focusedRow >= tableView.numberOfRows(inSection: 0) && completed {
+                    focusedRowResponse = false
+                    focusedRow = oldValue
+                    focusedRowResponse = true
+                    surveyViewController?.nextPage()
+                }
+            }
+            if oldValue != -1 {
+                if let cell = tableView.cellForRow(at: IndexPath(row: oldValue, section: 0)) as? SurveyElementCell {
+                    UIView.animate(withDuration: 0.2) { cell.unfocus() }
+                }
+            }
+        }
+    }
+    
+    /// Convenient shortcut that returns the fragment index of the current page.
+    var fragmentIndex: Int {
+        return fragmentData.index
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !completed {
+            DispatchQueue.main.async {
+                self.focusedRow = 0
+            }
+        }
+    }
+    
+    /**
+     A boolean array with the completion status of each survey element. This information is distributed to individual survey elements.
+     */
     private var completion: [(completed: Bool, required: Bool)] {
         return fragmentData.questions.map { ($0.completed, $0.isRequired) }
     }
@@ -33,16 +81,38 @@ class FragmentTableController: UITableViewController {
         
         precondition(fragmentData != nil)
         
-        contentCells = fragmentData.questions.map { $0.makeContentCell() }
+        contentCells = fragmentData.questions.map { question in
+            let cell = question.makeContentCell()
+            cell.surveyPage = self
+            return cell
+        }
+        
         fragmentData.questions.forEach { $0.parentView = surveyViewController }
         
-        tableView.allowsSelection = false
+        tableView.allowsSelection = true
         tableView.separatorStyle = .none
+        tableView.delegate = self
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.keyboardDismissMode = .interactive
         
         view.backgroundColor = UIColor(white: 0.94, alpha: 1)
     }
+    
+    func focus(cell: SurveyElementCell) {
+        if let row = self.contentCells.firstIndex(of: cell) {
+            UIView.animate(withDuration: 0.2) {
+                self.focusedRow = row
+            }
+        } else {
+            preconditionFailure("cell not found")
+        }
+    }
+    
+    func isCellFocused(cell: SurveyElementCell) -> Bool {
+        let row = tableView.indexPath(for: cell)?.row ?? -1
+        return row == focusedRow
+    }
+
 
     // MARK: - Table view data source
     
@@ -59,15 +129,21 @@ class FragmentTableController: UITableViewController {
         // Not very memory efficient, but we can assume that a survey
         // will never have too many question on the same page.
         
+        if indexPath.row == focusedRow {
+            contentCells[indexPath.row].focus()
+        } else {
+            contentCells[indexPath.row].unfocus()
+        }
+        
         return contentCells[indexPath.row]
-    }
-    
-    var fragmentIndex: Int {
-        return fragmentData.index
     }
     
     func updateCompletionStatusByQuestions() {
         self.completed = unlocked
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        focusedRow = indexPath.row
     }
     
     /// Fixes the bug with device rotation by resetting the content offset

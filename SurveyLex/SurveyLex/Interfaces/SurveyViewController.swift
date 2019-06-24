@@ -28,7 +28,7 @@ class SurveyViewController: UIPageViewController,
         }
     }
     
-    /// Convenient shortcut for accessing the current fragment table
+    /// Convenient shortcut for accessing the current fragment table.
     var currentFragment: FragmentTableController {
         return fragmentTables[fragmentIndex]
     }
@@ -37,7 +37,7 @@ class SurveyViewController: UIPageViewController,
     /// before the survey is presented.
     private var fragmentTables = [FragmentTableController]()
     
-    /// The top bar that displays the survey progress
+    /// The top bar that displays the survey progress.
     var progressIndicator: UIProgressView!
 
     override func viewDidLoad() {

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AudioResponseCell: UITableViewCell, RecordingDelegate {
+class AudioResponseCell: SurveyElementCell, RecordingDelegate {
     var skipButton: UIButton!
     var audioQuestion: Audio!
     var recordButton: RecordButton!
@@ -26,9 +26,13 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         }
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
     /// Initialize an audio response table cell.
     required init(audioQuestion: Audio) {
-        super.init(style: .default, reuseIdentifier: nil)
+        super.init()
         self.backgroundColor = .white
 
         self.audioQuestion = audioQuestion // must be set first
@@ -226,7 +230,4 @@ class AudioResponseCell: UITableViewCell, RecordingDelegate {
         audioQuestion.didFailToRecord(sender, error: error)
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
 }

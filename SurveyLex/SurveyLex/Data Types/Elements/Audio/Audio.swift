@@ -20,8 +20,9 @@ class Audio: Question, CustomStringConvertible {
     var fragmentId = "default"
     var parentView: SurveyViewController?
     private var lengthOfMostRecentRecording = 0.0
+    var order: (fragment: Int, question: Int)
     
-    required init(json: JSON, fragment: Fragment? = nil) {
+    required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
         guard let prompt = dictionary["prompt"]?.string else {
@@ -35,6 +36,7 @@ class Audio: Question, CustomStringConvertible {
         
         self.prompt = prompt
         self.fragment = fragment
+        self.order = order
     }
     
     var type: ResponseType {
@@ -45,7 +47,7 @@ class Audio: Question, CustomStringConvertible {
         return "Audio question: <\(prompt)>"
     }
     
-    func makeContentCell() -> UITableViewCell {
+    func makeContentCell() -> SurveyElementCell {
         let cell = AudioResponseCell(audioQuestion: self)
         cell.title = prompt
         let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("Recordings", isDirectory: true)

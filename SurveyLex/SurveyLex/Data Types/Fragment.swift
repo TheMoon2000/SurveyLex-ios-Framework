@@ -34,30 +34,31 @@ class Fragment: CustomStringConvertible {
         self.type = FragmentType(rawValue: type)!
         
         if self.type == .audio {
-            let a = Audio(json: data, fragment: self)
+            let a = Audio(json: data, order: (index + 1, 1), fragment: self)
             a.fragmentId = self.id
             questions.append(a)
         } else if self.type == .consent {
-            questions.append(Consent(json: data, fragment: self))
+            questions.append(Consent(json: data, order: (index + 1, 1), fragment: self))
         } else { // must be text questions
             guard let questionJSONList = data.dictionary?["surveyjs"]? .dictionaryValue["questions"]?.array else {
                 preconditionFailure("Malformed text question:")
             }
-            for q in questionJSONList {
-                self.questions.append(match(q))
+            for i in 0..<questionJSONList.count {
+                let q = match(questionJSONList[i], order: (index + 1, i + 1))
+                self.questions.append(q)
             }
         }
     }
     
     /// Matches a JSON packet to a specific question object
-    private func match(_ json: JSON) -> Question {
+    private func match(_ json: JSON, order: (Int, Int)) -> Question {
         switch json.dictionaryValue["type"]?.stringValue ?? "" {
         case "rating":
-            return Rating(json: json, fragment: self)
+            return Rating(json: json, order: order, fragment: self)
         case "text":
-            return Text(json: json, fragment: self)
+            return Text(json: json, order: order, fragment: self)
         case "radiogroup":
-            return RadioGroup(json: json, fragment: self)
+            return RadioGroup(json: json, order: order, fragment: self)
         default:
             preconditionFailure("Unmatched question type: '\(json.dictionaryValue["type"]?.stringValue ?? "")'")
         }
