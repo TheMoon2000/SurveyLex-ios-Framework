@@ -193,7 +193,6 @@
 			children = (
 				CC333BC022854D6F00B5D8C9 /* Question.swift */,
 				CC64525022BF210300FBEF58 /* Text */,
-				CC62604E22BAB78900499DFC /* EditableTextCell.swift */,
 				CC90E809228A84380040F990 /* Audio */,
 				CCC4A22A22BBC61D00757913 /* Rating */,
 				CC588D0F228C7AAF00665D00 /* Radio group */,
@@ -232,6 +231,7 @@
 			children = (
 				CC333BC92285505000B5D8C9 /* Text.swift */,
 				CC527EA522BF2164002FC179 /* TextCell.swift */,
+				CC62604E22BAB78900499DFC /* EditableTextCell.swift */,
 			);
 			path = Text;
 			sourceTree = "<group>";
