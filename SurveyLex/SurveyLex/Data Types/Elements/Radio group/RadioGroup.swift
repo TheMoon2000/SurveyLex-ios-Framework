@@ -14,7 +14,11 @@ class RadioGroup: Question, CustomStringConvertible {
     var fragment: Fragment?
     let choices: [String]
     var isRequired = false
-    var completed = false
+    var completed = false {
+        didSet {
+            parentView?.flipPageIfNeeded()
+        }
+    }
     var selection = -1
     var parentView: SurveyViewController?
     var order: (fragment: Int, question: Int)

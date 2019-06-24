@@ -97,7 +97,7 @@ class Audio: Question, CustomStringConvertible {
     
     
     @objc func flipPage() {
-        parentView?.nextPage()
+        parentView?.flipPageIfNeeded()
     }
     
 }

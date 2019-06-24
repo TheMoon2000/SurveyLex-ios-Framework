@@ -145,7 +145,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
             audioQuestion.completed = true
             
             // Flip the page to the next question is there is one.
-            audioQuestion.parentView?.nextPage()
+            audioQuestion.parentView?.flipPageIfNeeded()
             
             // Let the new title of the recording button be “Again”.
             recordButton.setTitle("Again", for: .normal)
@@ -157,7 +157,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
             recordButton.setTitle("Record", for: .normal)
             
             // Update the progress bar in `SurveyViewController` to reflect that the current audio question is not (or no longer) completed
-            audioQuestion.parentView?.updateCompletionRate(false)
+            audioQuestion.completed = false
             
             // Default to false, which means that we do reset the caption
             shouldCancelCaptionReset = false
@@ -178,7 +178,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
             // Called when the duration is shorter than 2 seconds
             
             recordButton.setTitle("Record", for: .normal)
-            audioQuestion.parentView?.updateCompletionRate(false)
+            audioQuestion.completed = false
             if audioQuestion.isRequired {
                 finishMessage.text = timeLimitString
                 skipButton.isHidden = true
@@ -213,9 +213,8 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         // Since we restarted recording, the previous 2-second delayed reset should be invalidated.
         shouldCancelCaptionReset = true
         
-        // Update completion status and display
+        // Update completion status
         audioQuestion.completed = false
-        audioQuestion.parentView?.updateCompletionRate(false)
     }
     
     /// Error handling is implemented in Audio.swift, so we reset the UI and then delegate the error to the Audio instance for more actions

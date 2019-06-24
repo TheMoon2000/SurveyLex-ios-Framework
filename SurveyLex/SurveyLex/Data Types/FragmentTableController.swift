@@ -26,7 +26,7 @@ class FragmentTableController: UITableViewController {
                 if focusedRow < tableView.numberOfRows(inSection: 0) {
                     var pos = UITableView.ScrollPosition.middle
                     let cell = contentCells[focusedRow]
-                    if cell.frame.height > tableView.frame.height {
+                    if cell.frame.height > tableView.frame.height || tableView.numberOfRows(inSection: 0) == 1 {
                         pos = .top
                     }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -39,7 +39,7 @@ class FragmentTableController: UITableViewController {
                     focusedRowResponse = false
                     focusedRow = oldValue
                     focusedRowResponse = true
-                    surveyViewController?.nextPage()
+                    surveyViewController?.flipPageIfNeeded()
                 }
             }
             if oldValue != -1 {
@@ -74,6 +74,10 @@ class FragmentTableController: UITableViewController {
     /// Whether the user can swipe right and proceed with the next page.
     var unlocked: Bool {
         return !fragmentData.questions.contains { !$0.completed && $0.isRequired }
+    }
+    
+    var allCompleted: Bool {
+        return !fragmentData.questions.contains { !$0.completed }
     }
 
     override func viewDidLoad() {

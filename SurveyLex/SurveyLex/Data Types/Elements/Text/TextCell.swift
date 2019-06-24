@@ -10,8 +10,8 @@ import UIKit
 
 class TextCell: SurveyElementCell, UITextFieldDelegate {
     
-    private var textQuestion: Text!
-    private var title: UITextView!
+    var textQuestion: Text!
+    var title: UITextView!
     var textfield: UITextField!
 
     required init?(coder aDecoder: NSCoder) {

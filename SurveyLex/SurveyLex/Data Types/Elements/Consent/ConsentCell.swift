@@ -129,7 +129,7 @@ class ConsentCell: SurveyElementCell {
     
     @objc private func agreed(_ sender: UIButton) {
         consentInfo.completed = true
-        consentInfo.parentView?.nextPage()
+        consentInfo.parentView?.flipPageIfNeeded()
     }
     
     override func unfocus() {}

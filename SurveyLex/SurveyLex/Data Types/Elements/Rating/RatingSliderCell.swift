@@ -15,8 +15,16 @@ class RatingSliderCell: SurveyElementCell {
     
     var title: UITextView!
     var slider: UISlider!
+    var caption: UILabel!
     var ratingQuestion: Rating!
-    var currentValue: Float = 50.0 // Default is center
+    var currentValue: Float = 50.0 {
+        didSet {
+            let segmentLength = 100.0 / Float(ratingQuestion.options.count - 1)
+            let index = Int(round(currentValue / segmentLength))
+            let option = ratingQuestion.options[index]
+            caption.text = option.text
+        }
+    }
 
     init(ratingQuestion: Rating) {
         super.init()
@@ -25,6 +33,7 @@ class RatingSliderCell: SurveyElementCell {
         
         title = makeTextView()
         slider = makeSlider()
+        caption = makeCaption()
         addTicks()
         
         sliderChanged()
@@ -71,7 +80,7 @@ class RatingSliderCell: SurveyElementCell {
         slider.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: sideMargins).isActive = true
         slider.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -sideMargins).isActive = true
         slider.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20).isActive = true
-        slider.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20).isActive = true
+//        slider.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -50).isActive = true
         
         slider.isContinuous = true
         slider.addTarget(self, action: #selector(sliderChanged), for: .valueChanged)
@@ -132,6 +141,25 @@ class RatingSliderCell: SurveyElementCell {
         }
     }
     
+    
+    private func makeCaption() -> UILabel {
+        let label = UILabel()
+        label.text = "No rating is given."
+        label.font = .systemFont(ofSize: 16)
+        label.textColor = .darkGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(label)
+        
+        label.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
+        label.topAnchor.constraint(equalTo: slider.bottomAnchor,
+                                   constant: 15).isActive = true
+        label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
+                                      constant: -12).isActive = true
+        
+        return label
+    }
+    
+
     @objc private func sliderChanged() {
         let segment: Float = 100.0 / (Float(ratingQuestion.options.count) - 1)
         slider.value = round(slider.value / segment) * segment
@@ -144,10 +172,10 @@ class RatingSliderCell: SurveyElementCell {
     @objc private func sliderPressed() {
         surveyPage?.focus(cell: self)
         slider.thumbTintColor = BLUE_TINT
-        ratingQuestion.completed = true
     }
     
     @objc private func sliderLifted() {
+        ratingQuestion.completed = true
         surveyPage?.focusedRow += 1
     }
     
@@ -159,14 +187,18 @@ class RatingSliderCell: SurveyElementCell {
     override func focus() {
         super.focus()
         title.textColor = .black
-        slider.thumbTintColor = ratingQuestion.completed ? BLUE_TINT : .lightGray
+        UIView.performWithoutAnimation {
+            slider.thumbTintColor = ratingQuestion.completed ? BLUE_TINT : .lightGray
+        }
     }
     
     override func unfocus() {
         super.unfocus()
         title.textColor = .gray
-        slider.thumbTintColor = ratingQuestion.completed ? DISABLED_BLUE : grayColor
-        slider.alpha = 1.0
+        UIView.performWithoutAnimation {
+            slider.thumbTintColor = ratingQuestion.completed ? DISABLED_BLUE : grayColor
+            slider.alpha = 1.0
+        }
     }
     
 }

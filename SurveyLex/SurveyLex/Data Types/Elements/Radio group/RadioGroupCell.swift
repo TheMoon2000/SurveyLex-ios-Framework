@@ -69,13 +69,9 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
     
     func didSelectRow(row: Int) {
         radioGroup.selection = row
-        if !radioGroup.completed {
-            radioGroup.completed = true
-            radioGroup.parentView?.updateCompletionRate(true)
-        }
+        radioGroup.completed = true
         
         if (surveyPage?.isCellFocused(cell: self) ?? false) {
-            print("move forward to row \(surveyPage!.focusedRow + 1)")
             surveyPage?.focusedRow += 1
         }
     }

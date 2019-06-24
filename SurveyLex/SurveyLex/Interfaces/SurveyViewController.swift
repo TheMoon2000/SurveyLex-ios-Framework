@@ -22,9 +22,12 @@ class SurveyViewController: UIPageViewController,
     /// The current page of the survey (a survey can have multiple pages).
     /// Updates the navigation bar according to the survey progress made by
     /// the user.
-    var fragmentIndex = 0 {
+    var fragmentIndex = -1 {
         didSet {
+            if fragmentIndex == -1 { return }
             navigationItem.title = surveyData.title + " (\(fragmentIndex + 1)/\(fragmentTables.count))"
+            let percentage = Float(fragmentIndex + 1) / Float(self.fragmentTables.count)
+            progressIndicator?.setProgress(percentage, animated: true)
         }
     }
     
@@ -50,6 +53,8 @@ class SurveyViewController: UIPageViewController,
             fragmentTableController.surveyViewController = self
             return fragmentTableController
         }
+        
+        progressIndicator = addProgressBar()
         fragmentIndex = 0
         
         view.backgroundColor = .white
@@ -61,7 +66,6 @@ class SurveyViewController: UIPageViewController,
                            animated: true,
                            completion: nil)
         
-        progressIndicator = addProgressBar()
         
         // Setup navigation bar appearance
         let cancelButton = UIBarButtonItem(title: "Close",
@@ -80,7 +84,6 @@ class SurveyViewController: UIPageViewController,
     
     private func addProgressBar() -> UIProgressView {
         let bar = UIProgressView(progressViewStyle: .bar)
-        bar.progress = 0
         bar.trackTintColor = UIColor(white: 0.9, alpha: 1)
         bar.progressTintColor = BUTTON_DEEP_BLUE
         bar.translatesAutoresizingMaskIntoConstraints = false
@@ -117,7 +120,9 @@ class SurveyViewController: UIPageViewController,
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
     
-        let index = fragmentTables.firstIndex(of: viewController as! FragmentTableController) ?? 0
+        guard let index = fragmentTables.firstIndex(of: viewController as! FragmentTableController) else {
+            preconditionFailure("View controller not found")
+        }
         
         if (index + 1 == fragmentTables.count) {
             return nil
@@ -131,45 +136,19 @@ class SurveyViewController: UIPageViewController,
     // Delegate method
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        if let frag = pageViewController.viewControllers?.last as? FragmentTableController {
-            if frag.fragmentIndex > fragmentIndex {
-                updateCompletionRate(true)
-            }
-            fragmentIndex = frag.fragmentIndex
+        if let newFragment = pageViewController.viewControllers?.last as? FragmentTableController {
+            fragmentIndex = newFragment.fragmentIndex
         }
     }
     
-    /// Keeps track of the proportion of questions the user has completed
-    ///
-    /// - Parameters:
-    ///    - treatOptionalAsCompleted: Whether we consider the current fragment
-    ///      as completed if it is not a required question
     
-    func updateCompletionRate(_ treatOptionalAsCompleted: Bool) {
-        var completionTotal = 0
-        
-        if treatOptionalAsCompleted && currentFragment.unlocked {
-            currentFragment.completed = true
-        } else {
-            currentFragment.updateCompletionStatusByQuestions()
-        }
-        
-        fragmentTables.forEach {
-            if $0.completed { completionTotal += 1 }
-        }
-        
-        UIView.animate(withDuration: 0.15) {
-            self.progressIndicator?.setProgress(Float(completionTotal) / Float(self.fragmentTables.count), animated: true)
-        }
-    }
-    
-    func nextPage() {
-        updateCompletionRate(true)
-        if fragmentIndex + 1 < fragmentTables.count && currentFragment.unlocked {
+    func flipPageIfNeeded() {
+        if currentFragment.allCompleted && fragmentIndex + 1 < fragmentTables.count {
             fragmentIndex += 1
-        self.setViewControllers([fragmentTables[fragmentIndex]],
-                                direction: .forward,
-                                animated: true, completion: nil)
+            self.setViewControllers([fragmentTables[fragmentIndex]],
+                                    direction: .forward,
+                                    animated: true,
+                                    completion: nil)
         } else if fragmentIndex + 1 == fragmentTables.count {
             print("reached the end of survey")
         }
@@ -177,6 +156,7 @@ class SurveyViewController: UIPageViewController,
     
     func previousPage() {
         if fragmentIndex > 0 {
+            fragmentIndex -= 1
             self.setViewControllers([fragmentTables[fragmentIndex]],
                                     direction: .reverse,
                                     animated: true,

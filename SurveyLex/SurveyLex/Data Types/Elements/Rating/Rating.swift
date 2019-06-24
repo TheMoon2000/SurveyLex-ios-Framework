@@ -13,7 +13,13 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     let title: String
     var fragment: Fragment?
     var isRequired = false
-    var completed = false
+    var completed = false {
+        didSet {
+            if completed {
+                parentView?.flipPageIfNeeded()
+            }
+        }
+    }
     var parentView: SurveyViewController?
     var options = [(value: String, text: String)]()
     var choices: [String] {
@@ -69,10 +75,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     
     func didSelectRow(row: Int) {
         currentSelections = [row]
-        if !self.completed {
-            self.completed = true
-            parentView?.nextPage()
-        }
+        completed = true
     }
     
 }
