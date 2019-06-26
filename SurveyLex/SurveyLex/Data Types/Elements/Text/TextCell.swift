@@ -99,6 +99,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        UISelectionFeedbackGenerator().selectionChanged()
         textQuestion.parentView?.flipPageIfNeeded(cell: self)
         self.surveyPage?.focusedRow += 1
         return true

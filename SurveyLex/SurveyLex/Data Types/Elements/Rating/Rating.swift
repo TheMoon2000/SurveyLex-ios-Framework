@@ -89,6 +89,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     /// Delegate method that is called when the user makes a selection.
     func didSelectRow(row: Int) {
         currentSelection = row
+        UISelectionFeedbackGenerator().selectionChanged()
         completed = true
     }
     
