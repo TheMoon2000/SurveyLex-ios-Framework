@@ -8,11 +8,16 @@
 
 import UIKit
 
+/// A subclass of `SurveyElementCell` that displays a rating question.
 class RatingSliderCell: SurveyElementCell {
     
+    /// Custom gray color used for the ticks and the track.
     let grayColor = UIColor(white: 0.85, alpha: 1)
+    
+    /// The left and right insets.
     let sideMargins: CGFloat = 30
     
+    /// The text view for the title of the rating question.
     var title: UITextView!
     var slider: UISlider!
     var caption: UILabel!
@@ -171,12 +176,19 @@ class RatingSliderCell: SurveyElementCell {
     
     @objc private func sliderPressed() {
         surveyPage?.focus(cell: self)
-        slider.thumbTintColor = BLUE_TINT
+        if slider.thumbTintColor! == .lightGray {
+            let segmentLength = 100.0 / Float(ratingQuestion.options.count - 1)
+            let index = Int(round(currentValue / segmentLength))
+            let option = ratingQuestion.options[index]
+            caption.text = option.text
+            slider.thumbTintColor = BLUE_TINT
+        }
     }
     
     @objc private func sliderLifted() {
         ratingQuestion.completed = true
         surveyPage?.focusedRow += 1
+        ratingQuestion.parentView?.flipPageIfNeeded(cell: self)
     }
     
     
@@ -194,7 +206,7 @@ class RatingSliderCell: SurveyElementCell {
     
     override func unfocus() {
         super.unfocus()
-        title.textColor = .gray
+        title.textColor = .darkGray
         UIView.performWithoutAnimation {
             slider.thumbTintColor = ratingQuestion.completed ? DISABLED_BLUE : grayColor
             slider.alpha = 1.0

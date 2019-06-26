@@ -126,9 +126,15 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
         }
     }
     
+    /// All types of errors that could have occurred during an attempt to record an audio.
     enum Error {
+        /// The app does not have permission to access the microphone.
         case micAccess
+        
+        /// The app is unable to write to the audio data to the designated path.
         case fileWrite
+        
+        /// The recording was interrupted (e.g. user returned to home screen).
         case interrupted
     }
 }

@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A cell in a `MultipleChoice` table view.
 class MultipleChoiceCell: UITableViewCell {
     
     private var radioCircle: RadioCircle!

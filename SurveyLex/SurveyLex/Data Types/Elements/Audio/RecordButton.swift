@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A special subclass of `UIButton` that records audio.
 class RecordButton: UIButton {
     
     var delegate: RecordingDelegate?

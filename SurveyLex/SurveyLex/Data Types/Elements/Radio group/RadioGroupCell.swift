@@ -8,10 +8,16 @@
 
 import UIKit
 
+/// A subclass of `SurveyElementCell` that display a radio group question.
 class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
     
+    /// The `RadioGroup` instance which the current cell is presenting.
     var radioGroup: RadioGroup!
-    private var textView: UITextView!
+    
+    /// The text view for the title of the radio group question.
+    private var title: UITextView!
+    
+    
     private var choiceTable: MultipleChoiceView!
 
     required init?(coder aDecoder: NSCoder) {
@@ -22,14 +28,14 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         super.init()
         self.radioGroup = radioGroup
         
-        textView = makeTextView()
+        title = makeTextView()
         choiceTable = makeChoiceTable()
     }
     
     private func makeTextView() -> UITextView {
         let textView = UITextView()
-        textView.attributedText = TextFormatter.formatted(radioGroup.title,
-                                                          type: .title)
+        let numbered = "\(radioGroup.order.fragment).\(radioGroup.order.question) " + radioGroup.title
+        textView.attributedText = TextFormatter.formatted(numbered, type: .title)
         textView.textAlignment = .left
         textView.isUserInteractionEnabled = false
         textView.dataDetectorTypes = .link
@@ -58,7 +64,7 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         choiceTable.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor).isActive = true
         choiceTable.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
                                             constant: -30).isActive = true
-        choiceTable.topAnchor.constraint(equalTo: textView.bottomAnchor,
+        choiceTable.topAnchor.constraint(equalTo: title.bottomAnchor,
                                          constant: 20).isActive = true
         
         return choiceTable
@@ -74,6 +80,19 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         if (surveyPage?.isCellFocused(cell: self) ?? false) {
             surveyPage?.focusedRow += 1
         }
+        radioGroup.parentView?.flipPageIfNeeded(cell: self)
+    }
+    
+    // Customized focus / unfocus appearance
+    
+    override func focus() {
+        super.focus()
+        title.textColor = .black
+    }
+    
+    override func unfocus() {
+        super.unfocus()
+        title.textColor = .darkGray
     }
 
 }

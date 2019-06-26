@@ -11,11 +11,17 @@ import SwiftyJSON
 
 /// Second class of survey objects. A `Fragment` is a collection of individual survey elements, intended to be presented together.
 class Fragment: CustomStringConvertible {
+    
+    /// The fragment id.
     internal var id = ""
+    
+    /// Specifies the type of fragment this one is.
     var type: FragmentType
     
-    /// An order list of all the questions that appear in this fragment
+    /// An order list of all the questions that appear in this fragment.
     var questions = [Question]()
+    
+    /// The index of the fragment (starting at 1).
     let index: Int
     
     public init(json: JSON, index: Int) {
@@ -34,12 +40,11 @@ class Fragment: CustomStringConvertible {
         self.type = FragmentType(rawValue: type)!
         
         if self.type == .audio {
-            let a = Audio(json: data, order: (index + 1, 1), fragment: self)
-            a.fragmentId = self.id
-            questions.append(a)
+            questions.append(Audio(json: data, order: (index + 1, 1), fragment: self))
         } else if self.type == .consent {
             questions.append(Consent(json: data, order: (index + 1, 1), fragment: self))
-        } else { // must be text questions
+        } else {
+            // must be surveyjs questions
             guard let questionJSONList = data.dictionary?["surveyjs"]? .dictionaryValue["questions"]?.array else {
                 preconditionFailure("Malformed text question:")
             }
@@ -50,7 +55,7 @@ class Fragment: CustomStringConvertible {
         }
     }
     
-    /// Matches a JSON packet to a specific question object
+    /// Matches a JSON to a specific question object.
     private func match(_ json: JSON, order: (Int, Int)) -> Question {
         switch json.dictionaryValue["type"]?.stringValue ?? "" {
         case "rating":
@@ -71,7 +76,7 @@ class Fragment: CustomStringConvertible {
         case audio = "AUDIO_STANDARD"
     }
     
-    /// Customized description that is more debug-friendly
+    /// Customized description that is more debug-friendly.
     var description: String {
         let idParts = id.components(separatedBy: "-")
         let questionsDescription = questions.map {
@@ -85,5 +90,25 @@ class Fragment: CustomStringConvertible {
         let fragmentTable = FragmentTableController()
         fragmentTable.fragmentData = self
         return fragmentTable
+    }
+    
+    /// Prepares the fragment in JSON form for submission.
+    var fragmentJSON: JSON {
+        var response = JSON()
+        response.dictionaryObject?["fragmentId"] = self.id
+        let typeJSON = JSON(parseJSON: "{type: \(self.type.rawValue)}")
+        response.dictionaryObject?["type"] = typeJSON
+        
+        switch self.type {
+        case .textSurvey:
+            var data = JSON()
+            questions.forEach { q in
+                data.arrayObject?.append(q.responseJSON)
+            }
+            response.dictionaryObject?["data"] = data
+            return response
+        default:
+            return response
+        }
     }
 }

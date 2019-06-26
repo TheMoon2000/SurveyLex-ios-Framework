@@ -5,10 +5,10 @@
 //  Created by Jia Rui Shan on 2019/5/10.
 //  Copyright © 2019 UC Berkeley. All rights reserved.
 //
-//  This is the main View Controller that displays the survey to the user.
 
 import UIKit
 
+/// A special subclass of `UIViewController` that displays a survey to the user.
 class SurveyViewController: UIPageViewController,
                             UIPageViewControllerDataSource,
                             UIPageViewControllerDelegate {
@@ -40,6 +40,9 @@ class SurveyViewController: UIPageViewController,
     /// before the survey is presented.
     private var fragmentTables = [FragmentTableController]()
     
+    /// Contains the set of `FragmentTableController`s that have already been displayed at least once to the user.
+    var visitedFragments = Set<FragmentTableController>()
+    
     /// The top bar that displays the survey progress.
     var progressIndicator: UIProgressView!
 
@@ -65,7 +68,8 @@ class SurveyViewController: UIPageViewController,
                            direction: .forward,
                            animated: true,
                            completion: nil)
-        
+
+        visitedFragments.insert(fragmentTables[0])
         
         // Setup navigation bar appearance
         let cancelButton = UIBarButtonItem(title: "Close",
@@ -101,7 +105,7 @@ class SurveyViewController: UIPageViewController,
         dismiss(animated: true, completion: nil)
     }
     
-    // Datasource methods
+    // Datasource methods for UIPageController
     
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
         return surveyData.fragments.count
@@ -129,19 +133,21 @@ class SurveyViewController: UIPageViewController,
         } else if (!fragmentTables[index].unlocked) {
             return nil
         }
-        
+                
         return fragmentTables[index + 1]
     }
     
-    // Delegate method
+    // Delegate method for UIPageController
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        
+        // newFragment only exists if the page flip is complete.
         if let newFragment = pageViewController.viewControllers?.last as? FragmentTableController {
             fragmentIndex = newFragment.fragmentIndex
         }
     }
     
-    
+    /// Flip the page as long as the next page exists and all questions in the current fragment are completed.
     func flipPageIfNeeded() {
         if currentFragment.allCompleted && fragmentIndex + 1 < fragmentTables.count {
             fragmentIndex += 1
@@ -154,6 +160,17 @@ class SurveyViewController: UIPageViewController,
         }
     }
     
+    /// Flip the page only if the provided cell is the last cell in the current fragment and all questions in the current fragment are completed. Needs to be called before focus().
+    func flipPageIfNeeded(cell: SurveyElementCell) {
+        dataSource = nil
+        dataSource = self
+        if currentFragment.contentCells.last == cell {
+            flipPageIfNeeded()
+        }
+        
+    }
+    
+    /// Flip back to the previous page.
     func previousPage() {
         if fragmentIndex > 0 {
             fragmentIndex -= 1

@@ -10,6 +10,14 @@ import UIKit
 import SwiftyJSON
 
 protocol Question: class, CustomStringConvertible {
+    
+    /**
+     Construct a new `Question` object from the provided data.
+     - Parameters:
+        - json: The JSON that contains all the information that makes up the question.
+        - order: A tuple that gives the index of the question in the survey (# fragment, # question).
+        - fragment: The parent `Fragment` object which the question belongs to.
+     */
     init(json: JSON, order: (Int, Int), fragment: Fragment?)
     
     /// An enum that classifies the question by its response type
@@ -32,13 +40,9 @@ protocol Question: class, CustomStringConvertible {
 
     /// The view of this particular UI element, as displayed to the user.
     func makeContentCell() -> SurveyElementCell
-}
-
-/// Gives default argument for the init method
-extension Question {
-    init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
-        self.init(json: json, order: (1, 1), fragment: fragment)
-    }
+    
+    /// Prepares the user's response for this question as a JSON.
+    var responseJSON: JSON { get }
 }
 
 
@@ -53,6 +57,6 @@ enum ResponseType: String {
     /// Similar to rating question.
     case radioGroup = "radiogroup"
     
-    case consent = "consent" // NOT used for initialization
-    case audio = "audio" // NOT used for initialization
+    case consent = "consent"
+    case audio = "audio"
 }

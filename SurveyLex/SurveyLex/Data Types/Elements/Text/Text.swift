@@ -9,33 +9,19 @@
 import UIKit
 import SwiftyJSON
 
+/// Represents the information about a text response question in a SurveyLex survey.
 class Text: Question, CustomStringConvertible {
-    let title: String
+    
+    // Inherited
+    
     var fragment: Fragment?
     var isRequired = false
-    var completed: Bool {
-        return !response.isEmpty
-    }
-    var response = ""
+
     var parentView: SurveyViewController?
     var order: (fragment: Int, question: Int)
     
-    required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
-        let dictionary = json.dictionaryValue
-        
-        guard let title = dictionary["title"]?.string else {
-            print(json)
-            preconditionFailure("Malformed text question")
-        }
-        
-        if let isRequired = dictionary["isRequired"]?.boolValue {
-            self.isRequired = isRequired
-        }
-        self.title = title
-        self.fragment = fragment
-        self.order = order
-        
-        self.isRequired = false // debugging
+    var completed: Bool {
+        return isRequired ? !response.isEmpty : true
     }
     
     var type: ResponseType {
@@ -50,9 +36,39 @@ class Text: Question, CustomStringConvertible {
         return TextCell(textQuestion: self)
     }
     
+    var responseJSON: JSON {
+        return JSON() // Need to be replaced
+    }
     
-    @objc private func dismissKeyboard(_ sender: UITextField) {
-        sender.endEditing(true)
+    // Custom instance variables
+    
+    /// The prompt for the text response question.
+    let title: String
+    
+    /// The response inputted by the user.
+    var response = ""
+    
+    /**
+     Construct a new text response question from the provided data.
+     - Parameters:
+        - json: The JSON that contains all the information for the text response question.
+        - order: A tuple that gives the index of the question in the survey (# fragment, # question).
+        - fragment: The parent `Fragment` object which the text response question belongs to.
+     */
+    required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
+        let dictionary = json.dictionaryValue
+        
+        guard let title = dictionary["title"]?.string else {
+            print(json)
+            preconditionFailure("Malformed text question")
+        }
+        
+        if let isRequired = dictionary["isRequired"]?.boolValue {
+            self.isRequired = isRequired
+        }
+        self.title = title
+        self.fragment = fragment
+        self.order = order
     }
 
     

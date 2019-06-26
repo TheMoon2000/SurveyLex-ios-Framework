@@ -8,18 +8,32 @@
 
 import UIKit
 
+/// A subclass of `SurveyElementCell` that displays an audio response question.
 class AudioResponseCell: SurveyElementCell, RecordingDelegate {
+    
+    /// A pointer to the skip button located below the record button.
     var skipButton: UIButton!
+    
+    /// The `Audio` instance which the current cell is presenting.
     var audioQuestion: Audio!
+    
+    /// A pointer to the record button.
     var recordButton: RecordButton!
+    
+    /// the `UILabel` under the record button.
     var finishMessage: UILabel!
+    
+    /// The `UILabel` for the audio response question.
     private var titleLabel: UILabel!
     
+    /// The title of the audio response question.
     var title = "Audio question" {
         didSet {
             titleLabel.attributedText = TextFormatter.formatted(title, type: .title)
         }
     }
+    
+    /// The URL where the audio file will be saved.
     var saveURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("tmp.m4a") {
         didSet {
             recordButton.recorder = Recorder(fileURL: saveURL)
@@ -30,7 +44,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         super.init(coder: aDecoder)
     }
     
-    /// Initialize an audio response table cell.
+    /// Initialize an audio response cell.
     required init(audioQuestion: Audio) {
         super.init()
         self.backgroundColor = .white
@@ -95,9 +109,13 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         skip.bottomAnchor.constraint(equalTo: bottomAnchor,
                                      constant: -45).isActive = true
         skip.isHidden = audioQuestion.isRequired
-        skip.addTarget(audioQuestion, action: #selector(audioQuestion.flipPage), for: .touchUpInside)
+        skip.addTarget(audioQuestion, action: #selector(flip), for: .touchUpInside)
         
         return skip
+    }
+    
+    @objc private func flip() {
+        audioQuestion.parentView?.flipPageIfNeeded()
     }
     
     /// UI setup (4).
@@ -144,7 +162,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
             // This is the only place where the audio question's `completion` property is set to true.
             audioQuestion.completed = true
             
-            // Flip the page to the next question is there is one.
+            // Flip the page if the next page exists.
             audioQuestion.parentView?.flipPageIfNeeded()
             
             // Let the new title of the recording button be “Again”.
@@ -176,7 +194,6 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         } else {
            
             // Called when the duration is shorter than 2 seconds
-            
             recordButton.setTitle("Record", for: .normal)
             audioQuestion.completed = false
             if audioQuestion.isRequired {

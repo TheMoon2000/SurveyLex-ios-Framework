@@ -8,11 +8,15 @@
 
 import UIKit
 
+/// A subclass of `SurveyElementCell` that displays a consent form.
 class ConsentCell: SurveyElementCell {
+    
+    let AGREE_PRESSED = UIColor(red: 0.39, green: 0.59, blue: 0.88, alpha: 1)
     
     var consentInfo: Consent!
     private var title: UITextView!
     private var separator: UIView!
+    private var bottomSeparator: UIView!
     private var consentText: UITextView!
     private var agreeButton: UIButton!
 
@@ -25,8 +29,9 @@ class ConsentCell: SurveyElementCell {
         selectionStyle = .none
         
         title = makeTitle()
-        separator = makeSeparator()
+        separator = makeSeparator(top: true)
         consentText = makeConsentText()
+        bottomSeparator = makeSeparator(top: false)
         agreeButton = makeAgreeButton()
     }
     
@@ -51,7 +56,7 @@ class ConsentCell: SurveyElementCell {
         return titleText
     }
     
-    private func makeSeparator() -> UIView {
+    private func makeSeparator(top: Bool) -> UIView {
         let separatorLine = UIView()
         separatorLine.backgroundColor = UIColor(white: 0.8, alpha: 1)
         separatorLine.translatesAutoresizingMaskIntoConstraints = false
@@ -60,8 +65,13 @@ class ConsentCell: SurveyElementCell {
         separatorLine.heightAnchor.constraint(equalToConstant: 1).isActive = true
         separatorLine.widthAnchor.constraint(equalToConstant: 60).isActive = true
         separatorLine.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
-        separatorLine.topAnchor.constraint(equalTo: title.bottomAnchor,
-                                           constant: 20).isActive = true
+        if top {
+            separatorLine.topAnchor.constraint(equalTo: title.bottomAnchor,
+                                               constant: 20).isActive = true
+        } else {
+            separatorLine.topAnchor.constraint(equalTo: consentText.bottomAnchor,
+                                               constant: 20).isActive = true
+        }
         
         return separatorLine
     }
@@ -115,7 +125,7 @@ class ConsentCell: SurveyElementCell {
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {
-        sender.backgroundColor = consentInfo.AGREE_PRESSED
+        sender.backgroundColor = AGREE_PRESSED
     }
     
     @objc private func buttonLifted(_ sender: UIButton) {

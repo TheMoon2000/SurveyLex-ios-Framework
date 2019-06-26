@@ -9,18 +9,51 @@
 import UIKit
 import SwiftyJSON
 
+/// Represents the information for a consent form in a SurveyLex survey.
 class Consent: Question, CustomStringConvertible {
-    let title: String
+    
+    // Inherited
+    
     var fragment: Fragment?
-    var consentText = ""
     var completed = false
-    let prompt: String
     var parentView: SurveyViewController?
     var isRequired = true
     var order: (fragment: Int, question: Int)
     
-    let AGREE_PRESSED = UIColor(red: 0.39, green: 0.59, blue: 0.88, alpha: 1)
+    var type: ResponseType {
+        return .consent
+    }
     
+    var description: String {
+        return "Consent form <\(title)>"
+    }
+    
+    func makeContentCell() -> SurveyElementCell {
+        return ConsentCell(consent: self)
+    }
+    
+    var responseJSON: JSON {
+        return JSON() // Need to be replaced
+    }
+    
+    // Custom instance variables
+    
+    /// The title of the consent form.
+    let title: String
+    
+    /// A raw text representation of the body of the consent form.
+    let consentText: String
+    
+    /// The prompt for the consent form.
+    let prompt: String
+    
+    /**
+     Construct a new consent form from the provided data.
+     - Parameters:
+        -  json: The JSON that contains all the information that makes up the consent form.
+        - order: A tuple that gives the index of the form in the survey (# fragment, # element), although it won't be displayed.
+        - fragment: The parent `Fragment` object which the consent form belongs to.
+     */
     required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
@@ -41,19 +74,6 @@ class Consent: Question, CustomStringConvertible {
         self.prompt = prompt
         self.fragment = fragment
         self.order = order
-    }
-    
-    
-    var type: ResponseType {
-        return .consent
-    }
-    
-    var description: String {
-        return "Consent form <\(title)>"
-    }
-    
-    func makeContentCell() -> SurveyElementCell {
-        return ConsentCell(consent: self)
     }
     
 }

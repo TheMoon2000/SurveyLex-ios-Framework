@@ -9,19 +9,47 @@
 import UIKit
 import SwiftyJSON
 
-/// Represents an audio response question as a survey element. One single audio response takes up an entire fragment.
+/// Represents the information for an audio question in a SurveyLex survey. One single audio response takes up an entire `Fragment`.
 class Audio: Question, CustomStringConvertible {
     
-    let prompt: String
+    // Inherited
+    
     var fragment: Fragment?
     var isRequired = true
     var completed = false
-    var duration = 30.0 // Length of the audio response
-    var fragmentId = "default"
     var parentView: SurveyViewController?
-    private var lengthOfMostRecentRecording = 0.0
     var order: (fragment: Int, question: Int)
     
+    var type: ResponseType {
+        return .audio
+    }
+    
+    var description: String {
+        return "Audio question: <\(prompt)>"
+    }
+    
+    var responseJSON: JSON {
+        return JSON() // Need to be replaced
+    }
+    
+    // Custom instance variables
+    
+    /// The prompt of the audio question.
+    let prompt: String
+
+    /// The max length of the audio response.
+    var duration = 30.0
+    
+    /// Self-explanatory.
+    private var lengthOfMostRecentRecording = 0.0
+
+    /**
+     Construct a new audio response question from the provided data.
+     - Parameters:
+        - json: The JSON that contains all the information that makes up the audio response question.
+        - order: A tuple that gives the index of the question in the survey (# fragment, # question).
+        - fragment: The parent `Fragment` object which the question belongs to.
+     */
     required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
@@ -30,21 +58,18 @@ class Audio: Question, CustomStringConvertible {
             preconditionFailure("Malformed text question")
         }
         
+        if let duration = dictionary["maxLength"]?.double {
+            self.duration = duration
+        }
+        
         if let isRequired = dictionary["isRequired"]?.boolValue {
             self.isRequired = isRequired
         }
         
+        
         self.prompt = prompt
         self.fragment = fragment
         self.order = order
-    }
-    
-    var type: ResponseType {
-        return .audio
-    }
-    
-    var description: String {
-        return "Audio question: <\(prompt)>"
     }
     
     func makeContentCell() -> SurveyElementCell {
@@ -60,7 +85,7 @@ class Audio: Question, CustomStringConvertible {
             preconditionFailure("No write permission to write audio.")
         }
         
-        cell.saveURL = url.appendingPathComponent(fragmentId /* + ".m4a" */)
+        cell.saveURL = url.appendingPathComponent(fragment!.id)
         
         
         return cell
@@ -93,11 +118,6 @@ class Audio: Question, CustomStringConvertible {
             alert.addAction(UIAlertAction(title: "Try Again", style: .default, handler: nil))
             parentView?.present(alert, animated: true, completion: nil)
         }
-    }
-    
-    
-    @objc func flipPage() {
-        parentView?.flipPageIfNeeded()
     }
     
 }

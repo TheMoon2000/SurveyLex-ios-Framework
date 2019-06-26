@@ -5,10 +5,11 @@
 //  Created by Jia Rui Shan on 2019/5/10.
 //  Copyright © 2019 UC Berkeley. All rights reserved.
 //
-//  A UINavigationController wrapper, created mainly for future uses
+
 
 import UIKit
 
+/// A UINavigationController wrapper, allowing full customization of the navigation bar.
 class SurveyNavigationController: UINavigationController {
 
     override func viewDidLoad() {

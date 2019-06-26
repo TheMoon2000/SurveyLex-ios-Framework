@@ -13,7 +13,6 @@ class SurveyElementCell: UITableViewCell {
     /// Reference to the Fragment Table View Controller that displays the current survey element.
     var surveyPage: FragmentTableController?
     
-    private(set) var isCurrentQuestion = false
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -25,13 +24,13 @@ class SurveyElementCell: UITableViewCell {
         selectionStyle = .none
     }
     
+    /// Focus the cell by initiating a series of visual changes.
     func focus() {
-        isCurrentQuestion = true
         subviews.forEach { $0.alpha = 1.0 }
     }
     
+    /// Unfocus the cell by initiating a series of visual changes.
     func unfocus() {
-        isCurrentQuestion = false
         subviews.forEach { $0.alpha = UNFOCUSED_ALPHA }
     }
 

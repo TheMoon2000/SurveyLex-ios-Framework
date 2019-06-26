@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A set of required methods that handle recording events.
 protocol RecordingDelegate {
     
     /// Called when recording has begun.

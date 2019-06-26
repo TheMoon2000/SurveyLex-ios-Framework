@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Handles events for a survey presentation.
 public protocol SurveyResponseDelegate {
     
     /// Called when the `Survey` instance established a connection to the server and retrieved all necessary information about the survey.

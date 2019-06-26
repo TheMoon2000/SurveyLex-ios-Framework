@@ -12,21 +12,28 @@ import SwiftyJSON
 /// An interactive interface that presents a survey (powered by SurveyLex) for the user to fill.
 public class Survey {
     
-    /// The NeuroLex API URL prefix
+    /// The NeuroLex SurveyLex API URL prefix.
     private static let BASE_URL = "https://api.neurolex.ai/1.0/object/surveys/taker/"
     
+    /// The survey ID as a uuid string.
     private(set) var surveyID = ""
+    
+    /// Whether a `URLSession` task is already running.
     private var isAlreadyLoading = false
-    private var targetVC: UIViewController?
+    
+    /// The view controller that will present the survey when `present()` is called.
+    public var targetVC: UIViewController?
     private(set) var surveyData: SurveyData?
     
+    /// Optional delegate that handles survey responses.
     public var delegate: SurveyResponseDelegate?
     
     /**
-     Initializes a new `Survey` front-end by providing a JSON data source.
+     Initializes a new `Survey` front-end by providing a JSON data source. **This constructor is not recommended**.
     
      - Parameters:
         - json: The input json source object to display.
+        - target: The UIViewController that will present the survey.
      */
     public init(json: JSON, target: UIViewController) {
         self.surveyData = try! SurveyData(json: json)
@@ -46,6 +53,11 @@ public class Survey {
         self.targetVC = target
     }
     
+    /**
+     A private helper method that loads the survey JSON from the API and executes a block of code upon completion.
+     - Parameters:
+        - completion: The code that gets executed after the `URLRequest` has returned a response.
+     */
     
     private func load(_ completion: @escaping () -> ()) {
         if isAlreadyLoading { return } // An instance is already running
@@ -110,8 +122,7 @@ public class Survey {
         self.load { self.present() }
     }
 
-    
-    /// Present the survey, provided that is has been loaded from the server.
+    /// Present the survey to `target`, provided that is has been loaded from the server.
     public func present() {
         
         guard surveyData != nil else {

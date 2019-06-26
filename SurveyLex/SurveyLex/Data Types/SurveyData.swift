@@ -11,14 +11,22 @@ import SwiftyJSON
 
 /// The root class of survey elements, which encapsulates the data for an entire survey form. A `SurveyData` object contains a list of `Fragment`s.
 public class SurveyData: CustomStringConvertible {
+    
+    /// The title of the survey.
     let title: String
     // let creator: String
+    
+    /// The uuid of the survey.
     let surveyId: String
+    
+    /// Whether the survey is published.
     let published: Bool
+    
+    /// An array of survey fragments, each representing a page of the survey.
     var fragments = [Fragment]()
     
     /// Creates a new survey form using a JSON summary of the survey.
-    public init(json: JSON) throws {
+    required public init(json: JSON) throws {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,
@@ -29,7 +37,6 @@ public class SurveyData: CustomStringConvertible {
         else {
             print("Error parsing JSON survey data:", dictionary)
             throw Errors.invalid
-//            preconditionFailure("Malformed survey data")
         }
         
         self.title = title
@@ -43,15 +50,7 @@ public class SurveyData: CustomStringConvertible {
         }
     }
     
-    /// Constructs a blank SurveyData object
-    public init() {
-        self.title = ""
-        self.surveyId = ""
-        self.published = false
-        // self.creator = ""
-    }
-    
-    /// Customized description that is more debug-friendly
+    /// Customized description that is more debug-friendly.
     public var description: String {
         let idParts = surveyId.components(separatedBy: "-")
         let fragmentDescription = fragments.map {
@@ -63,7 +62,10 @@ public class SurveyData: CustomStringConvertible {
 }
 
 extension SurveyData {
+    /// All types errors that could be thrown from a failed SurveyData instantiation.
     enum Errors: Error {
+        
+        /// The provided JSON does not contain all the necessary attributes for a SurveyLex survey.
         case invalid
     }
 }

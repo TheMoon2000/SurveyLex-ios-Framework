@@ -9,20 +9,52 @@
 import UIKit
 import SwiftyJSON
 
+/// Represents the information for a radio group question in a SurveyLex survey.
 class RadioGroup: Question, CustomStringConvertible {
-    let title: String
+    
+    // Inherited
+    
     var fragment: Fragment?
-    let choices: [String]
     var isRequired = false
-    var completed = false {
-        didSet {
-            parentView?.flipPageIfNeeded()
-        }
-    }
-    var selection = -1
+    var completed = false
     var parentView: SurveyViewController?
     var order: (fragment: Int, question: Int)
     
+    var type: ResponseType {
+        return .radioGroup
+    }
+    
+    var description: String {
+        return "Radio group: <" + choices.map {$0.description}.joined(separator: ", ") + ">"
+    }
+    
+    func makeContentCell() -> SurveyElementCell {
+        return RadioGroupCell(radioGroup: self)
+    }
+    
+    var responseJSON: JSON {
+        return JSON() // Need to be replaced
+    }
+    
+    // Custom instance variables
+    
+    /// The title of the radio group question.
+    let title: String
+
+    /// The choices available for the user to choose from in this radio group question.
+    let choices: [String]
+    
+    /// The index of the current selection. -1 means nothing is selected.
+    var selection = -1
+    
+    
+    /**
+     Construct a new `RadioGroup` question from the provided data.
+     - Parameters:
+        - json: The JSON that contains all the information that makes up the radio group.
+        - order: A tuple that gives the index of the question in the survey (# fragment, # question).
+        - fragment: The parent `Fragment` object which the radio group belongs to.
+     */
     required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
@@ -41,18 +73,6 @@ class RadioGroup: Question, CustomStringConvertible {
         self.choices = questionData
         self.fragment = fragment
         self.order = order
-    }
-    
-    var type: ResponseType {
-        return .radioGroup
-    }
-    
-    var description: String {
-        return "Radio group: <" + choices.map {$0.description}.joined(separator: ", ") + ">"
-    }
-    
-    func makeContentCell() -> SurveyElementCell {
-        return RadioGroupCell(radioGroup: self)
     }
 
 }

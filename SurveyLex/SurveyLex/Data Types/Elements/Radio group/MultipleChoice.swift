@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A table view embedded in a `RadioGroupCell`.
 class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSource {
 
     var responseDelegate: RatingResponseDelegate?

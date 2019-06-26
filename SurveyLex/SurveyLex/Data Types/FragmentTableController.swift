@@ -11,12 +11,19 @@ import UIKit
 /// A subclass of `UITableViewController` designed to present a single survey fragment (page).
 class FragmentTableController: UITableViewController {
     
+    /// The native `Fragment` representation of the content of this fragment.
     var fragmentData: Fragment!
-    var surveyViewController: SurveyViewController?
-    var contentCells = [SurveyElementCell]()
-    var completed = false
     
+    /// The parent `SurveyViewController` which will display this fragment as one of its pages.
+    var surveyViewController: SurveyViewController?
+    
+    /// An array of `SurveyElementCell`s in order, each representing a survey element in the fragment.
+    var contentCells = [SurveyElementCell]()
+
+    /// A helper variable that controls whether updates to `focusedRow` will trigger any side effects.
     private var focusedRowResponse = true
+    
+    /// The index of the row that is currently focused, as seen by the user.
     var focusedRow = -1 {
         didSet (oldValue) {
             if !focusedRowResponse { return }
@@ -35,7 +42,7 @@ class FragmentTableController: UITableViewController {
                 }
                 if let cell = tableView.cellForRow(at: index) as? SurveyElementCell {
                     UIView.animate(withDuration: 0.2) { cell.focus() }
-                } else if focusedRow >= tableView.numberOfRows(inSection: 0) && completed {
+                } else if focusedRow >= tableView.numberOfRows(inSection: 0) && allCompleted {
                     focusedRowResponse = false
                     focusedRow = oldValue
                     focusedRowResponse = true
@@ -57,25 +64,33 @@ class FragmentTableController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !completed {
+        if !surveyViewController!.visitedFragments.contains(self) {
+            surveyViewController?.visitedFragments.insert(self)
             DispatchQueue.main.async {
                 self.focusedRow = 0
+            }
+        } else if fragmentData.questions.count == 1 {
+            DispatchQueue.main.async {
+                self.focusedRow = 0
+            }
+        } else if focusedRow != -1 {
+            DispatchQueue.main.async {
+                self.contentCells[self.focusedRow].focus()
             }
         }
     }
     
-    /**
-     A boolean array with the completion status of each survey element. This information is distributed to individual survey elements.
-     */
+     /// A boolean array with the completion status of each survey element. This information is distributed to individual survey elements.
     private var completion: [(completed: Bool, required: Bool)] {
         return fragmentData.questions.map { ($0.completed, $0.isRequired) }
     }
     
-    /// Whether the user can swipe right and proceed with the next page.
+    /// Whether the user can swipe right and proceed with the next page. That is, all the required questions have been completed.
     var unlocked: Bool {
         return !fragmentData.questions.contains { !$0.completed && $0.isRequired }
     }
     
+    /// Whether all questions (required and optional) are completed by the user.
     var allCompleted: Bool {
         return !fragmentData.questions.contains { !$0.completed }
     }
@@ -142,15 +157,11 @@ class FragmentTableController: UITableViewController {
         return contentCells[indexPath.row]
     }
     
-    func updateCompletionStatusByQuestions() {
-        self.completed = unlocked
-    }
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         focusedRow = indexPath.row
     }
     
-    /// Fixes the bug with device rotation by resetting the content offset
+    /// Fixes the bug with device rotation by resetting the content offset.
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         let spaceBelow = tableView.contentSize.height - tableView.contentOffset.y
         let upwardOffset = max(0, size.height - spaceBelow)

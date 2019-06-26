@@ -8,10 +8,16 @@
 
 import UIKit
 
+/// A subclass of SurveyElementCell that displays a text response question.
 class TextCell: SurveyElementCell, UITextFieldDelegate {
     
-    var textQuestion: Text!
-    var title: UITextView!
+    /// The `Text` instance which the current cell is presenting.
+    private(set) var textQuestion: Text!
+    
+    /// The text view for the title of the text question.
+    private var title: UITextView!
+    
+    /// The text field where the user inputs their text response.
     var textfield: UITextField!
 
     required init?(coder aDecoder: NSCoder) {
@@ -31,7 +37,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         let numbered = "\(textQuestion.order.fragment).\(textQuestion.order.question) " + textQuestion.title
         textView.attributedText = TextFormatter.formatted(numbered, type: .title)
         textView.textAlignment = .left
-        textView.textColor = .gray
+        textView.textColor = .darkGray
         textView.isUserInteractionEnabled = false
         textView.dataDetectorTypes = .link
         textView.linkTextAttributes[.foregroundColor] = BLUE_TINT
@@ -88,7 +94,12 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         surveyPage?.focus(cell: self)
     }
     
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textQuestion.response = textField.text!
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textQuestion.parentView?.flipPageIfNeeded(cell: self)
         self.surveyPage?.focusedRow += 1
         return true
     }
@@ -103,7 +114,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     override func unfocus() {
         super.unfocus()
-        title.textColor = .gray
+        title.textColor = .darkGray
         textfield.delegate = nil
         textfield.resignFirstResponder()
         textfield.delegate = self

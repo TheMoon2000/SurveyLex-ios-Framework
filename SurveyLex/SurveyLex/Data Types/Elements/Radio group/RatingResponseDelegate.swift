@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A set of required methods that handle a rating event.
 protocol RatingResponseDelegate {
     func didSelectRow(row: Int)
 }
