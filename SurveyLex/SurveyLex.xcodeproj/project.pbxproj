@@ -32,11 +32,10 @@
 		CC55C632228C79D4002BF123 /* MultipleChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC55C631228C79D4002BF123 /* MultipleChoice.swift */; };
 		CC588D13228C84B600665D00 /* RadioCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC588D12228C84B600665D00 /* RadioCircle.swift */; };
 		CC588D15228CB85C00665D00 /* RatingResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC588D14228CB85C00665D00 /* RatingResponseDelegate.swift */; };
-		CC62604F22BAB78900499DFC /* EditableTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC62604E22BAB78900499DFC /* EditableTextCell.swift */; };
+		CC7D7C8322C3EE6500DDD3B3 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7C8222C3EE6500DDD3B3 /* Checkbox.swift */; };
 		CC90E804228A7CC40040F990 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC90E803228A7CC40040F990 /* Recorder.swift */; };
 		CC90E806228A7CC70040F990 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC90E805228A7CC70040F990 /* RecordButton.swift */; };
 		CCC3812E228E1F24003864A5 /* SurveyResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC3812D228E1F24003864A5 /* SurveyResponseDelegate.swift */; };
-		CCC38130228E486E003864A5 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC3812F228E486E003864A5 /* SwiftyJSON.framework */; };
 		CCC38132228E48B2003864A5 /* QuestionElementsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BAC22854C7400B5D8C9 /* QuestionElementsTest.swift */; };
 		CCC824EC22BBE29B00FFD251 /* MultipleChoiceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC824EB22BBE29B00FFD251 /* MultipleChoiceCell.swift */; };
 		CCC824F022BC080000FFD251 /* RatingSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC824EF22BC080000FFD251 /* RatingSliderCell.swift */; };
@@ -89,7 +88,8 @@
 		CC55C631228C79D4002BF123 /* MultipleChoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleChoice.swift; sourceTree = "<group>"; };
 		CC588D12228C84B600665D00 /* RadioCircle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioCircle.swift; sourceTree = "<group>"; };
 		CC588D14228CB85C00665D00 /* RatingResponseDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingResponseDelegate.swift; sourceTree = "<group>"; };
-		CC62604E22BAB78900499DFC /* EditableTextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditableTextCell.swift; sourceTree = "<group>"; };
+		CC7D7C8022C3EBD900DDD3B3 /* Down.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Down.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC7D7C8222C3EE6500DDD3B3 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		CC90E803228A7CC40040F990 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		CC90E805228A7CC70040F990 /* RecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
 		CCC3812D228E1F24003864A5 /* SurveyResponseDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyResponseDelegate.swift; sourceTree = "<group>"; };
@@ -106,7 +106,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCC38130228E486E003864A5 /* SwiftyJSON.framework in Frameworks */,
 				574FB97B3F483D76F4B281E5 /* Pods_SurveyLex.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,6 +206,7 @@
 		CC527EA922BF2A72002FC179 /* Consent */ = {
 			isa = PBXGroup;
 			children = (
+				CC7D7C8222C3EE6500DDD3B3 /* Checkbox.swift */,
 				CC333BCE2286020100B5D8C9 /* Consent.swift */,
 				CC527EAA22BF2A99002FC179 /* ConsentCell.swift */,
 			);
@@ -231,7 +231,6 @@
 			children = (
 				CC333BC92285505000B5D8C9 /* Text.swift */,
 				CC527EA522BF2164002FC179 /* TextCell.swift */,
-				CC62604E22BAB78900499DFC /* EditableTextCell.swift */,
 			);
 			path = Text;
 			sourceTree = "<group>";
@@ -260,6 +259,7 @@
 		CCE1E681228659740011D142 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC7D7C8022C3EBD900DDD3B3 /* Down.framework */,
 				CCC3812F228E486E003864A5 /* SwiftyJSON.framework */,
 				578DB5898550851207D6EA80 /* Pods_SurveyLex.framework */,
 				39C87D2EF893B02158465308 /* Pods_SurveyLexTests.framework */,
@@ -466,7 +466,6 @@
 				CC588D15228CB85C00665D00 /* RatingResponseDelegate.swift in Sources */,
 				CCC3812E228E1F24003864A5 /* SurveyResponseDelegate.swift in Sources */,
 				CC55C632228C79D4002BF123 /* MultipleChoice.swift in Sources */,
-				CC62604F22BAB78900499DFC /* EditableTextCell.swift in Sources */,
 				CC333BCD2285F34500B5D8C9 /* Rating.swift in Sources */,
 				CCC824F022BC080000FFD251 /* RatingSliderCell.swift in Sources */,
 				CCE1E69222867BB70011D142 /* SurveyNavigationController.swift in Sources */,
@@ -477,6 +476,7 @@
 				CC333BCA2285505000B5D8C9 /* Text.swift in Sources */,
 				CCFAC9AC228D343500F92CB4 /* AudioResponseCellTableViewCell.swift in Sources */,
 				CC527EAD22BFC4CB002FC179 /* RadioGroupCell.swift in Sources */,
+				CC7D7C8322C3EE6500DDD3B3 /* Checkbox.swift in Sources */,
 				CC527EAB22BF2A99002FC179 /* ConsentCell.swift in Sources */,
 				CC527EA822BF2231002FC179 /* SurveyElementCell.swift in Sources */,
 				CC333BC322854DB900B5D8C9 /* Fragment.swift in Sources */,

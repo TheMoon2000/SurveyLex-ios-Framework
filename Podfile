@@ -19,6 +19,7 @@ target 'SurveyLex' do
   project 'SurveyLex/SurveyLex.xcodeproj'
   use_frameworks!
   pod 'SwiftyJSON'
+  # pod 'Down'
 end
 
 target 'SurveyLexTests' do
