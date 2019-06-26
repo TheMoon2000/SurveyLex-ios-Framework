@@ -19,6 +19,8 @@ class ConsentCell: SurveyElementCell {
     private var bottomSeparator: UIView!
     private var consentText: UITextView!
     private var agreeButton: UIButton!
+    private var checkbox: Checkbox!
+    private var prompt: UITextView!
 
     init(consent: Consent) {
         super.init()
@@ -32,7 +34,11 @@ class ConsentCell: SurveyElementCell {
         separator = makeSeparator(top: true)
         consentText = makeConsentText()
         bottomSeparator = makeSeparator(top: false)
+        checkbox = makeCheckbox()
+        prompt = makePromptText()
         agreeButton = makeAgreeButton()
+        
+        checkboxPressed()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -97,6 +103,51 @@ class ConsentCell: SurveyElementCell {
         return consent
     }
     
+    private func makeCheckbox() -> Checkbox {
+        let check = Checkbox()
+        check.checkmarkStyle = .square
+        check.borderStyle = .square
+        check.borderWidth = 1.5
+        check.checkmarkSize = 0.56
+        check.checkmarkColor = BLUE_TINT
+        check.checkedBorderColor = DISABLED_BLUE
+        check.uncheckedBorderColor = .init(white: 0.87, alpha: 1)
+        check.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(check)
+        
+        check.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        check.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        check.leftAnchor.constraint(equalTo: consentText.leftAnchor,
+                                    constant: 1).isActive = true
+        check.topAnchor.constraint(equalTo: bottomSeparator.bottomAnchor,
+                                   constant: 22).isActive = true
+        
+        check.addTarget(self, action: #selector(checkboxPressed), for: .valueChanged)
+        
+        return check
+    }
+    
+    private func makePromptText() -> UITextView {
+        let prompt = UITextView()
+        prompt.attributedText = TextFormatter.formatted(consentInfo.prompt,
+                                                        type: .subtitle)
+        prompt.isScrollEnabled = false
+        prompt.isEditable = false
+        prompt.dataDetectorTypes = .link
+        prompt.linkTextAttributes[.foregroundColor] = BLUE_TINT
+        prompt.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(prompt)
+        
+        prompt.topAnchor.constraint(equalTo: checkbox.topAnchor,
+                                    constant: -8.5).isActive = true
+        prompt.leftAnchor.constraint(equalTo: checkbox.rightAnchor,
+                                     constant: 15).isActive = true
+        prompt.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
+                                      constant: -40).isActive = true
+        
+        return prompt
+    }
+    
     private func makeAgreeButton() -> UIButton {
         let button = UIButton()
         button.setTitle("Agree & Continue", for: .normal)
@@ -105,7 +156,7 @@ class ConsentCell: SurveyElementCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(.white, for: .normal)
         button.heightAnchor.constraint(equalToConstant: 49).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 210).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 220).isActive = true
         
         button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
         button.addTarget(self,
@@ -116,12 +167,24 @@ class ConsentCell: SurveyElementCell {
         addSubview(button)
         
         button.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
-        button.topAnchor.constraint(equalTo: consentText.bottomAnchor,
+        button.topAnchor.constraint(equalTo: prompt.bottomAnchor,
                                     constant: 32).isActive = true
         button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
                                        constant: -40).isActive = true
         
         return button
+    }
+    
+    @objc private func checkboxPressed() {
+        if checkbox.isChecked {
+            agreeButton.isEnabled = true
+            agreeButton.backgroundColor = BLUE_TINT
+        } else {
+            agreeButton.isEnabled = false
+            agreeButton.backgroundColor = DISABLED_BLUE
+        }
+        consentInfo.completed = checkbox.isChecked
+        consentInfo.parentView?.reloadDatasource()
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {

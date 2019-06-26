@@ -11,7 +11,7 @@ import UIKit
 class TextFormatter {
     
     enum TextType {
-        case title, consentText, body
+        case title, consentText, body, subtitle
     }
     
     static func formatted(_ string: String, type: TextType) -> NSAttributedString {
@@ -36,16 +36,21 @@ class TextFormatter {
 
         let pgStyle = NSMutableParagraphStyle()
         pgStyle.lineSpacing = 3
-        pgStyle.alignment = .center
         
         var attributes = [NSAttributedString.Key : Any]()
         switch type {
         case .body:
             attributes[.font] = UIFont.systemFont(ofSize: 19, weight: .regular)
+            pgStyle.alignment = .left
         case .consentText:
             attributes[.font] = UIFont.systemFont(ofSize: 17)
+            pgStyle.alignment = .left
+        case .subtitle:
+            attributes[.font] = UIFont.systemFont(ofSize: 16)
+            pgStyle.alignment = .left
         case .title:
             attributes[.font] = UIFont.systemFont(ofSize: 22, weight: .medium)
+            pgStyle.alignment = .center
         }
         
         attrTxt.addAttributes(attributes, range: NSMakeRange(0, newString.count))
