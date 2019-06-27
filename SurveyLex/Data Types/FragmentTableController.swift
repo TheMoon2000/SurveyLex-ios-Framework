@@ -68,9 +68,10 @@ class FragmentTableController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        print("appeared")
         if !surveyViewController!.visitedFragments.contains(self) {
             surveyViewController?.visitedFragments.insert(self)
-            DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 self.focusedRow = 0
             }
         } else if fragmentData.questions.count == 1 {
