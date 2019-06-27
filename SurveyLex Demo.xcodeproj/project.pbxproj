@@ -8,10 +8,79 @@
 
 /* Begin PBXBuildFile section */
 		39736DE68188A44E97FA2F5C /* Pods_SurveyLex_Demo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 953F6676BCD8B7E2133D6C2F /* Pods_SurveyLex_Demo.framework */; };
+		A4E389BC286686E8478C1CA4 /* Pods_SurveyLexTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F992643D83FC55C478001582 /* Pods_SurveyLexTests.framework */; };
 		CC333BFF2286528500B5D8C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BFE2286528500B5D8C9 /* AppDelegate.swift */; };
 		CC333C042286528500B5D8C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC333C022286528500B5D8C9 /* Main.storyboard */; };
 		CC333C062286528700B5D8C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC333C052286528700B5D8C9 /* Assets.xcassets */; };
 		CC333C092286528700B5D8C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC333C072286528700B5D8C9 /* LaunchScreen.storyboard */; };
+		CC7D7D1522C44F6000DDD3B3 /* SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC7D7D0C22C44F6000DDD3B3 /* SurveyLex.framework */; };
+		CC7D7D1C22C44F6000DDD3B3 /* SurveyLexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D1B22C44F6000DDD3B3 /* SurveyLexTests.swift */; };
+		CC7D7D1E22C44F6000DDD3B3 /* SurveyLex.h in Headers */ = {isa = PBXBuildFile; fileRef = CC7D7D0E22C44F6000DDD3B3 /* SurveyLex.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CC7D7D2122C44F6000DDD3B3 /* SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC7D7D0C22C44F6000DDD3B3 /* SurveyLex.framework */; };
+		CC7D7D2222C44F6000DDD3B3 /* SurveyLex.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC7D7D0C22C44F6000DDD3B3 /* SurveyLex.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CC7D7D2F22C44FA700DDD3B3 /* SurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D2D22C44FA700DDD3B3 /* SurveyViewController.swift */; };
+		CC7D7D3022C44FA700DDD3B3 /* SurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D2D22C44FA700DDD3B3 /* SurveyViewController.swift */; };
+		CC7D7D3122C44FA700DDD3B3 /* SurveyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D2E22C44FA700DDD3B3 /* SurveyNavigationController.swift */; };
+		CC7D7D3222C44FA700DDD3B3 /* SurveyNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D2E22C44FA700DDD3B3 /* SurveyNavigationController.swift */; };
+		CC7D7D5722C44FB100DDD3B3 /* SurveyElementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3422C44FB100DDD3B3 /* SurveyElementCell.swift */; };
+		CC7D7D5822C44FB100DDD3B3 /* SurveyElementCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3422C44FB100DDD3B3 /* SurveyElementCell.swift */; };
+		CC7D7D5922C44FB100DDD3B3 /* SurveyResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3522C44FB100DDD3B3 /* SurveyResponseDelegate.swift */; };
+		CC7D7D5A22C44FB100DDD3B3 /* SurveyResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3522C44FB100DDD3B3 /* SurveyResponseDelegate.swift */; };
+		CC7D7D5B22C44FB100DDD3B3 /* Survey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3622C44FB100DDD3B3 /* Survey.swift */; };
+		CC7D7D5C22C44FB100DDD3B3 /* Survey.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3622C44FB100DDD3B3 /* Survey.swift */; };
+		CC7D7D5D22C44FB100DDD3B3 /* FragmentTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3722C44FB100DDD3B3 /* FragmentTableController.swift */; };
+		CC7D7D5E22C44FB100DDD3B3 /* FragmentTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3722C44FB100DDD3B3 /* FragmentTableController.swift */; };
+		CC7D7D5F22C44FB100DDD3B3 /* SurveyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3822C44FB100DDD3B3 /* SurveyData.swift */; };
+		CC7D7D6022C44FB100DDD3B3 /* SurveyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3822C44FB100DDD3B3 /* SurveyData.swift */; };
+		CC7D7D6122C44FB100DDD3B3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3A22C44FB100DDD3B3 /* Constants.swift */; };
+		CC7D7D6222C44FB100DDD3B3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3A22C44FB100DDD3B3 /* Constants.swift */; };
+		CC7D7D6322C44FB100DDD3B3 /* RatingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3C22C44FB100DDD3B3 /* RatingCell.swift */; };
+		CC7D7D6422C44FB100DDD3B3 /* RatingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3C22C44FB100DDD3B3 /* RatingCell.swift */; };
+		CC7D7D6522C44FB100DDD3B3 /* RatingTextTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3D22C44FB100DDD3B3 /* RatingTextTable.swift */; };
+		CC7D7D6622C44FB100DDD3B3 /* RatingTextTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3D22C44FB100DDD3B3 /* RatingTextTable.swift */; };
+		CC7D7D6722C44FB100DDD3B3 /* Rating.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3E22C44FB100DDD3B3 /* Rating.swift */; };
+		CC7D7D6822C44FB100DDD3B3 /* Rating.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3E22C44FB100DDD3B3 /* Rating.swift */; };
+		CC7D7D6922C44FB100DDD3B3 /* RatingSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3F22C44FB100DDD3B3 /* RatingSliderCell.swift */; };
+		CC7D7D6A22C44FB100DDD3B3 /* RatingSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D3F22C44FB100DDD3B3 /* RatingSliderCell.swift */; };
+		CC7D7D6B22C44FB100DDD3B3 /* TextFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4022C44FB100DDD3B3 /* TextFormatter.swift */; };
+		CC7D7D6C22C44FB100DDD3B3 /* TextFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4022C44FB100DDD3B3 /* TextFormatter.swift */; };
+		CC7D7D6D22C44FB100DDD3B3 /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4122C44FB100DDD3B3 /* Question.swift */; };
+		CC7D7D6E22C44FB100DDD3B3 /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4122C44FB100DDD3B3 /* Question.swift */; };
+		CC7D7D6F22C44FB100DDD3B3 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4322C44FB100DDD3B3 /* Recorder.swift */; };
+		CC7D7D7022C44FB100DDD3B3 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4322C44FB100DDD3B3 /* Recorder.swift */; };
+		CC7D7D7122C44FB100DDD3B3 /* RecordingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4422C44FB100DDD3B3 /* RecordingDelegate.swift */; };
+		CC7D7D7222C44FB100DDD3B3 /* RecordingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4422C44FB100DDD3B3 /* RecordingDelegate.swift */; };
+		CC7D7D7322C44FB100DDD3B3 /* AudioResponseCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4522C44FB100DDD3B3 /* AudioResponseCellTableViewCell.swift */; };
+		CC7D7D7422C44FB100DDD3B3 /* AudioResponseCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4522C44FB100DDD3B3 /* AudioResponseCellTableViewCell.swift */; };
+		CC7D7D7522C44FB100DDD3B3 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4622C44FB100DDD3B3 /* Audio.swift */; };
+		CC7D7D7622C44FB100DDD3B3 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4622C44FB100DDD3B3 /* Audio.swift */; };
+		CC7D7D7722C44FB100DDD3B3 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4722C44FB100DDD3B3 /* RecordButton.swift */; };
+		CC7D7D7822C44FB100DDD3B3 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4722C44FB100DDD3B3 /* RecordButton.swift */; };
+		CC7D7D7922C44FB100DDD3B3 /* Consent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4922C44FB100DDD3B3 /* Consent.swift */; };
+		CC7D7D7A22C44FB100DDD3B3 /* Consent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4922C44FB100DDD3B3 /* Consent.swift */; };
+		CC7D7D7B22C44FB100DDD3B3 /* ConsentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4A22C44FB100DDD3B3 /* ConsentCell.swift */; };
+		CC7D7D7C22C44FB100DDD3B3 /* ConsentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4A22C44FB100DDD3B3 /* ConsentCell.swift */; };
+		CC7D7D7D22C44FB100DDD3B3 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4B22C44FB100DDD3B3 /* Checkbox.swift */; };
+		CC7D7D7E22C44FB100DDD3B3 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4B22C44FB100DDD3B3 /* Checkbox.swift */; };
+		CC7D7D7F22C44FB100DDD3B3 /* TextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4D22C44FB100DDD3B3 /* TextCell.swift */; };
+		CC7D7D8022C44FB100DDD3B3 /* TextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4D22C44FB100DDD3B3 /* TextCell.swift */; };
+		CC7D7D8122C44FB100DDD3B3 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4E22C44FB100DDD3B3 /* Text.swift */; };
+		CC7D7D8222C44FB100DDD3B3 /* Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4E22C44FB100DDD3B3 /* Text.swift */; };
+		CC7D7D8322C44FB100DDD3B3 /* RadioGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5022C44FB100DDD3B3 /* RadioGroup.swift */; };
+		CC7D7D8422C44FB100DDD3B3 /* RadioGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5022C44FB100DDD3B3 /* RadioGroup.swift */; };
+		CC7D7D8522C44FB100DDD3B3 /* MultipleChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5122C44FB100DDD3B3 /* MultipleChoice.swift */; };
+		CC7D7D8622C44FB100DDD3B3 /* MultipleChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5122C44FB100DDD3B3 /* MultipleChoice.swift */; };
+		CC7D7D8722C44FB100DDD3B3 /* RadioGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5222C44FB100DDD3B3 /* RadioGroupCell.swift */; };
+		CC7D7D8822C44FB100DDD3B3 /* RadioGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5222C44FB100DDD3B3 /* RadioGroupCell.swift */; };
+		CC7D7D8922C44FB100DDD3B3 /* RadioCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5322C44FB100DDD3B3 /* RadioCircle.swift */; };
+		CC7D7D8A22C44FB100DDD3B3 /* RadioCircle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5322C44FB100DDD3B3 /* RadioCircle.swift */; };
+		CC7D7D8B22C44FB100DDD3B3 /* RatingResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5422C44FB100DDD3B3 /* RatingResponseDelegate.swift */; };
+		CC7D7D8C22C44FB100DDD3B3 /* RatingResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5422C44FB100DDD3B3 /* RatingResponseDelegate.swift */; };
+		CC7D7D8D22C44FB100DDD3B3 /* MultipleChoiceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5522C44FB100DDD3B3 /* MultipleChoiceCell.swift */; };
+		CC7D7D8E22C44FB100DDD3B3 /* MultipleChoiceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5522C44FB100DDD3B3 /* MultipleChoiceCell.swift */; };
+		CC7D7D8F22C44FB100DDD3B3 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5622C44FB100DDD3B3 /* Fragment.swift */; };
+		CC7D7D9022C44FB100DDD3B3 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5622C44FB100DDD3B3 /* Fragment.swift */; };
+		CC7D7D9322C44FCF00DDD3B3 /* QuestionElementsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D9122C44FCF00DDD3B3 /* QuestionElementsTest.swift */; };
 		CCE1E653228653500011D142 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E652228653500011D142 /* Constants.swift */; };
 		CCE1E655228653620011D142 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E654228653620011D142 /* Recorder.swift */; };
 		CCE1E657228653690011D142 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E656228653690011D142 /* MainTabBarController.swift */; };
@@ -20,7 +89,32 @@
 		CCE1E65D2286539C0011D142 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE1E65C2286539C0011D142 /* RecordViewController.swift */; };
 		CCE1E68F22867A320011D142 /* SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE1E68D228679880011D142 /* SurveyLex.framework */; };
 		CCE1E69022867A320011D142 /* SurveyLex.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCE1E68D228679880011D142 /* SurveyLex.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E56E2C2F55B7F00AB9BF9EE8 /* Pods_SurveyLex.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3328B7387310869E4069073 /* Pods_SurveyLex.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CC7D7D1622C44F6000DDD3B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC333BF32286528500B5D8C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC7D7D0B22C44F6000DDD3B3;
+			remoteInfo = SurveyLex;
+		};
+		CC7D7D1822C44F6000DDD3B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC333BF32286528500B5D8C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC333BFA2286528500B5D8C9;
+			remoteInfo = "SurveyLex Demo";
+		};
+		CC7D7D1F22C44F6000DDD3B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC333BF32286528500B5D8C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC7D7D0B22C44F6000DDD3B3;
+			remoteInfo = SurveyLex;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		CCE1E665228654F80011D142 /* Embed Frameworks */ = {
@@ -29,6 +123,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CC7D7D2222C44F6000DDD3B3 /* SurveyLex.framework in Embed Frameworks */,
 				CCE1E69022867A320011D142 /* SurveyLex.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -38,14 +133,57 @@
 
 /* Begin PBXFileReference section */
 		1E21BA35407F2DDE6009F4DC /* Pods-SurveyLex Demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex Demo.release.xcconfig"; path = "Pods/Target Support Files/Pods-SurveyLex Demo/Pods-SurveyLex Demo.release.xcconfig"; sourceTree = "<group>"; };
+		34DDA322F3341CB2942B2405 /* Pods-SurveyLex.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SurveyLex/Pods-SurveyLex.debug.xcconfig"; sourceTree = "<group>"; };
 		4FF5A6D7193A47BB0FF3E336 /* Pods-SurveyLex Demo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex Demo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SurveyLex Demo/Pods-SurveyLex Demo.debug.xcconfig"; sourceTree = "<group>"; };
+		50CA91B65C8C5BBBD6AC7E40 /* Pods-SurveyLexTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLexTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests.release.xcconfig"; sourceTree = "<group>"; };
+		8404C2C6D99365C050564C45 /* Pods-SurveyLexTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLexTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests.debug.xcconfig"; sourceTree = "<group>"; };
 		953F6676BCD8B7E2133D6C2F /* Pods_SurveyLex_Demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SurveyLex_Demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3328B7387310869E4069073 /* Pods_SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2C0ACD2D9D17E40A4AB89C1 /* Pods-SurveyLex.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex.release.xcconfig"; path = "Pods/Target Support Files/Pods-SurveyLex/Pods-SurveyLex.release.xcconfig"; sourceTree = "<group>"; };
 		CC333BFB2286528500B5D8C9 /* SurveyLex Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SurveyLex Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC333BFE2286528500B5D8C9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CC333C032286528500B5D8C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CC333C052286528700B5D8C9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC333C082286528700B5D8C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CC333C0A2286528700B5D8C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CC7D7D0C22C44F6000DDD3B3 /* SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC7D7D0E22C44F6000DDD3B3 /* SurveyLex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SurveyLex.h; sourceTree = "<group>"; };
+		CC7D7D0F22C44F6000DDD3B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CC7D7D1422C44F6000DDD3B3 /* SurveyLexTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SurveyLexTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC7D7D1B22C44F6000DDD3B3 /* SurveyLexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyLexTests.swift; sourceTree = "<group>"; };
+		CC7D7D1D22C44F6000DDD3B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CC7D7D2D22C44FA700DDD3B3 /* SurveyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SurveyViewController.swift; sourceTree = "<group>"; };
+		CC7D7D2E22C44FA700DDD3B3 /* SurveyNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SurveyNavigationController.swift; sourceTree = "<group>"; };
+		CC7D7D3422C44FB100DDD3B3 /* SurveyElementCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SurveyElementCell.swift; sourceTree = "<group>"; };
+		CC7D7D3522C44FB100DDD3B3 /* SurveyResponseDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SurveyResponseDelegate.swift; sourceTree = "<group>"; };
+		CC7D7D3622C44FB100DDD3B3 /* Survey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Survey.swift; sourceTree = "<group>"; };
+		CC7D7D3722C44FB100DDD3B3 /* FragmentTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FragmentTableController.swift; sourceTree = "<group>"; };
+		CC7D7D3822C44FB100DDD3B3 /* SurveyData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SurveyData.swift; sourceTree = "<group>"; };
+		CC7D7D3A22C44FB100DDD3B3 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		CC7D7D3C22C44FB100DDD3B3 /* RatingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingCell.swift; sourceTree = "<group>"; };
+		CC7D7D3D22C44FB100DDD3B3 /* RatingTextTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingTextTable.swift; sourceTree = "<group>"; };
+		CC7D7D3E22C44FB100DDD3B3 /* Rating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rating.swift; sourceTree = "<group>"; };
+		CC7D7D3F22C44FB100DDD3B3 /* RatingSliderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingSliderCell.swift; sourceTree = "<group>"; };
+		CC7D7D4022C44FB100DDD3B3 /* TextFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFormatter.swift; sourceTree = "<group>"; };
+		CC7D7D4122C44FB100DDD3B3 /* Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Question.swift; sourceTree = "<group>"; };
+		CC7D7D4322C44FB100DDD3B3 /* Recorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
+		CC7D7D4422C44FB100DDD3B3 /* RecordingDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingDelegate.swift; sourceTree = "<group>"; };
+		CC7D7D4522C44FB100DDD3B3 /* AudioResponseCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioResponseCellTableViewCell.swift; sourceTree = "<group>"; };
+		CC7D7D4622C44FB100DDD3B3 /* Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
+		CC7D7D4722C44FB100DDD3B3 /* RecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
+		CC7D7D4922C44FB100DDD3B3 /* Consent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Consent.swift; sourceTree = "<group>"; };
+		CC7D7D4A22C44FB100DDD3B3 /* ConsentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsentCell.swift; sourceTree = "<group>"; };
+		CC7D7D4B22C44FB100DDD3B3 /* Checkbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
+		CC7D7D4D22C44FB100DDD3B3 /* TextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextCell.swift; sourceTree = "<group>"; };
+		CC7D7D4E22C44FB100DDD3B3 /* Text.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
+		CC7D7D5022C44FB100DDD3B3 /* RadioGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadioGroup.swift; sourceTree = "<group>"; };
+		CC7D7D5122C44FB100DDD3B3 /* MultipleChoice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipleChoice.swift; sourceTree = "<group>"; };
+		CC7D7D5222C44FB100DDD3B3 /* RadioGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadioGroupCell.swift; sourceTree = "<group>"; };
+		CC7D7D5322C44FB100DDD3B3 /* RadioCircle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadioCircle.swift; sourceTree = "<group>"; };
+		CC7D7D5422C44FB100DDD3B3 /* RatingResponseDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingResponseDelegate.swift; sourceTree = "<group>"; };
+		CC7D7D5522C44FB100DDD3B3 /* MultipleChoiceCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipleChoiceCell.swift; sourceTree = "<group>"; };
+		CC7D7D5622C44FB100DDD3B3 /* Fragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
+		CC7D7D9122C44FCF00DDD3B3 /* QuestionElementsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionElementsTest.swift; sourceTree = "<group>"; };
 		CCE1E652228653500011D142 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		CCE1E654228653620011D142 /* Recorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		CCE1E656228653690011D142 /* MainTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
@@ -53,6 +191,7 @@
 		CCE1E65A228653980011D142 /* SurveyIDViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SurveyIDViewController.swift; sourceTree = "<group>"; };
 		CCE1E65C2286539C0011D142 /* RecordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
 		CCE1E68D228679880011D142 /* SurveyLex.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SurveyLex.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F992643D83FC55C478001582 /* Pods_SurveyLexTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SurveyLexTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +200,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCE1E68F22867A320011D142 /* SurveyLex.framework in Frameworks */,
+				CC7D7D2122C44F6000DDD3B3 /* SurveyLex.framework in Frameworks */,
 				39736DE68188A44E97FA2F5C /* Pods_SurveyLex_Demo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC7D7D0922C44F6000DDD3B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E56E2C2F55B7F00AB9BF9EE8 /* Pods_SurveyLex.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC7D7D1122C44F6000DDD3B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC7D7D1522C44F6000DDD3B3 /* SurveyLex.framework in Frameworks */,
+				A4E389BC286686E8478C1CA4 /* Pods_SurveyLexTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,6 +230,8 @@
 			children = (
 				CCE1E68D228679880011D142 /* SurveyLex.framework */,
 				953F6676BCD8B7E2133D6C2F /* Pods_SurveyLex_Demo.framework */,
+				F992643D83FC55C478001582 /* Pods_SurveyLexTests.framework */,
+				A3328B7387310869E4069073 /* Pods_SurveyLex.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -81,6 +240,8 @@
 			isa = PBXGroup;
 			children = (
 				CC333BFD2286528500B5D8C9 /* SurveyLex Demo */,
+				CC7D7D0D22C44F6000DDD3B3 /* SurveyLex */,
+				CC7D7D1A22C44F6000DDD3B3 /* SurveyLexTests */,
 				CC333BFC2286528500B5D8C9 /* Products */,
 				ED9845E46E20658DF1483EC7 /* Pods */,
 				67F0E65787DD3F5C76CD54FE /* Frameworks */,
@@ -91,6 +252,8 @@
 			isa = PBXGroup;
 			children = (
 				CC333BFB2286528500B5D8C9 /* SurveyLex Demo.app */,
+				CC7D7D0C22C44F6000DDD3B3 /* SurveyLex.framework */,
+				CC7D7D1422C44F6000DDD3B3 /* SurveyLexTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,16 +276,145 @@
 			path = "SurveyLex Demo";
 			sourceTree = "<group>";
 		};
+		CC7D7D0D22C44F6000DDD3B3 /* SurveyLex */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D0E22C44F6000DDD3B3 /* SurveyLex.h */,
+				CC7D7D0F22C44F6000DDD3B3 /* Info.plist */,
+				CC7D7D2C22C44FA700DDD3B3 /* Interfaces */,
+				CC7D7D3322C44FB100DDD3B3 /* Data Types */,
+			);
+			path = SurveyLex;
+			sourceTree = "<group>";
+		};
+		CC7D7D1A22C44F6000DDD3B3 /* SurveyLexTests */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D1B22C44F6000DDD3B3 /* SurveyLexTests.swift */,
+				CC7D7D9122C44FCF00DDD3B3 /* QuestionElementsTest.swift */,
+				CC7D7D1D22C44F6000DDD3B3 /* Info.plist */,
+			);
+			path = SurveyLexTests;
+			sourceTree = "<group>";
+		};
+		CC7D7D2C22C44FA700DDD3B3 /* Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D2D22C44FA700DDD3B3 /* SurveyViewController.swift */,
+				CC7D7D2E22C44FA700DDD3B3 /* SurveyNavigationController.swift */,
+			);
+			path = Interfaces;
+			sourceTree = "<group>";
+		};
+		CC7D7D3322C44FB100DDD3B3 /* Data Types */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D3422C44FB100DDD3B3 /* SurveyElementCell.swift */,
+				CC7D7D3522C44FB100DDD3B3 /* SurveyResponseDelegate.swift */,
+				CC7D7D3622C44FB100DDD3B3 /* Survey.swift */,
+				CC7D7D3722C44FB100DDD3B3 /* FragmentTableController.swift */,
+				CC7D7D3822C44FB100DDD3B3 /* SurveyData.swift */,
+				CC7D7D3922C44FB100DDD3B3 /* Elements */,
+				CC7D7D5622C44FB100DDD3B3 /* Fragment.swift */,
+			);
+			path = "Data Types";
+			sourceTree = "<group>";
+		};
+		CC7D7D3922C44FB100DDD3B3 /* Elements */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D3A22C44FB100DDD3B3 /* Constants.swift */,
+				CC7D7D3B22C44FB100DDD3B3 /* Rating */,
+				CC7D7D4022C44FB100DDD3B3 /* TextFormatter.swift */,
+				CC7D7D4122C44FB100DDD3B3 /* Question.swift */,
+				CC7D7D4222C44FB100DDD3B3 /* Audio */,
+				CC7D7D4822C44FB100DDD3B3 /* Consent */,
+				CC7D7D4C22C44FB100DDD3B3 /* Text */,
+				CC7D7D4F22C44FB100DDD3B3 /* Radio group */,
+			);
+			path = Elements;
+			sourceTree = "<group>";
+		};
+		CC7D7D3B22C44FB100DDD3B3 /* Rating */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D3C22C44FB100DDD3B3 /* RatingCell.swift */,
+				CC7D7D3D22C44FB100DDD3B3 /* RatingTextTable.swift */,
+				CC7D7D3E22C44FB100DDD3B3 /* Rating.swift */,
+				CC7D7D3F22C44FB100DDD3B3 /* RatingSliderCell.swift */,
+			);
+			path = Rating;
+			sourceTree = "<group>";
+		};
+		CC7D7D4222C44FB100DDD3B3 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D4322C44FB100DDD3B3 /* Recorder.swift */,
+				CC7D7D4422C44FB100DDD3B3 /* RecordingDelegate.swift */,
+				CC7D7D4522C44FB100DDD3B3 /* AudioResponseCellTableViewCell.swift */,
+				CC7D7D4622C44FB100DDD3B3 /* Audio.swift */,
+				CC7D7D4722C44FB100DDD3B3 /* RecordButton.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		CC7D7D4822C44FB100DDD3B3 /* Consent */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D4922C44FB100DDD3B3 /* Consent.swift */,
+				CC7D7D4A22C44FB100DDD3B3 /* ConsentCell.swift */,
+				CC7D7D4B22C44FB100DDD3B3 /* Checkbox.swift */,
+			);
+			path = Consent;
+			sourceTree = "<group>";
+		};
+		CC7D7D4C22C44FB100DDD3B3 /* Text */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D4D22C44FB100DDD3B3 /* TextCell.swift */,
+				CC7D7D4E22C44FB100DDD3B3 /* Text.swift */,
+			);
+			path = Text;
+			sourceTree = "<group>";
+		};
+		CC7D7D4F22C44FB100DDD3B3 /* Radio group */ = {
+			isa = PBXGroup;
+			children = (
+				CC7D7D5022C44FB100DDD3B3 /* RadioGroup.swift */,
+				CC7D7D5122C44FB100DDD3B3 /* MultipleChoice.swift */,
+				CC7D7D5222C44FB100DDD3B3 /* RadioGroupCell.swift */,
+				CC7D7D5322C44FB100DDD3B3 /* RadioCircle.swift */,
+				CC7D7D5422C44FB100DDD3B3 /* RatingResponseDelegate.swift */,
+				CC7D7D5522C44FB100DDD3B3 /* MultipleChoiceCell.swift */,
+			);
+			path = "Radio group";
+			sourceTree = "<group>";
+		};
 		ED9845E46E20658DF1483EC7 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 				4FF5A6D7193A47BB0FF3E336 /* Pods-SurveyLex Demo.debug.xcconfig */,
 				1E21BA35407F2DDE6009F4DC /* Pods-SurveyLex Demo.release.xcconfig */,
+				8404C2C6D99365C050564C45 /* Pods-SurveyLexTests.debug.xcconfig */,
+				50CA91B65C8C5BBBD6AC7E40 /* Pods-SurveyLexTests.release.xcconfig */,
+				34DDA322F3341CB2942B2405 /* Pods-SurveyLex.debug.xcconfig */,
+				B2C0ACD2D9D17E40A4AB89C1 /* Pods-SurveyLex.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CC7D7D0722C44F6000DDD3B3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC7D7D1E22C44F6000DDD3B3 /* SurveyLex.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		CC333BFA2286528500B5D8C9 /* SurveyLex Demo */ = {
@@ -139,11 +431,52 @@
 			buildRules = (
 			);
 			dependencies = (
+				CC7D7D2022C44F6000DDD3B3 /* PBXTargetDependency */,
 			);
 			name = "SurveyLex Demo";
 			productName = "SurveyLex Demo";
 			productReference = CC333BFB2286528500B5D8C9 /* SurveyLex Demo.app */;
 			productType = "com.apple.product-type.application";
+		};
+		CC7D7D0B22C44F6000DDD3B3 /* SurveyLex */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC7D7D2322C44F6000DDD3B3 /* Build configuration list for PBXNativeTarget "SurveyLex" */;
+			buildPhases = (
+				4D2F742475866A3272515D93 /* [CP] Check Pods Manifest.lock */,
+				CC7D7D0722C44F6000DDD3B3 /* Headers */,
+				CC7D7D0822C44F6000DDD3B3 /* Sources */,
+				CC7D7D0922C44F6000DDD3B3 /* Frameworks */,
+				CC7D7D0A22C44F6000DDD3B3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SurveyLex;
+			productName = SurveyLex;
+			productReference = CC7D7D0C22C44F6000DDD3B3 /* SurveyLex.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		CC7D7D1322C44F6000DDD3B3 /* SurveyLexTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC7D7D2622C44F6000DDD3B3 /* Build configuration list for PBXNativeTarget "SurveyLexTests" */;
+			buildPhases = (
+				A77ADF7CAE83606CC6663630 /* [CP] Check Pods Manifest.lock */,
+				CC7D7D1022C44F6000DDD3B3 /* Sources */,
+				CC7D7D1122C44F6000DDD3B3 /* Frameworks */,
+				CC7D7D1222C44F6000DDD3B3 /* Resources */,
+				32BA58E02CE5910896EDFE29 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CC7D7D1722C44F6000DDD3B3 /* PBXTargetDependency */,
+				CC7D7D1922C44F6000DDD3B3 /* PBXTargetDependency */,
+			);
+			name = SurveyLexTests;
+			productName = SurveyLexTests;
+			productReference = CC7D7D1422C44F6000DDD3B3 /* SurveyLexTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -157,6 +490,13 @@
 				TargetAttributes = {
 					CC333BFA2286528500B5D8C9 = {
 						CreatedOnToolsVersion = 10.2.1;
+					};
+					CC7D7D0B22C44F6000DDD3B3 = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
+					CC7D7D1322C44F6000DDD3B3 = {
+						CreatedOnToolsVersion = 10.2.1;
+						TestTargetID = CC333BFA2286528500B5D8C9;
 					};
 				};
 			};
@@ -174,6 +514,8 @@
 			projectRoot = "";
 			targets = (
 				CC333BFA2286528500B5D8C9 /* SurveyLex Demo */,
+				CC7D7D0B22C44F6000DDD3B3 /* SurveyLex */,
+				CC7D7D1322C44F6000DDD3B3 /* SurveyLexTests */,
 			);
 		};
 /* End PBXProject section */
@@ -189,9 +531,91 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CC7D7D0A22C44F6000DDD3B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC7D7D1222C44F6000DDD3B3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		32BA58E02CE5910896EDFE29 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Down.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4D2F742475866A3272515D93 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SurveyLex-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A77ADF7CAE83606CC6663630 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SurveyLexTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		AC8CE00362D40F47E4AAF4A7 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -201,12 +625,14 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-SurveyLex Demo/Pods-SurveyLex Demo-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON-iOS11.0/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Down.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,7 +679,103 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CC7D7D0822C44F6000DDD3B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC7D7D7522C44FB100DDD3B3 /* Audio.swift in Sources */,
+				CC7D7D6F22C44FB100DDD3B3 /* Recorder.swift in Sources */,
+				CC7D7D5D22C44FB100DDD3B3 /* FragmentTableController.swift in Sources */,
+				CC7D7D6922C44FB100DDD3B3 /* RatingSliderCell.swift in Sources */,
+				CC7D7D7F22C44FB100DDD3B3 /* TextCell.swift in Sources */,
+				CC7D7D8922C44FB100DDD3B3 /* RadioCircle.swift in Sources */,
+				CC7D7D7D22C44FB100DDD3B3 /* Checkbox.swift in Sources */,
+				CC7D7D7B22C44FB100DDD3B3 /* ConsentCell.swift in Sources */,
+				CC7D7D8F22C44FB100DDD3B3 /* Fragment.swift in Sources */,
+				CC7D7D8B22C44FB100DDD3B3 /* RatingResponseDelegate.swift in Sources */,
+				CC7D7D5722C44FB100DDD3B3 /* SurveyElementCell.swift in Sources */,
+				CC7D7D3122C44FA700DDD3B3 /* SurveyNavigationController.swift in Sources */,
+				CC7D7D5B22C44FB100DDD3B3 /* Survey.swift in Sources */,
+				CC7D7D8522C44FB100DDD3B3 /* MultipleChoice.swift in Sources */,
+				CC7D7D8122C44FB100DDD3B3 /* Text.swift in Sources */,
+				CC7D7D7722C44FB100DDD3B3 /* RecordButton.swift in Sources */,
+				CC7D7D6D22C44FB100DDD3B3 /* Question.swift in Sources */,
+				CC7D7D8D22C44FB100DDD3B3 /* MultipleChoiceCell.swift in Sources */,
+				CC7D7D2F22C44FA700DDD3B3 /* SurveyViewController.swift in Sources */,
+				CC7D7D6722C44FB100DDD3B3 /* Rating.swift in Sources */,
+				CC7D7D5922C44FB100DDD3B3 /* SurveyResponseDelegate.swift in Sources */,
+				CC7D7D7122C44FB100DDD3B3 /* RecordingDelegate.swift in Sources */,
+				CC7D7D6522C44FB100DDD3B3 /* RatingTextTable.swift in Sources */,
+				CC7D7D6322C44FB100DDD3B3 /* RatingCell.swift in Sources */,
+				CC7D7D6B22C44FB100DDD3B3 /* TextFormatter.swift in Sources */,
+				CC7D7D5F22C44FB100DDD3B3 /* SurveyData.swift in Sources */,
+				CC7D7D6122C44FB100DDD3B3 /* Constants.swift in Sources */,
+				CC7D7D8322C44FB100DDD3B3 /* RadioGroup.swift in Sources */,
+				CC7D7D7922C44FB100DDD3B3 /* Consent.swift in Sources */,
+				CC7D7D8722C44FB100DDD3B3 /* RadioGroupCell.swift in Sources */,
+				CC7D7D7322C44FB100DDD3B3 /* AudioResponseCellTableViewCell.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC7D7D1022C44F6000DDD3B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC7D7D8622C44FB100DDD3B3 /* MultipleChoice.swift in Sources */,
+				CC7D7D6E22C44FB100DDD3B3 /* Question.swift in Sources */,
+				CC7D7D6822C44FB100DDD3B3 /* Rating.swift in Sources */,
+				CC7D7D3022C44FA700DDD3B3 /* SurveyViewController.swift in Sources */,
+				CC7D7D3222C44FA700DDD3B3 /* SurveyNavigationController.swift in Sources */,
+				CC7D7D7822C44FB100DDD3B3 /* RecordButton.swift in Sources */,
+				CC7D7D5E22C44FB100DDD3B3 /* FragmentTableController.swift in Sources */,
+				CC7D7D8222C44FB100DDD3B3 /* Text.swift in Sources */,
+				CC7D7D7222C44FB100DDD3B3 /* RecordingDelegate.swift in Sources */,
+				CC7D7D7E22C44FB100DDD3B3 /* Checkbox.swift in Sources */,
+				CC7D7D8422C44FB100DDD3B3 /* RadioGroup.swift in Sources */,
+				CC7D7D6022C44FB100DDD3B3 /* SurveyData.swift in Sources */,
+				CC7D7D7C22C44FB100DDD3B3 /* ConsentCell.swift in Sources */,
+				CC7D7D7622C44FB100DDD3B3 /* Audio.swift in Sources */,
+				CC7D7D8C22C44FB100DDD3B3 /* RatingResponseDelegate.swift in Sources */,
+				CC7D7D7A22C44FB100DDD3B3 /* Consent.swift in Sources */,
+				CC7D7D6C22C44FB100DDD3B3 /* TextFormatter.swift in Sources */,
+				CC7D7D6422C44FB100DDD3B3 /* RatingCell.swift in Sources */,
+				CC7D7D5A22C44FB100DDD3B3 /* SurveyResponseDelegate.swift in Sources */,
+				CC7D7D6A22C44FB100DDD3B3 /* RatingSliderCell.swift in Sources */,
+				CC7D7D8822C44FB100DDD3B3 /* RadioGroupCell.swift in Sources */,
+				CC7D7D7422C44FB100DDD3B3 /* AudioResponseCellTableViewCell.swift in Sources */,
+				CC7D7D5C22C44FB100DDD3B3 /* Survey.swift in Sources */,
+				CC7D7D5822C44FB100DDD3B3 /* SurveyElementCell.swift in Sources */,
+				CC7D7D1C22C44F6000DDD3B3 /* SurveyLexTests.swift in Sources */,
+				CC7D7D6622C44FB100DDD3B3 /* RatingTextTable.swift in Sources */,
+				CC7D7D8E22C44FB100DDD3B3 /* MultipleChoiceCell.swift in Sources */,
+				CC7D7D6222C44FB100DDD3B3 /* Constants.swift in Sources */,
+				CC7D7D8022C44FB100DDD3B3 /* TextCell.swift in Sources */,
+				CC7D7D9022C44FB100DDD3B3 /* Fragment.swift in Sources */,
+				CC7D7D7022C44FB100DDD3B3 /* Recorder.swift in Sources */,
+				CC7D7D8A22C44FB100DDD3B3 /* RadioCircle.swift in Sources */,
+				CC7D7D9322C44FCF00DDD3B3 /* QuestionElementsTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CC7D7D1722C44F6000DDD3B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC7D7D0B22C44F6000DDD3B3 /* SurveyLex */;
+			targetProxy = CC7D7D1622C44F6000DDD3B3 /* PBXContainerItemProxy */;
+		};
+		CC7D7D1922C44F6000DDD3B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC333BFA2286528500B5D8C9 /* SurveyLex Demo */;
+			targetProxy = CC7D7D1822C44F6000DDD3B3 /* PBXContainerItemProxy */;
+		};
+		CC7D7D2022C44F6000DDD3B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC7D7D0B22C44F6000DDD3B3 /* SurveyLex */;
+			targetProxy = CC7D7D1F22C44F6000DDD3B3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CC333C022286528500B5D8C9 /* Main.storyboard */ = {
@@ -433,6 +955,110 @@
 			};
 			name = Release;
 		};
+		CC7D7D2422C44F6000DDD3B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 34DDA322F3341CB2942B2405 /* Pods-SurveyLex.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = GR353CPP2V;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = SurveyLex/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.themoon2000.SurveyLex;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		CC7D7D2522C44F6000DDD3B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B2C0ACD2D9D17E40A4AB89C1 /* Pods-SurveyLex.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = GR353CPP2V;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = SurveyLex/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.themoon2000.SurveyLex;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		CC7D7D2722C44F6000DDD3B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8404C2C6D99365C050564C45 /* Pods-SurveyLexTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GR353CPP2V;
+				INFOPLIST_FILE = SurveyLexTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.themoon2000.SurveyLexTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SurveyLex Demo.app/SurveyLex Demo";
+			};
+			name = Debug;
+		};
+		CC7D7D2822C44F6000DDD3B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 50CA91B65C8C5BBBD6AC7E40 /* Pods-SurveyLexTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GR353CPP2V;
+				INFOPLIST_FILE = SurveyLexTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.themoon2000.SurveyLexTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SurveyLex Demo.app/SurveyLex Demo";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -450,6 +1076,24 @@
 			buildConfigurations = (
 				CC333C0E2286528700B5D8C9 /* Debug */,
 				CC333C0F2286528700B5D8C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC7D7D2322C44F6000DDD3B3 /* Build configuration list for PBXNativeTarget "SurveyLex" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC7D7D2422C44F6000DDD3B3 /* Debug */,
+				CC7D7D2522C44F6000DDD3B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC7D7D2622C44F6000DDD3B3 /* Build configuration list for PBXNativeTarget "SurveyLexTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC7D7D2722C44F6000DDD3B3 /* Debug */,
+				CC7D7D2822C44F6000DDD3B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

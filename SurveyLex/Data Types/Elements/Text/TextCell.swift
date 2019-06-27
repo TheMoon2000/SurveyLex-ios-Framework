@@ -96,12 +96,21 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         textQuestion.response = textField.text!
+        if !textfield.text!.isEmpty {
+            textfield.returnKeyType = .done
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         UISelectionFeedbackGenerator().selectionChanged()
-        textQuestion.parentView?.flipPageIfNeeded(cell: self)
-        self.surveyPage?.focusedRow += 1
+        if textfield.returnKeyType == .next {
+            textQuestion.parentView?.flipPageIfNeeded(cell: self)
+            self.surveyPage?.focusedRow += 1
+        } else {
+            textfield.delegate = nil
+            textfield.resignFirstResponder()
+            textfield.delegate = self
+        }
         return true
     }
     

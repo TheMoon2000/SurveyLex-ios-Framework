@@ -28,6 +28,7 @@ class FragmentTableController: UITableViewController {
         didSet (oldValue) {
             if !focusedRowResponse { return }
             if focusedRow == oldValue { return }
+            
             if focusedRow != -1 {
                 let index = IndexPath(row: focusedRow, section: 0)
                 if focusedRow < tableView.numberOfRows(inSection: 0) {
@@ -56,6 +57,9 @@ class FragmentTableController: UITableViewController {
             }
         }
     }
+    
+    // /// The maximum value `focusedRow` has taken.
+    
     
     /// Convenient shortcut that returns the fragment index of the current page.
     var fragmentIndex: Int {

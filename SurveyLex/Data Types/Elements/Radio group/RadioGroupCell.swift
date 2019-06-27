@@ -75,12 +75,17 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
     
     func didSelectRow(row: Int) {
         radioGroup.selection = row
-        radioGroup.completed = true
         
-        if (surveyPage?.isCellFocused(cell: self) ?? false) {
-            surveyPage?.focusedRow += 1
+        if !radioGroup.completed {
+            radioGroup.completed = true
+            
+            if (surveyPage?.isCellFocused(cell: self) ?? false) {
+                surveyPage?.focusedRow += 1
+            }
+            radioGroup.parentView?.flipPageIfNeeded(cell: self)
+        } else {
+            surveyPage?.focus(cell: self)
         }
-        radioGroup.parentView?.flipPageIfNeeded(cell: self)
     }
     
     // Customized focus / unfocus appearance

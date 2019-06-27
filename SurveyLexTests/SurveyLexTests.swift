@@ -1,15 +1,15 @@
 //
-//  SurveyDataTests.swift
+//  SurveyLexTests.swift
 //  SurveyLexTests
 //
-//  Created by Jia Rui Shan on 2019/5/10.
+//  Created by Jia Rui Shan on 2019/6/26.
 //  Copyright © 2019 UC Berkeley. All rights reserved.
 //
 
 import XCTest
-import SwiftyJSON
+@testable import SurveyLex
 
-class SurveyDataTests: XCTestCase {
+class SurveyLexTests: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -19,9 +19,9 @@ class SurveyDataTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testRatingDisplay() {
-        
-        
+    func testExample() {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
     func testPerformanceExample() {

@@ -186,9 +186,11 @@ class RatingSliderCell: SurveyElementCell {
     }
     
     @objc private func sliderLifted() {
-        ratingQuestion.completed = true
-        surveyPage?.focusedRow += 1
-        ratingQuestion.parentView?.flipPageIfNeeded(cell: self)
+        if !ratingQuestion.completed {
+            ratingQuestion.completed = true
+            surveyPage?.focusedRow += 1
+            ratingQuestion.parentView?.flipPageIfNeeded(cell: self)
+        }
     }
     
     

@@ -163,7 +163,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
             audioQuestion.completed = true
             
             // Flip the page if the next page exists.
-            audioQuestion.parentView?.flipPageIfNeeded()
+            // audioQuestion.parentView?.flipPageIfNeeded()
             
             // Let the new title of the recording button be “Again”.
             recordButton.setTitle("Again", for: .normal)
