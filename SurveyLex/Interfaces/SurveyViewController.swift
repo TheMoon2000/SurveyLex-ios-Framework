@@ -161,7 +161,11 @@ class SurveyViewController: UIPageViewController,
     }
     
     /// Flip the page only if the provided cell is the last cell in the current fragment and all questions in the current fragment are completed. Needs to be called before focus().
-    func flipPageIfNeeded(cell: SurveyElementCell) {
+    func toNext(from cell: SurveyElementCell) {
+        let nextRow = currentFragment.contentCells.firstIndex(of: cell)! + 1
+        if nextRow < currentFragment.contentCells.count && !currentFragment.contentCells[nextRow].completed {
+            currentFragment.focusedRow += 1
+        }
         reloadDatasource()
         if currentFragment.contentCells.last == cell {
             flipPageIfNeeded()

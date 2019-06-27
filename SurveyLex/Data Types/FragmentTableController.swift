@@ -43,11 +43,6 @@ class FragmentTableController: UITableViewController {
                 }
                 if let cell = tableView.cellForRow(at: index) as? SurveyElementCell {
                     UIView.animate(withDuration: 0.2) { cell.focus() }
-                } else if focusedRow >= tableView.numberOfRows(inSection: 0) && allCompleted {
-                    focusedRowResponse = false
-                    focusedRow = oldValue
-                    focusedRowResponse = true
-                    surveyViewController?.flipPageIfNeeded()
                 }
             }
             if oldValue != -1 {
@@ -68,7 +63,6 @@ class FragmentTableController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("appeared")
         if !surveyViewController!.visitedFragments.contains(self) {
             surveyViewController?.visitedFragments.insert(self)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {

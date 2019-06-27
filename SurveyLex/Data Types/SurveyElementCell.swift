@@ -18,6 +18,10 @@ class SurveyElementCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     
+    var completed: Bool {
+        return false
+    }
+    
     init() {
         super.init(style: .default, reuseIdentifier: nil)
         

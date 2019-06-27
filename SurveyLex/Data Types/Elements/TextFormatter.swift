@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Down
 
 class TextFormatter {
     
@@ -15,6 +16,88 @@ class TextFormatter {
     }
     
     static func formatted(_ string: String, type: TextType) -> NSAttributedString {
+        
+        let bodyStyle = """
+            body {
+                font-family: -apple-system;
+                font-size: 19px;
+                line-height: 1.5;
+                letter-spacing: 2%;
+            }
+"""
+        let consentStyle = """
+            body {
+                font-family: -apple-system;
+                font-size: 17px;
+                line-height: 1.5;
+                letter-spacing: 1%;
+            }
+"""
+        let subtitleStyle = """
+            body {
+                font-family: -apple-system;
+                font-size: 16px;
+                line-height: 1.4;
+                letter-spacing: 1%;
+            }
+"""
+        let titleStyle = """
+            body {
+                font-family: -apple-system;
+                font-weight: 500;
+                font-size: 22px;
+                line-height: 1.4;
+                letter-spacing: 2px;
+            }
+"""
+        
+        let _ = """
+            body {
+                font: -apple-system-body; font-size: 18px; }
+            h1 { font: -apple-system-title1 }
+            h2 { font: -apple-system-title2 }
+            h3 { font: -apple-system-title3 }
+            h4, h5, h6 { font: -apple-system-headline }
+"""
+        
+        
+        switch type {
+        case .body:
+            do {
+                let down = try Down(markdownString: string).toAttributedString(.default, stylesheet: bodyStyle)
+                return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
+            } catch {
+                return legacy(string, type: .body)
+            }
+        case .consentText:
+            do {
+                let down = try Down(markdownString: string).toAttributedString(.default, stylesheet: consentStyle)
+                return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
+            } catch {
+                return legacy(string, type: .consentText)
+            }
+        case .subtitle:
+            do {
+                let down = try Down(markdownString: string).toAttributedString(.default, stylesheet: subtitleStyle)
+                return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
+            } catch {
+                return legacy(string, type: .subtitle)
+            }
+        case .title:
+            do {
+                let down = try Down(markdownString: string).toAttributedString(.default, stylesheet: titleStyle)
+                return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
+            } catch {
+                return legacy(string, type: .title)
+            }
+        }
+        
+    }
+    
+    /// Legacy formatter used as fallback
+    private static func legacy(_ string: String, type: TextType) -> NSAttributedString {
+        
+        print("Warning: legacy text formatter called")
         
         var newString = string // This mutable string will be used instead
         
@@ -33,24 +116,22 @@ class TextFormatter {
         newString = linkFormat(regex: "\\*\\*.+\\*\\*", input: newString)
         
         let attrTxt = NSMutableAttributedString(string: newString)
-
+        
         let pgStyle = NSMutableParagraphStyle()
-        pgStyle.lineSpacing = 3
+        pgStyle.lineSpacing = 4
+        pgStyle.paragraphSpacing = 10
+        pgStyle.alignment = .left
         
         var attributes = [NSAttributedString.Key : Any]()
         switch type {
         case .body:
             attributes[.font] = UIFont.systemFont(ofSize: 19, weight: .regular)
-            pgStyle.alignment = .left
         case .consentText:
             attributes[.font] = UIFont.systemFont(ofSize: 17)
-            pgStyle.alignment = .left
         case .subtitle:
             attributes[.font] = UIFont.systemFont(ofSize: 16)
-            pgStyle.alignment = .left
         case .title:
             attributes[.font] = UIFont.systemFont(ofSize: 22, weight: .medium)
-            pgStyle.alignment = .center
         }
         
         attrTxt.addAttributes(attributes, range: NSMakeRange(0, newString.count))
@@ -58,7 +139,7 @@ class TextFormatter {
         attrTxt.addAttributes([
             .paragraphStyle: pgStyle,
             .kern: 0.2
-        ], range: NSMakeRange(0, newString.count))
+            ], range: NSMakeRange(0, newString.count))
         
         return attrTxt
     }

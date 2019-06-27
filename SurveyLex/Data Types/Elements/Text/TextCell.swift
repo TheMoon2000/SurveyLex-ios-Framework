@@ -11,6 +11,11 @@ import UIKit
 /// A subclass of SurveyElementCell that displays a text response question.
 class TextCell: SurveyElementCell, UITextFieldDelegate {
     
+    /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
+    override var completed: Bool {
+        return textQuestion.completed
+    }
+    
     /// The `Text` instance which the current cell is presenting.
     private(set) var textQuestion: Text!
     
@@ -104,8 +109,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         UISelectionFeedbackGenerator().selectionChanged()
         if textfield.returnKeyType == .next {
-            textQuestion.parentView?.flipPageIfNeeded(cell: self)
-            self.surveyPage?.focusedRow += 1
+            textQuestion.parentView?.toNext(from: self)
         } else {
             textfield.delegate = nil
             textfield.resignFirstResponder()
@@ -117,9 +121,9 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     override func focus() {
         super.focus()
         title.textColor = .black
-        textfield.delegate = nil
-        textfield.becomeFirstResponder()
-        textfield.delegate = self
+        self.textfield.delegate = nil
+        self.textfield.becomeFirstResponder()
+        self.textfield.delegate = self
     }
     
     override func unfocus() {

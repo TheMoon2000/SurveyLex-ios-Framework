@@ -11,13 +11,18 @@ import UIKit
 /// A subclass of `SurveyElementCell` that display a radio group question.
 class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
     
+    /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
+    override var completed: Bool {
+        return radioGroup.completed
+    }
+    
     /// The `RadioGroup` instance which the current cell is presenting.
     var radioGroup: RadioGroup!
     
     /// The text view for the title of the radio group question.
     private var title: UITextView!
     
-    
+    /// The table subview embedded in this cell.
     private var choiceTable: MultipleChoiceView!
 
     required init?(coder aDecoder: NSCoder) {
@@ -80,9 +85,8 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
             radioGroup.completed = true
             
             if (surveyPage?.isCellFocused(cell: self) ?? false) {
-                surveyPage?.focusedRow += 1
+                radioGroup.parentView?.toNext(from: self)
             }
-            radioGroup.parentView?.flipPageIfNeeded(cell: self)
         } else {
             surveyPage?.focus(cell: self)
         }

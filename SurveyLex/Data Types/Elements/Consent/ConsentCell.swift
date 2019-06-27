@@ -7,13 +7,21 @@
 //
 
 import UIKit
+import Down
 
 /// A subclass of `SurveyElementCell` that displays a consent form.
 class ConsentCell: SurveyElementCell {
     
     let AGREE_PRESSED = UIColor(red: 0.39, green: 0.59, blue: 0.88, alpha: 1)
     
+    /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
+    override var completed: Bool {
+        return consentInfo.completed
+    }
+    
+    /// The `Consent` instance which the current cell is presenting.
     var consentInfo: Consent!
+    
     private var title: UITextView!
     private var separator: UIView!
     private var bottomSeparator: UIView!
@@ -49,6 +57,8 @@ class ConsentCell: SurveyElementCell {
         let titleText = UITextView()
         titleText.isScrollEnabled = false
         titleText.attributedText = TextFormatter.formatted(consentInfo.title, type: .title)
+        titleText.textAlignment = .center
+        titleText.isUserInteractionEnabled = false
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
         
@@ -85,6 +95,7 @@ class ConsentCell: SurveyElementCell {
     private func makeConsentText() -> UITextView {
         let consent = UITextView()
         consent.attributedText = TextFormatter.formatted(consentInfo.consentText, type: .consentText)
+//        consent.attributedText = TextFormatter.formatted("*This is italic!*", type: .body)
         consent.textAlignment = .left
         consent.isEditable = false
         consent.dataDetectorTypes = .link
@@ -120,7 +131,7 @@ class ConsentCell: SurveyElementCell {
         check.leftAnchor.constraint(equalTo: consentText.leftAnchor,
                                     constant: 1).isActive = true
         check.topAnchor.constraint(equalTo: bottomSeparator.bottomAnchor,
-                                   constant: 22).isActive = true
+                                   constant: 24).isActive = true
         
         check.addTarget(self, action: #selector(checkboxPressed), for: .valueChanged)
         

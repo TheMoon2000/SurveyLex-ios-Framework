@@ -11,6 +11,11 @@ import UIKit
 /// A subclass of `SurveyElementCell` that displays an audio response question.
 class AudioResponseCell: SurveyElementCell, RecordingDelegate {
     
+    /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
+    override var completed: Bool {
+        return audioQuestion.completed
+    }
+    
     /// A pointer to the skip button located below the record button.
     var skipButton: UIButton!
     
@@ -30,6 +35,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
     var title = "Audio question" {
         didSet {
             titleLabel.attributedText = TextFormatter.formatted(title, type: .title)
+            titleLabel.textAlignment = .center
         }
     }
     
@@ -50,7 +56,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         self.backgroundColor = .white
 
         self.audioQuestion = audioQuestion // must be set first
-        self.titleLabel = makeLabel()
+        self.titleLabel = makeTitle()
         self.recordButton = makeRecordButton()
         self.skipButton = makeSkipButton()
         self.finishMessage = makeFinishMessage()
@@ -60,7 +66,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
     }
     
     /// UI setup (1).
-    private func makeLabel() -> UILabel {
+    private func makeTitle() -> UILabel {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22, weight: .medium)
         label.text = "[Replace me]"

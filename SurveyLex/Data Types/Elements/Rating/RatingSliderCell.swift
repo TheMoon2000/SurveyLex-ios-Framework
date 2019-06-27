@@ -11,6 +11,10 @@ import UIKit
 /// A subclass of `SurveyElementCell` that displays a rating question.
 class RatingSliderCell: SurveyElementCell {
     
+    override var completed: Bool {
+        return ratingQuestion.completed
+    }
+    
     /// Custom gray color used for the ticks and the track.
     let grayColor = UIColor(white: 0.85, alpha: 1)
     
@@ -188,8 +192,7 @@ class RatingSliderCell: SurveyElementCell {
     @objc private func sliderLifted() {
         if !ratingQuestion.completed {
             ratingQuestion.completed = true
-            surveyPage?.focusedRow += 1
-            ratingQuestion.parentView?.flipPageIfNeeded(cell: self)
+            ratingQuestion.parentView?.toNext(from: self)
         }
     }
     
