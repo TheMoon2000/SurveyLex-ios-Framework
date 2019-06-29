@@ -17,6 +17,20 @@ class TextFormatter {
     
     static func formatted(_ string: String, type: TextType) -> NSAttributedString {
         
+        var newString = string // This mutable string will be used instead
+        
+        // Convert all the special expressions into hyperlinks
+        let linkDetector = try! NSRegularExpression(pattern: "\\[!\\[.*\\]\\(.*\\)\\]\\(.+\\)", options: .dotMatchesLineSeparators)
+        let matches = linkDetector.matches(in: newString,
+                                           options: .init(),
+                                           range: NSMakeRange(0, newString.count))
+        for match in matches {
+            let matchString = String(newString[Range(match.range, in: newString)!])
+            let components = matchString.components(separatedBy: ["(", ")"])
+            let link = components[components.count - 2]
+            newString = newString.replacingOccurrences(of: matchString, with: link)
+        }
+        
         let bodyStyle = """
             body {
                 font-family: -apple-system;
@@ -44,7 +58,7 @@ class TextFormatter {
         let titleStyle = """
             body {
                 font-family: -apple-system;
-                font-weight: 500;
+                font-weight: 600;
                 font-size: 22px;
                 line-height: 1.4;
                 letter-spacing: 2px;
@@ -64,28 +78,28 @@ class TextFormatter {
         switch type {
         case .body:
             do {
-                let down = try Down(markdownString: string).toAttributedString(.default, stylesheet: bodyStyle)
+                let down = try Down(markdownString: newString).toAttributedString(.default, stylesheet: bodyStyle)
                 return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
             } catch {
                 return legacy(string, type: .body)
             }
         case .consentText:
             do {
-                let down = try Down(markdownString: string).toAttributedString(.default, stylesheet: consentStyle)
+                let down = try Down(markdownString: newString).toAttributedString(.default, stylesheet: consentStyle)
                 return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
             } catch {
                 return legacy(string, type: .consentText)
             }
         case .subtitle:
             do {
-                let down = try Down(markdownString: string).toAttributedString(.default, stylesheet: subtitleStyle)
+                let down = try Down(markdownString: newString).toAttributedString(.default, stylesheet: subtitleStyle)
                 return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
             } catch {
                 return legacy(string, type: .subtitle)
             }
         case .title:
             do {
-                let down = try Down(markdownString: string).toAttributedString(.default, stylesheet: titleStyle)
+                let down = try Down(markdownString: newString).toAttributedString(.default, stylesheet: titleStyle)
                 return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
             } catch {
                 return legacy(string, type: .title)

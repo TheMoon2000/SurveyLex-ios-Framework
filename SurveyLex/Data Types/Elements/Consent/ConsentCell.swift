@@ -150,7 +150,7 @@ class ConsentCell: SurveyElementCell {
         addSubview(prompt)
         
         prompt.topAnchor.constraint(equalTo: checkbox.topAnchor,
-                                    constant: -8.5).isActive = true
+                                    constant: -9).isActive = true
         prompt.leftAnchor.constraint(equalTo: checkbox.rightAnchor,
                                      constant: 15).isActive = true
         prompt.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,

@@ -11,9 +11,9 @@ import UIKit
 /// A subclass of SurveyElementCell that displays a text response question.
 class TextCell: SurveyElementCell, UITextFieldDelegate {
     
-    /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
+    /// Whether the user has already focused on the cell at least once and entered a valid string.
     override var completed: Bool {
-        return textQuestion.completed
+        return textfield.returnKeyType == .done
     }
     
     /// The `Text` instance which the current cell is presenting.
@@ -101,7 +101,8 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         textQuestion.response = textField.text!
-        if !textfield.text!.isEmpty {
+        let response = CharacterSet(charactersIn: textfield.text!)
+        if !response.isSubset(of: .whitespacesAndNewlines) {
             textfield.returnKeyType = .done
         }
     }
