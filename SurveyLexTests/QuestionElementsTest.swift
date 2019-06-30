@@ -30,7 +30,7 @@ class QuestionElementsTest: XCTestCase {
         }
         """
         let jsonData = JSON(parseJSON: questionInput)
-        let radioQuestion = RadioGroup(json: jsonData)
+        let radioQuestion = RadioGroup(json: jsonData, order: (1, 1))
         print(radioQuestion)
         XCTAssertEqual(radioQuestion.type, .radioGroup)
         XCTAssertEqual(radioQuestion.choices, ["Yes", "No"])
@@ -117,7 +117,7 @@ class QuestionElementsTest: XCTestCase {
         """
         let jsonData = JSON(parseJSON: questionInput)
         
-        let ratingQuestion = Rating(json: jsonData)
+        let ratingQuestion = Rating(json: jsonData, order: (1, 1))
         let rateValues = ratingQuestion.options.map {$0.value}
         let displayed = ratingQuestion.options.map {$0.text}
         print(ratingQuestion)
@@ -145,7 +145,7 @@ class QuestionElementsTest: XCTestCase {
         """
         let jsonData = JSON(parseJSON: questionInput)
         
-        let ratingQuestion = Rating(json: jsonData)
+        let ratingQuestion = Rating(json: jsonData, order: (1, 1))
         let rateValues = ratingQuestion.options.map {$0.value}
         let displayed = ratingQuestion.options.map {$0.text}
         print(ratingQuestion)
