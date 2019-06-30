@@ -18,6 +18,7 @@ class SurveyElementCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     
+    /// The completion status of the cell.
     var completed: Bool {
         return false
     }
