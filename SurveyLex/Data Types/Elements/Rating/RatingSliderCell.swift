@@ -38,14 +38,14 @@ class RatingSliderCell: SurveyElementCell {
     init(ratingQuestion: Rating) {
         super.init()
         
+        print("rating cell initialized")
+        
         self.ratingQuestion = ratingQuestion
         
         title = makeTextView()
         slider = makeSlider()
         caption = makeCaption()
         addTicks()
-        
-        sliderChanged()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -55,23 +55,23 @@ class RatingSliderCell: SurveyElementCell {
     
     private func makeTextView() -> UITextView {
         let textView = UITextView()
-        textView.attributedText = TextFormatter.formatted(ratingQuestion.title,
-                                                          type: .title)
+        let numbered = "\(self.ratingQuestion.order.fragment).\(ratingQuestion.order.question) " + ratingQuestion.title
+        textView.attributedText = TextFormatter.formatted(numbered, type: .title)
         textView.textColor = .gray
         textView.textAlignment = .left
-        textView.isUserInteractionEnabled = false
+        textView.isScrollEnabled = false
+        textView.isEditable = false
         textView.dataDetectorTypes = .link
         textView.linkTextAttributes[.foregroundColor] = BLUE_TINT
-        textView.isScrollEnabled = false
         textView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textView)
         
         textView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
                                       constant: 30).isActive = true
         textView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                       constant: 30).isActive = true
+                                       constant: 20).isActive = true
         textView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                        constant: -30).isActive = true
+                                        constant: -20).isActive = true
         return textView
     }
     
@@ -80,7 +80,7 @@ class RatingSliderCell: SurveyElementCell {
         slider.maximumTrackTintColor = .clear
         slider.minimumTrackTintColor = .clear
         slider.maximumValue = 100
-        slider.value = 50
+        slider.value = currentValue
         slider.thumbTintColor = DARKER_TINT
         
         slider.translatesAutoresizingMaskIntoConstraints = false
@@ -192,7 +192,7 @@ class RatingSliderCell: SurveyElementCell {
     @objc private func sliderLifted() {
         if !ratingQuestion.completed {
             ratingQuestion.completed = true
-            ratingQuestion.parentView?.toNext(from: self)
+            let _ = !ratingQuestion.parentView!.toNext(from: self)
         }
     }
     

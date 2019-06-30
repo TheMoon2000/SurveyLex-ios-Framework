@@ -57,6 +57,15 @@ enum ResponseType: String {
     /// Similar to rating question.
     case radioGroup = "radiogroup"
     
+    /// A consent form.
     case consent = "consent"
+    
+    /// An audio response question.
     case audio = "audio"
+    
+    /// An info screen.
+    case info = "info"
+    
+    /// Unsupported question type.
+    case unsupported = ""
 }

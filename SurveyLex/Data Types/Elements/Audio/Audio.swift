@@ -15,7 +15,7 @@ class Audio: Question, CustomStringConvertible {
     // Inherited
     
     var fragment: Fragment?
-    var isRequired = true
+    var isRequired = false
     var completed = false
     var parentView: SurveyViewController?
     var order: (fragment: Int, question: Int)
@@ -38,7 +38,10 @@ class Audio: Question, CustomStringConvertible {
     let prompt: String
 
     /// The max length of the audio response.
-    var duration = 30.0
+    var duration = 60.0
+    
+    /// Whether the recording automatically starts.
+    var autoStart = false
     
     /// Self-explanatory.
     private var lengthOfMostRecentRecording = 0.0

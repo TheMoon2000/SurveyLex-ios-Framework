@@ -24,10 +24,6 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     /// The text field where the user inputs their text response.
     var textfield: UITextField!
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
     
     init(textQuestion: Text) {
         super.init()
@@ -66,6 +62,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         textfield.borderStyle = .none
         textfield.clearButtonMode = .whileEditing
         textfield.returnKeyType = .next
+        textfield.enablesReturnKeyAutomatically = textQuestion.isRequired
         textfield.placeholder = textQuestion.isRequired ? "Required" : "Optional"
         textfield.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textfield)
@@ -101,16 +98,15 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         textQuestion.response = textField.text!
-        let response = CharacterSet(charactersIn: textfield.text!)
-        if !response.isSubset(of: .whitespacesAndNewlines) {
-            textfield.returnKeyType = .done
-        }
+        textfield.returnKeyType = .done
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         UISelectionFeedbackGenerator().selectionChanged()
         if textfield.returnKeyType == .next {
-            textQuestion.parentView?.toNext(from: self)
+            if !textQuestion.parentView!.toNext(from: self) {
+                surveyPage?.focus(cell: self)
+            }
         } else {
             textfield.delegate = nil
             textfield.resignFirstResponder()
@@ -133,6 +129,10 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         textfield.delegate = nil
         textfield.resignFirstResponder()
         textfield.delegate = self
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 
 }

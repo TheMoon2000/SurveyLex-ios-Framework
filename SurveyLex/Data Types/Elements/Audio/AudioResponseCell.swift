@@ -8,7 +8,7 @@
 
 import UIKit
 
-/// A subclass of `SurveyElementCell` that displays an audio response question.
+/// A subclass of `SurveyElementCell` that displays an audio response question. Audio questions are designed to occupy an *entire* fragment.
 class AudioResponseCell: SurveyElementCell, RecordingDelegate {
     
     /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
@@ -65,6 +65,12 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         self.heightAnchor.constraint(greaterThanOrEqualToConstant: UIScreen.main.bounds.height - 60 - UIApplication.shared.keyWindow!.safeAreaInsets.bottom).isActive = true
     }
     
+    func viewDidAppear() {
+        if audioQuestion.autoStart && !completed {
+            recordButton.startRecording()
+        }
+    }
+    
     /// UI setup (1).
     private func makeTitle() -> UILabel {
         let label = UILabel()
@@ -115,13 +121,13 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         skip.bottomAnchor.constraint(equalTo: bottomAnchor,
                                      constant: -45).isActive = true
         skip.isHidden = audioQuestion.isRequired
-        skip.addTarget(audioQuestion, action: #selector(flip), for: .touchUpInside)
+        skip.addTarget(self, action: #selector(flip), for: .touchUpInside)
         
         return skip
     }
     
     @objc private func flip() {
-        audioQuestion.parentView?.flipPageIfNeeded()
+        audioQuestion.parentView?.flipPageIfNeeded(allCompleted: false)
     }
     
     /// UI setup (4).
@@ -210,6 +216,8 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
                 skipButton.isHidden = false
             }
         }
+        
+        audioQuestion.parentView?.reloadDatasource()
     }
     
     /// A local instance variable that manages the countdown timer
@@ -251,5 +259,8 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         }
         audioQuestion.didFailToRecord(sender, error: error)
     }
+    
+    /// An audio cell should always be focused.
+    override func unfocus() {}
     
 }

@@ -147,30 +147,49 @@ class SurveyViewController: UIPageViewController,
         }
     }
     
-    /// Flip the page as long as the next page exists and all questions in the current fragment are completed.
-    func flipPageIfNeeded() {
-        if currentFragment.allCompleted && fragmentIndex + 1 < fragmentTables.count {
+    /**
+     Flip the page as long as the next page exists and all questions in the current fragment are completed.
+     
+     - Parameters:
+        - allCompleted: Whether to require all questions to be completed in order for the page to flip (`true`) or only require required questions to be completed (`false`).
+     
+     - Returns: A boolean indicating whether the page was flipped.
+    */
+    
+    func flipPageIfNeeded(allCompleted: Bool = true) -> Bool {
+        let cond = allCompleted ? currentFragment.allCompleted : currentFragment.unlocked
+        if cond && fragmentIndex + 1 < fragmentTables.count {
             fragmentIndex += 1
             self.setViewControllers([fragmentTables[fragmentIndex]],
                                     direction: .forward,
                                     animated: true,
                                     completion: nil)
+            return true
         } else if fragmentIndex + 1 == fragmentTables.count {
             print("reached the end of survey")
         }
+        return false
     }
     
-    /// Flip the page only if the provided cell is the last cell in the current fragment and all questions in the current fragment are completed. Needs to be called before focus().
-    func toNext(from cell: SurveyElementCell) {
+    
+    /**
+     Flip the page only if the provided cell is the last cell in the current fragment and all questions in the current fragment are completed. Needs to be called before focus().
+     
+     - Returns: A boolean indicating whether the focus cell has changed.
+     */
+    
+    func toNext(from cell: SurveyElementCell) -> Bool {
         reloadDatasource()
+        var focusChanged = false
         let nextRow = currentFragment.contentCells.firstIndex(of: cell)! + 1
         if nextRow < currentFragment.contentCells.count && !currentFragment.contentCells[nextRow].completed {
-            currentFragment.focusedRow += 1
-        }
-        if currentFragment.contentCells.last == cell {
-            flipPageIfNeeded()
+            currentFragment.focusedRow = nextRow
+            focusChanged = true
+        } else if currentFragment.contentCells.last == cell {
+            focusChanged = flipPageIfNeeded()
         }
         
+        return focusChanged
     }
     
     /// Reload the datasource.

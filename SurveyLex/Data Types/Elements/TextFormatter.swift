@@ -55,10 +55,11 @@ class TextFormatter {
                 letter-spacing: 1%;
             }
 """
+
         let titleStyle = """
             body {
-                font-family: -apple-system;
-                font-weight: 600;
+                font-family: -apple-system, BlinkMacSystemFont;
+                font-weight: 500;
                 font-size: 22px;
                 line-height: 1.4;
                 letter-spacing: 2px;

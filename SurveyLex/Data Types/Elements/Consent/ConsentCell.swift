@@ -7,19 +7,16 @@
 //
 
 import UIKit
-import Down
 
-/// A subclass of `SurveyElementCell` that displays a consent form.
+/// A subclass of `SurveyElementCell` that displays a consent form. Consent forms are designed to occupy an *entire* fragment.
 class ConsentCell: SurveyElementCell {
-    
-    let AGREE_PRESSED = UIColor(red: 0.39, green: 0.59, blue: 0.88, alpha: 1)
     
     /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
     override var completed: Bool {
         return consentInfo.completed
     }
     
-    /// The `Consent` instance which the current cell is presenting.
+    /// The `Consent` object which the current cell is presenting.
     var consentInfo: Consent!
     
     private var title: UITextView!
@@ -49,16 +46,12 @@ class ConsentCell: SurveyElementCell {
         checkboxPressed()
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     private func makeTitle() -> UITextView {
         let titleText = UITextView()
         titleText.isScrollEnabled = false
         titleText.attributedText = TextFormatter.formatted(consentInfo.title, type: .title)
         titleText.textAlignment = .center
-        titleText.isUserInteractionEnabled = false
+        titleText.isEditable = false
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
         
@@ -95,7 +88,6 @@ class ConsentCell: SurveyElementCell {
     private func makeConsentText() -> UITextView {
         let consent = UITextView()
         consent.attributedText = TextFormatter.formatted(consentInfo.consentText, type: .consentText)
-//        consent.attributedText = TextFormatter.formatted("*This is italic!*", type: .body)
         consent.textAlignment = .left
         consent.isEditable = false
         consent.dataDetectorTypes = .link
@@ -199,7 +191,7 @@ class ConsentCell: SurveyElementCell {
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {
-        sender.backgroundColor = AGREE_PRESSED
+        sender.backgroundColor = BUTTON_PRESSED
     }
     
     @objc private func buttonLifted(_ sender: UIButton) {
@@ -213,9 +205,15 @@ class ConsentCell: SurveyElementCell {
     
     @objc private func agreed(_ sender: UIButton) {
         consentInfo.completed = true
-        consentInfo.parentView?.flipPageIfNeeded()
+        if consentInfo.parentView!.flipPageIfNeeded() {
+            checkbox.isEnabled = false
+        }
     }
     
+    /// A consent cell should always be focused.
     override func unfocus() {}
 
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
 }

@@ -77,6 +77,10 @@ class FragmentTableController: UITableViewController {
                 self.contentCells[self.focusedRow].focus()
             }
         }
+        
+        if let audioCell = contentCells.first as? AudioResponseCell {
+            audioCell.viewDidAppear()
+        }
     }
     
      /// A boolean array with the completion status of each survey element. This information is distributed to individual survey elements.

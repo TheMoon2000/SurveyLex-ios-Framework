@@ -39,11 +39,12 @@ class Fragment: CustomStringConvertible {
         self.index = index
         self.type = FragmentType(rawValue: type)!
         
-        if self.type == .audio {
+        switch self.type {
+        case .audio:
             questions.append(Audio(json: data, order: (index + 1, 1), fragment: self))
-        } else if self.type == .consent {
+        case .consent:
             questions.append(Consent(json: data, order: (index + 1, 1), fragment: self))
-        } else {
+        case .textSurvey:
             // must be surveyjs questions
             guard let questionJSONList = data.dictionary?["surveyjs"]? .dictionaryValue["questions"]?.array else {
                 preconditionFailure("Malformed text question:")
@@ -52,12 +53,15 @@ class Fragment: CustomStringConvertible {
                 let q = match(questionJSONList[i], order: (index + 1, i + 1))
                 self.questions.append(q)
             }
+        case .info:
+            questions.append(Info(json: data, order: (index + 1, 1), fragment: self))
         }
     }
     
     /// Matches a JSON to a specific question object.
     private func match(_ json: JSON, order: (Int, Int)) -> Question {
-        switch json.dictionaryValue["type"]?.stringValue ?? "" {
+        let type = json.dictionaryValue["type"]?.stringValue ?? ""
+        switch type {
         case "rating":
             return Rating(json: json, order: order, fragment: self)
         case "text":
@@ -65,7 +69,10 @@ class Fragment: CustomStringConvertible {
         case "radiogroup":
             return RadioGroup(json: json, order: order, fragment: self)
         default:
-            preconditionFailure("Unmatched question type: '\(json.dictionaryValue["type"]?.stringValue ?? "")'")
+//            preconditionFailure("Unmatched question type: '\(json.dictionaryValue["type"]?.stringValue ?? "")'")
+            let u = UnsupportedQuestion(json: json, order: order, fragment: self)
+            u.typeString = type
+            return u
         }
     }
     
@@ -74,6 +81,7 @@ class Fragment: CustomStringConvertible {
         case consent = "CONSENT"
         case textSurvey = "TEXT_SURVEYJS"
         case audio = "AUDIO_STANDARD"
+        case info = "INFO"
     }
     
     /// Customized description that is more debug-friendly.
