@@ -83,9 +83,9 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         
         if !radioGroup.completed {
             radioGroup.completed = true
-            
-            if (surveyPage?.isCellFocused(cell: self) ?? false) {
-                radioGroup.parentView?.toNext(from: self)
+            if !radioGroup.parentView!.toNext(from: self) {
+                // The focus was not changed
+                surveyPage?.focus(cell: self)
             }
         } else {
             surveyPage?.focus(cell: self)
