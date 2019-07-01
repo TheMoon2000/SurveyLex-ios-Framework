@@ -30,12 +30,10 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     init(rateInfo: [(value: String, text: String)], delegate: RatingResponseDelegate) {
         super.init(frame: .zero, style: .plain)
         tableFooterView = UIView(frame: .zero)
-        self.delegate = self
         self.responseDelegate = delegate
-        self.dataSource = self
-        self.allowsMultipleSelection = false
+        self.delegate = self; self.dataSource = self
         self.rateInfo = rateInfo
-        separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        separatorInset = .zero
         self.rowHeight = UITableView.automaticDimension
         self.register(MultipleChoiceCell.classForCoder(),
                       forCellReuseIdentifier: "choice")
