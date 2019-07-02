@@ -9,7 +9,7 @@
 import UIKit
 
 /// A subclass of `SurveyElementCell` that display a radio group question.
-class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
+class RadioGroupCell: SurveyElementCell {
     
     /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
     override var completed: Bool {
@@ -57,8 +57,7 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
     }
     
     private func makeChoiceTable() -> MultipleChoiceView {
-        let rateInfo = radioGroup.choices.map { ($0, $0) }
-        let choiceTable = MultipleChoiceView(rateInfo: rateInfo, delegate: self)
+        let choiceTable = MultipleChoiceView(radioGroup: radioGroup, parentCell: self)
         choiceTable.translatesAutoresizingMaskIntoConstraints = false
         choiceTable.isScrollEnabled = false
         addSubview(choiceTable)
@@ -74,18 +73,24 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         
     }
     
-    // MARK: Rating response delegate
+    // MARK: MultipleChoice table selection handler
     
     func didSelectRow(row: Int) {
         radioGroup.selection = row
         
         if !radioGroup.completed {
             radioGroup.completed = true
-            if !radioGroup.parentView!.toNext(from: self) {
-                // The focus was not changed
+            if (surveyPage?.isCellFocused(cell: self) ?? false) {
+                if !radioGroup.parentView!.toNext(from: self) {
+                    // This is the last cell on the page, so keep it focused
+                    surveyPage?.focus(cell: self)
+                }
+            } else {
+                // The cell was not focused when a selection was made, so now focus it.
                 surveyPage?.focus(cell: self)
             }
         } else {
+            // The cell has already been selected once, so keep it focused.
             surveyPage?.focus(cell: self)
         }
     }

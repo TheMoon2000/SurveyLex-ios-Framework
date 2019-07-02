@@ -10,29 +10,25 @@ import UIKit
 
 /// A table view embedded in a `RadioGroupCell`.
 class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSource {
-
-    var responseDelegate: RatingResponseDelegate?
-//    var selectionIndex: Int?
     
-    var selectedRow: Int?
+    var radioGroup: RadioGroup!
+    var parentCell: RadioGroupCell!
     
     override var intrinsicContentSize: CGSize {
-//        self.reloadData()
-        if let row = selectedRow {
-            self.selectRow(at: IndexPath(row: row, section: 0), animated: false, scrollPosition: .none)
-        }
+        self.reloadData()
+        selectRow(at: IndexPath(row: radioGroup.selection, section: 0), animated: false, scrollPosition: .none)
         return contentSize
     }
-    
-    /// The rating information which the table view is presenting
-    var rateInfo = [(value: String, text: String)]()
 
-    init(rateInfo: [(value: String, text: String)], delegate: RatingResponseDelegate) {
+    init(radioGroup: RadioGroup, parentCell: RadioGroupCell) {
         super.init(frame: .zero, style: .plain)
+        
+        self.radioGroup = radioGroup
+        self.parentCell = parentCell
+        
         tableFooterView = UIView(frame: .zero)
-        self.responseDelegate = delegate
-        self.delegate = self; self.dataSource = self
-        self.rateInfo = rateInfo
+        self.delegate = self
+        self.dataSource = self
         separatorInset = .zero
         self.rowHeight = UITableView.automaticDimension
         self.register(MultipleChoiceCell.classForCoder(),
@@ -43,26 +39,25 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         let cell = self.tableView(tableView, cellForRowAt: indexPath)
         let width = UIScreen.main.bounds.width
+//        print(cell.preferredHeight(width: width - 55), cell.preferredHeight(width: cell.frame.width))
         return cell.preferredHeight(width: width - 55)
     }
     
     // MARK: Table view data source
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return rateInfo.count
+        return radioGroup.choices.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "choice") as! MultipleChoiceCell
-        cell.titleText = rateInfo[indexPath.row].text
-        cell.tintColor = BLUE_TINT
+        cell.titleText = radioGroup.choices[indexPath.row]
         return cell
     }
 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedRow = indexPath.row
-        responseDelegate?.didSelectRow(row: indexPath.row)
+        parentCell.didSelectRow(row: indexPath.row)
     }
     
     

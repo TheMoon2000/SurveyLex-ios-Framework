@@ -11,7 +11,7 @@ import UIKit
 /// A cell in a `MultipleChoice` table view.
 class MultipleChoiceCell: UITableViewCell {
     
-    private var radioCircle: UICheckbox!
+    var radioCircle: UICheckbox!
     private var titleLabel: UILabel!
     private var highlightBackground: UIView!
     
@@ -20,13 +20,6 @@ class MultipleChoiceCell: UITableViewCell {
             titleLabel.text = titleText
         }
     }
-    
-    override var tintColor: UIColor! {
-        didSet {
-            radioCircle.tintColor = tintColor
-        }
-    }
-    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
