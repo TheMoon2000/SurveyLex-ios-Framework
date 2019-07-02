@@ -193,9 +193,10 @@ class FragmentTableController: UITableViewController {
         return contentCells.count
     }
     
+    /* Cannot implement this datasource method or weird things happen during device  orientation change
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 0
-    }
+    }*/
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
