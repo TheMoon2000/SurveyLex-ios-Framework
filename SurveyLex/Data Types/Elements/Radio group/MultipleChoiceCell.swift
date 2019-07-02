@@ -11,7 +11,7 @@ import UIKit
 /// A cell in a `MultipleChoice` table view.
 class MultipleChoiceCell: UITableViewCell {
     
-    private var radioCircle: RadioCircle!
+    private var radioCircle: UICheckbox!
     private var titleLabel: UILabel!
     private var highlightBackground: UIView!
     
@@ -45,24 +45,28 @@ class MultipleChoiceCell: UITableViewCell {
             return view
         }()
         
-        makeRadioCircle()
+        radioCircle = {
+            let circle = UICheckbox()
+            circle.format(type: .circle)
+            circle.checkmarkColor = BUTTON_DEEP_BLUE
+            circle.borderWidth = 2
+            circle.checkedBorderColor = BLUE_TINT
+            circle.uncheckedBorderColor = DISABLED_BLUE
+            circle.isUserInteractionEnabled = false
+            circle.translatesAutoresizingMaskIntoConstraints = false
+            self.addSubview(circle)
+            
+            circle.widthAnchor.constraint(equalToConstant: 24).isActive = true
+            circle.heightAnchor.constraint(equalToConstant: 24).isActive = true
+            circle.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
+                                          constant: -SIDE_PADDING).isActive = true
+            circle.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+            
+            return circle
+        }()
         makeLabel()
         
         highlightBackground.backgroundColor = .white
-    }
-    
-    private func makeRadioCircle() {
-        let circle = RadioCircle()
-        circle.isOpaque = false
-        circle.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(circle)
-        
-        circle.widthAnchor.constraint(equalToConstant: 24).isActive = true
-        circle.heightAnchor.constraint(equalToConstant: 24).isActive = true
-        circle.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                      constant: -SIDE_PADDING).isActive = true
-        circle.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        radioCircle = circle
     }
     
     private func makeLabel() {
@@ -87,7 +91,7 @@ class MultipleChoiceCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
-        self.radioCircle.selected = selected
+        self.radioCircle.isChecked = selected
 
         let transition = {
             self.highlightBackground.backgroundColor = selected ? SELECTION : UIColor.white
