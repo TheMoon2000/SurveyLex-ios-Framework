@@ -113,8 +113,8 @@ class ConsentCell: SurveyElementCell {
         let check = UICheckbox()
         check.format(type: .square)
         check.translatesAutoresizingMaskIntoConstraints = false
-        check.widthAnchor.constraint(equalToConstant: 19).isActive = true
-        check.heightAnchor.constraint(equalToConstant: 19).isActive = true
+        check.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        check.heightAnchor.constraint(equalToConstant: 20).isActive = true
         addSubview(check)
         
         check.leftAnchor.constraint(equalTo: consentText.leftAnchor,

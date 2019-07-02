@@ -27,14 +27,14 @@ class CheckboxItemCell: UITableViewCell {
         checkbox.format(type: .square)
         checkbox.isUserInteractionEnabled = false
         checkbox.translatesAutoresizingMaskIntoConstraints = false
-        checkbox.widthAnchor.constraint(equalToConstant: 19).isActive = true
-        checkbox.heightAnchor.constraint(equalToConstant: 19).isActive = true
+        checkbox.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        checkbox.heightAnchor.constraint(equalToConstant: 20).isActive = true
         addSubview(checkbox)
         
         checkbox.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                   constant: 10).isActive = true
+                                   constant: 12).isActive = true
         checkbox.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                       constant: SIDE_PADDING).isActive = true
+                                       constant: SIDE_PADDING + 10).isActive = true
         
         return checkbox
     }
