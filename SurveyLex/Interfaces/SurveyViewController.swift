@@ -137,7 +137,7 @@ class SurveyViewController: UIPageViewController,
         return fragmentTables[index + 1]
     }
     
-    // Delegate method for UIPageController
+    // MARK: UIPageController delegate
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         
@@ -148,7 +148,7 @@ class SurveyViewController: UIPageViewController,
     }
     
     /**
-     Flip the page as long as the next page exists and all questions in the current fragment are completed.
+     Flips the page as long as the next page exists and all questions in the current fragment are completed.
      
      - Parameters:
         - allCompleted: Whether to require all questions to be completed in order for the page to flip (`true`) or only require required questions to be completed (`false`).
@@ -173,7 +173,7 @@ class SurveyViewController: UIPageViewController,
     
     
     /**
-     Flip the page only if the provided cell is the last cell in the current fragment and all questions in the current fragment are completed. Needs to be called before focus().
+     Flips the page only if the provided cell is the last cell in the current fragment and all questions in the current fragment are completed. Needs to be called before focus().
      
      - Returns: A boolean indicating whether the focus cell has changed.
      */
@@ -192,13 +192,13 @@ class SurveyViewController: UIPageViewController,
         return focusChanged
     }
     
-    /// Reload the datasource.
+    /// Reloads the datasource.
     func reloadDatasource() {
         dataSource = nil
         dataSource = self
     }
     
-    /// Flip back to the previous page.
+    /// Flips back to the previous page.
     func previousPage() {
         if fragmentIndex > 0 {
             fragmentIndex -= 1

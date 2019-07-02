@@ -33,29 +33,27 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         super.init()
         self.radioGroup = radioGroup
         
-        title = makeTextView()
+        title = makeTitleView()
         choiceTable = makeChoiceTable()
     }
     
-    private func makeTextView() -> UITextView {
-        let textView = UITextView()
-        let numbered = "\(radioGroup.order.fragment).\(radioGroup.order.question) " + radioGroup.title
-        textView.attributedText = TextFormatter.formatted(numbered, type: .title)
-        textView.textAlignment = .left
-        textView.isUserInteractionEnabled = false
-        textView.dataDetectorTypes = .link
-        textView.linkTextAttributes[.foregroundColor] = BLUE_TINT
-        textView.isScrollEnabled = false
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(textView)
+    // MARK: Main components (title & radio group)
+    
+    private func makeTitleView() -> UITextView {
+        let titleText = UITextView()
+        titleText.text = "\(radioGroup.order.fragment).\(radioGroup.order.question) " + radioGroup.title
+        titleText.format(as: .title)
+        titleText.textColor = .darkGray
+        titleText.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(titleText)
         
-        textView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                      constant: 30).isActive = true
-        textView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                       constant: 18).isActive = true
-        textView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                        constant: -18).isActive = true
-        return textView
+        titleText.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
+                                      constant: 20).isActive = true
+        titleText.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
+                                        constant: SIDE_PADDING).isActive = true
+        titleText.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
+                                         constant: -SIDE_PADDING).isActive = true
+        return titleText
     }
     
     private func makeChoiceTable() -> MultipleChoiceView {
@@ -65,8 +63,8 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         choiceTable.isScrollEnabled = false
         addSubview(choiceTable)
         
-        choiceTable.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor).isActive = true
-        choiceTable.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor).isActive = true
+        choiceTable.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        choiceTable.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
         choiceTable.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
                                             constant: -30).isActive = true
         choiceTable.topAnchor.constraint(equalTo: title.bottomAnchor,
@@ -76,7 +74,7 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         
     }
     
-    // Rating response delegate
+    // MARK: Rating response delegate
     
     func didSelectRow(row: Int) {
         radioGroup.selection = row
@@ -92,7 +90,7 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         }
     }
     
-    // Customized focus / unfocus appearance
+    // MARK: Customized focus / unfocus appearance
     
     override func focus() {
         super.focus()

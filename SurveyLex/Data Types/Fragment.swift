@@ -68,6 +68,8 @@ class Fragment: CustomStringConvertible {
             return Text(json: json, order: order, fragment: self)
         case "radiogroup":
             return RadioGroup(json: json, order: order, fragment: self)
+        case "checkbox":
+            return CheckBoxes(json: json, order: order, fragment: self)
         default:
 //            preconditionFailure("Unmatched question type: '\(json.dictionaryValue["type"]?.stringValue ?? "")'")
             let u = UnsupportedQuestion(json: json, order: order, fragment: self)

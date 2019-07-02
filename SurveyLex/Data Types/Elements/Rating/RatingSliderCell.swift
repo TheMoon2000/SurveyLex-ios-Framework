@@ -11,15 +11,16 @@ import UIKit
 /// A subclass of `SurveyElementCell` that displays a rating question.
 class RatingSliderCell: SurveyElementCell {
     
+    /// The left and right insets.
+    let sideMargins: CGFloat = 30
+    
+    
     override var completed: Bool {
         return ratingQuestion.completed
     }
     
     /// Custom gray color used for the ticks and the track.
     let grayColor = UIColor(white: 0.85, alpha: 1)
-    
-    /// The left and right insets.
-    let sideMargins: CGFloat = 30
     
     /// The text view for the title of the rating question.
     var title: UITextView!
@@ -37,9 +38,7 @@ class RatingSliderCell: SurveyElementCell {
 
     init(ratingQuestion: Rating) {
         super.init()
-        
-        print("rating cell initialized")
-        
+                
         self.ratingQuestion = ratingQuestion
         
         title = makeTextView()
@@ -55,23 +54,18 @@ class RatingSliderCell: SurveyElementCell {
     
     private func makeTextView() -> UITextView {
         let textView = UITextView()
-        let numbered = "\(self.ratingQuestion.order.fragment).\(ratingQuestion.order.question) " + ratingQuestion.title
-        textView.attributedText = TextFormatter.formatted(numbered, type: .title)
+        textView.text = "\(ratingQuestion.order.fragment).\(ratingQuestion.order.question) " + ratingQuestion.title
+        textView.format(as: .title)
         textView.textColor = .gray
-        textView.textAlignment = .left
-        textView.isScrollEnabled = false
-        textView.isEditable = false
-        textView.dataDetectorTypes = .link
-        textView.linkTextAttributes[.foregroundColor] = BLUE_TINT
         textView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textView)
         
         textView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                      constant: 30).isActive = true
+                                      constant: 25).isActive = true
         textView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                       constant: 20).isActive = true
+                                       constant: SIDE_PADDING).isActive = true
         textView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                        constant: -20).isActive = true
+                                        constant: -SIDE_PADDING).isActive = true
         return textView
     }
     
@@ -82,6 +76,10 @@ class RatingSliderCell: SurveyElementCell {
         slider.maximumValue = 100
         slider.value = currentValue
         slider.thumbTintColor = DARKER_TINT
+        /*
+        slider.layer.borderWidth = 1
+        slider.layer.borderColor = UIColor.orange.cgColor
+        */
         
         slider.translatesAutoresizingMaskIntoConstraints = false
         addSubview(slider)
@@ -101,51 +99,63 @@ class RatingSliderCell: SurveyElementCell {
     
     private func addTicks() {
         
+        let ticks = UIView()
+        ticks.translatesAutoresizingMaskIntoConstraints = false
+        insertSubview(ticks, belowSubview: slider)
+        ticks.leftAnchor.constraint(equalTo: slider.leftAnchor).isActive = true
+        ticks.rightAnchor.constraint(equalTo: slider.rightAnchor).isActive = true
+        ticks.topAnchor.constraint(equalTo: slider.topAnchor).isActive = true
+        ticks.bottomAnchor.constraint(equalTo: slider.bottomAnchor).isActive = true
+        
         let segmentCount = CGFloat(ratingQuestion.options.count) - 1
         let thumbWidth = slider.thumbRect(forBounds: slider.bounds,
-                                          trackRect: slider.trackRect(forBounds: slider.bounds), value: 50).width
+                                          trackRect: slider.trackRect(forBounds: slider.bounds), value: 0).width - 3
         
         let track = UIView()
         track.backgroundColor = grayColor
         track.translatesAutoresizingMaskIntoConstraints = false
-        insertSubview(track, belowSubview: slider)
+        ticks.addSubview(track)
         
-        track.heightAnchor.constraint(equalToConstant: 1.5).isActive = true
+        track.heightAnchor.constraint(equalToConstant: 2).isActive = true
         track.leftAnchor.constraint(equalTo: slider.leftAnchor,
                                     constant: thumbWidth / 2).isActive = true
         track.rightAnchor.constraint(equalTo: slider.rightAnchor,
                                      constant: -thumbWidth / 2).isActive = true
         track.centerYAnchor.constraint(equalTo: slider.centerYAnchor).isActive = true
         
+        // Ticks
         
         func makeTickmark() -> UIView {
             let tick = UIView()
             tick.backgroundColor = grayColor
             tick.translatesAutoresizingMaskIntoConstraints = false
+            ticks.addSubview(tick)
+                
+            tick.widthAnchor.constraint(equalToConstant: 2).isActive = true
+            tick.heightAnchor.constraint(equalToConstant: 12).isActive = true
+            tick.centerYAnchor.constraint(equalTo: slider.centerYAnchor).isActive = true
+            
             return tick
         }
         
+        let left = makeTickmark()
+        left.leftAnchor.constraint(equalTo: slider.leftAnchor, constant: thumbWidth / 2).isActive = true
+        
         for i in 0..<ratingQuestion.options.count {
             let tickmark = makeTickmark()
-            insertSubview(tickmark, belowSubview: slider)
-            
-            tickmark.widthAnchor.constraint(equalToConstant: 1.1).isActive = true
-            tickmark.heightAnchor.constraint(equalToConstant: 12).isActive = true
-            
-            tickmark.centerYAnchor.constraint(equalTo: slider.centerYAnchor).isActive = true
             
             /*
              Pseudocode:
-             tick.centerX = [slider.right - (sideMargins + thumbWidth)] * i / segmentCount + sideMargins + thumbWidth / 2
+             tick.centerX = (slider.right - thumbWidth) * i / segmentCount + thumbWidth / 2
              */
             
             NSLayoutConstraint(item: tickmark,
                                attribute: .centerX,
                                relatedBy: .equal,
-                               toItem: slider,
+                               toItem: ticks,
                                attribute: .right,
-                               multiplier: max(.leastNormalMagnitude, CGFloat(i) / segmentCount),
-                               constant: sideMargins + thumbWidth / 2 - (sideMargins + thumbWidth) * CGFloat(i) / segmentCount).isActive = true
+                               multiplier: max(.leastNonzeroMagnitude, CGFloat(i) / segmentCount),
+                               constant: -thumbWidth * CGFloat(i) / segmentCount + thumbWidth / 2).isActive = true
     
         }
     }
@@ -180,6 +190,7 @@ class RatingSliderCell: SurveyElementCell {
     
     @objc private func sliderPressed() {
         surveyPage?.focus(cell: self)
+        UISelectionFeedbackGenerator().selectionChanged()
         if slider.thumbTintColor! == .lightGray {
             let segmentLength = 100.0 / Float(ratingQuestion.options.count - 1)
             let index = Int(round(currentValue / segmentLength))

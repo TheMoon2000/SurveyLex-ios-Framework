@@ -66,6 +66,9 @@ enum ResponseType: String {
     /// An info screen.
     case info = "info"
     
+    /// Checkbox.
+    case checkbox = "checkbox"
+    
     /// Unsupported question type.
     case unsupported = ""
 }

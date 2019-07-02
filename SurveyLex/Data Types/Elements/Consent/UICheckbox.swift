@@ -1,5 +1,5 @@
 //
-//  Checkbox.swift
+//  UICheckbox.swift
 //  CheckboxDemo
 //
 
@@ -8,7 +8,7 @@ import UIKit
 
 /// Checkbox is a simple, animation free checkbox and UISwitch alternative designed
 /// to be performant and easy to implement.
-public class Checkbox: UIControl {
+public class UICheckbox: UIControl {
 
     // MARK: - Enums
 
@@ -287,4 +287,21 @@ public class Checkbox: UIControl {
         return hitFrame.contains(point)
     }
 
+}
+
+extension UICheckbox {
+    func format(type: UICheckbox.CheckmarkStyle) {
+        self.checkmarkStyle = type
+        if type == .square {
+            self.borderStyle = .square
+        } else {
+            self.borderStyle = .circle
+        }
+        self.borderWidth = 1.5
+        self.checkmarkSize = 0.56
+        self.checkmarkColor = BLUE_TINT
+        self.checkedBorderColor = DISABLED_BLUE
+        self.uncheckedBorderColor = .init(white: 0.87, alpha: 1)
+        self.translatesAutoresizingMaskIntoConstraints = false
+    }
 }

@@ -25,33 +25,30 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     /// The text field where the user inputs their text response.
     var textfield: UITextField!
     
+    // MARK: Main components setup
+    
     init(textQuestion: Text) {
         super.init()
         self.textQuestion = textQuestion
-        title = makeTextView()
+        title = makeTitleView()
         textfield = makeTextField()
         makeLine()
     }
     
-    private func makeTextView() -> UITextView {
+    private func makeTitleView() -> UITextView {
         let textView = UITextView()
-        let numbered = "\(textQuestion.order.fragment).\(textQuestion.order.question) " + textQuestion.title
-        textView.attributedText = TextFormatter.formatted(numbered, type: .title)
-        textView.textAlignment = .left
-        textView.textColor = .darkGray
-        textView.isUserInteractionEnabled = false
-        textView.dataDetectorTypes = .link
-        textView.linkTextAttributes[.foregroundColor] = BLUE_TINT
-        textView.isScrollEnabled = false
+        textView.text = "\(textQuestion.order.fragment).\(textQuestion.order.question) " + textQuestion.title
+        textView.format(as: .title)
+        textView.textColor = .gray
         textView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textView)
         
         textView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                      constant: 20).isActive = true
+                                      constant: 25).isActive = true
         textView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                       constant: 18).isActive = true
+                                       constant: SIDE_PADDING).isActive = true
         textView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                        constant: -18).isActive = true
+                                        constant: -SIDE_PADDING).isActive = true
         return textView
     }
     
@@ -68,9 +65,9 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         addSubview(textfield)
         
         textfield.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                        constant: 22).isActive = true
+                                        constant: SIDE_PADDING).isActive = true
         textfield.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                         constant: -22).isActive = true
+                                         constant: -SIDE_PADDING).isActive = true
         textfield.heightAnchor.constraint(equalToConstant: 56).isActive = true
         textfield.topAnchor.constraint(equalTo: title.bottomAnchor,
                                        constant:0).isActive = true
@@ -92,6 +89,8 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
                                      constant: -8).isActive = true
     }
 
+    // MARK: Text field delegate
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         surveyPage?.focus(cell: self)
     }
@@ -114,6 +113,8 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         }
         return true
     }
+    
+    // MARK: Overriden methods
     
     override func focus() {
         super.focus()

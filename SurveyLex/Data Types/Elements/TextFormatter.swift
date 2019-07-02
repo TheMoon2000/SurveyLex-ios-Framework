@@ -12,7 +12,7 @@ import Down
 class TextFormatter {
     
     enum TextType {
-        case title, consentText, body, subtitle
+        case title, consentText, subtitle, plain
     }
     
     static func formatted(_ string: String, type: TextType) -> NSAttributedString {
@@ -66,6 +66,15 @@ class TextFormatter {
             }
 """
         
+        let plainStyle = """
+            body {
+                font-family: -apple-system;
+                font-size: 18px;
+                line-height: 1.4;
+                letter-spacing: 1%;
+            }
+"""
+        
         let _ = """
             body {
                 font: -apple-system-body; font-size: 18px; }
@@ -77,13 +86,6 @@ class TextFormatter {
         
         
         switch type {
-        case .body:
-            do {
-                let down = try Down(markdownString: newString).toAttributedString(.default, stylesheet: bodyStyle)
-                return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
-            } catch {
-                return legacy(string, type: .body)
-            }
         case .consentText:
             do {
                 let down = try Down(markdownString: newString).toAttributedString(.default, stylesheet: consentStyle)
@@ -101,6 +103,13 @@ class TextFormatter {
         case .title:
             do {
                 let down = try Down(markdownString: newString).toAttributedString(.default, stylesheet: titleStyle)
+                return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
+            } catch {
+                return legacy(string, type: .title)
+            }
+        case .plain:
+            do {
+                let down = try Down(markdownString: newString).toAttributedString(.default, stylesheet: plainStyle)
                 return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
             } catch {
                 return legacy(string, type: .title)
@@ -139,14 +148,14 @@ class TextFormatter {
         
         var attributes = [NSAttributedString.Key : Any]()
         switch type {
-        case .body:
-            attributes[.font] = UIFont.systemFont(ofSize: 19, weight: .regular)
         case .consentText:
             attributes[.font] = UIFont.systemFont(ofSize: 17)
         case .subtitle:
             attributes[.font] = UIFont.systemFont(ofSize: 16)
         case .title:
             attributes[.font] = UIFont.systemFont(ofSize: 22, weight: .medium)
+        case .plain:
+            attributes[.font] = UIFont.systemFont(ofSize: 18.5)
         }
         
         attrTxt.addAttributes(attributes, range: NSMakeRange(0, newString.count))

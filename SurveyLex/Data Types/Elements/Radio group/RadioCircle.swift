@@ -39,7 +39,7 @@ class RadioCircle: UIView {
         
         
         if selected {
-            let inner = UIBezierPath(arcCenter: center, radius: bounds.midX - 5, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
+            let inner = UIBezierPath(arcCenter: center, radius: bounds.midX - 6, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
             tintColor.setFill()
             inner.fill()
         }

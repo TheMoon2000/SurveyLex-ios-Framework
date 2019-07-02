@@ -181,7 +181,6 @@ class RecordButton: UIButton {
     }
     
     func startRecording() {
-        buttonPressed()
         record()
     }
 

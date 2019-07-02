@@ -28,16 +28,8 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
     /// the `UILabel` under the record button.
     var finishMessage: UILabel!
     
-    /// The `UILabel` for the audio response question.
-    private var titleLabel: UILabel!
-    
-    /// The title of the audio response question.
-    var title = "Audio question" {
-        didSet {
-            titleLabel.attributedText = TextFormatter.formatted(title, type: .title)
-            titleLabel.textAlignment = .center
-        }
-    }
+    /// The title UI element the audio response question.
+    private var titleLabel: UITextView!
     
     /// The URL where the audio file will be saved.
     var saveURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("tmp.m4a") {
@@ -66,26 +58,25 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
     }
     
     func viewDidAppear() {
+        print("audio response appeared")
         if audioQuestion.autoStart && !completed {
             recordButton.startRecording()
         }
     }
     
     /// UI setup (1).
-    private func makeTitle() -> UILabel {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .medium)
-        label.text = "[Replace me]"
-        label.numberOfLines = 100
-        label.adjustsFontSizeToFitWidth = true
-        label.lineBreakMode = .byWordWrapping
+    private func makeTitle() -> UITextView {
+        let label = UITextView()
+        label.text = audioQuestion.prompt
+        label.format(as: .title)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
+        
         label.leftAnchor.constraint(equalTo: leftAnchor,
-                                    constant: 30).isActive = true
+                                    constant: SIDE_PADDING).isActive = true
         label.rightAnchor.constraint(equalTo: rightAnchor,
-                                     constant: -30).isActive = true
+                                     constant: -SIDE_PADDING).isActive = true
         label.topAnchor.constraint(equalTo: topAnchor,
                                    constant: 40).isActive = true
         return label
@@ -127,7 +118,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
     }
     
     @objc private func flip() {
-        audioQuestion.parentView?.flipPageIfNeeded(allCompleted: false)
+        let _ = audioQuestion.parentView?.flipPageIfNeeded(allCompleted: false)
     }
     
     /// UI setup (4).
@@ -155,7 +146,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         return "Time limit: \(Int(audioQuestion.duration))s"
     }
 
-    // Delegate methods for recorder
+    // MARK: Recording delegate
     
     /// Because we reset `finishMessage.text` after a two-second delay, we need to make sure that we abort the process if the user has started to record again. If set to `true`, it means that we do not reset `finishMessage.text` to "Recording was too short" after the 2 seconds are over.
     var shouldCancelCaptionReset = false

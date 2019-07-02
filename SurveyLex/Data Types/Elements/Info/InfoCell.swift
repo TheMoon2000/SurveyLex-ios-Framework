@@ -31,19 +31,18 @@ class InfoCell: SurveyElementCell {
     
     private func makeTitle() -> UITextView {
         let titleText = UITextView()
-        titleText.isScrollEnabled = false
-        titleText.attributedText = TextFormatter.formatted(infoData.title, type: .title)
+        titleText.text = infoData.title
+        titleText.format(as: .title)
         titleText.textAlignment = .center
-        titleText.isEditable = false
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
         
         titleText.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
                                        constant: 40).isActive = true
         titleText.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                        constant: 32).isActive = true
+                                        constant: SIDE_PADDING).isActive = true
         titleText.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                         constant: -32).isActive = true
+                                         constant: -SIDE_PADDING).isActive = true
         
         return titleText
     }

@@ -17,7 +17,7 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     var selectedRow: Int?
     
     override var intrinsicContentSize: CGSize {
-        self.reloadData()
+//        self.reloadData()
         if let row = selectedRow {
             self.selectRow(at: IndexPath(row: row, section: 0), animated: false, scrollPosition: .none)
         }
@@ -46,7 +46,7 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
         return cell.preferredHeight(width: width - 55)
     }
     
-    // Datasource methods
+    // MARK: Table view data source
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return rateInfo.count

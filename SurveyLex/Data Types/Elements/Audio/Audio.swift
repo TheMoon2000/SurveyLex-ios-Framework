@@ -77,7 +77,6 @@ class Audio: Question, CustomStringConvertible {
     
     func makeContentCell() -> SurveyElementCell {
         let cell = AudioResponseCell(audioQuestion: self)
-        cell.title = prompt
         let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("Recordings", isDirectory: true)
         
         do {

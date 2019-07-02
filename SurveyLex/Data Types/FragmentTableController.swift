@@ -60,26 +60,24 @@ class FragmentTableController: UITableViewController {
     var fragmentIndex: Int {
         return fragmentData.index
     }
+
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !surveyViewController!.visitedFragments.contains(self) {
-            surveyViewController?.visitedFragments.insert(self)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if !self.surveyViewController!.visitedFragments.contains(self) {
+                self.surveyViewController?.visitedFragments.insert(self)
                 self.focusedRow = 0
-            }
-        } else if fragmentData.questions.count == 1 {
-            DispatchQueue.main.async {
+            } else if self.fragmentData.questions.count == 1 {
                 self.focusedRow = 0
-            }
-        } else if focusedRow != -1 {
-            DispatchQueue.main.async {
+            } else if self.focusedRow != -1 {
                 self.contentCells[self.focusedRow].focus()
             }
-        }
-        
-        if let audioCell = contentCells.first as? AudioResponseCell {
-            audioCell.viewDidAppear()
+            
+            if let audioCell = self.contentCells.first as? AudioResponseCell {
+                audioCell.viewDidAppear()
+            }
         }
     }
     
@@ -103,21 +101,29 @@ class FragmentTableController: UITableViewController {
         
         precondition(fragmentData != nil)
         
-        contentCells = fragmentData.questions.map { question in
-            let cell = question.makeContentCell()
-            cell.surveyPage = self
-            return cell
-        }
-        
-        fragmentData.questions.forEach { $0.parentView = surveyViewController }
-        
         tableView.allowsSelection = true
         tableView.separatorStyle = .none
-        tableView.delegate = self
+//        tableView.rowHeight = UITableView.automaticDimension
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.keyboardDismissMode = .interactive
         
         view.backgroundColor = UIColor(white: 0.94, alpha: 1)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            self.loadSurveyElements()
+        }
+    }
+    
+    func loadSurveyElements() {
+        for question in fragmentData.questions {
+            question.parentView = surveyViewController
+            
+            let cell = question.makeContentCell()
+            cell.surveyPage = self
+            cell.unfocus()
+            contentCells.append(cell)
+        }
+        tableView.reloadSections(IndexSet(arrayLiteral: 0), with: .none)
     }
     
     func focus(cell: SurveyElementCell) {
@@ -151,17 +157,29 @@ class FragmentTableController: UITableViewController {
         // Not very memory efficient, but we can assume that a survey
         // will never have too many question on the same page.
         
+        /*
         if indexPath.row == focusedRow {
             contentCells[indexPath.row].focus()
         } else {
             contentCells[indexPath.row].unfocus()
-        }
+        }*/
         
         return contentCells[indexPath.row]
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         focusedRow = indexPath.row
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.contentView.alpha = 0
+        
+        UIView.animate(
+            withDuration: 0.4,
+            delay: 0.2 * Double(indexPath.row),
+            animations: {
+                cell.contentView.alpha = 1
+        })
     }
     
     /// Fixes the bug with device rotation by resetting the content offset.

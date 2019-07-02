@@ -25,9 +25,14 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
         textView = makeTextView() // 2
         lookupButton = makeLookupButton() // 3
         
+        // Tribe 4 application
 //        textView.text = "16261720-43fe-11e9-8a24-cd4ab4d0c054"
+        
+        // Post day diary
 //        textView.text = "41e8abf0-62b9-11e9-a454-f5b21638e785"
 //        textView.text = "5f108ef0-5d23-11e9-8d7e-bb5f7e5229ff"
+        
+        // Custom (everything in one survey)
         textView.text = "b1d9d390-9b5c-11e9-a279-9f8e317e3dcc"
     }
     
