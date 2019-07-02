@@ -28,7 +28,6 @@ class FragmentTableController: UITableViewController {
         didSet (oldValue) {
             if !focusedRowResponse { return }
             if focusedRow == oldValue { return }
-            print("focused row \(focusedRow)")
             if focusedRow != -1 {
                 let index = IndexPath(row: focusedRow, section: 0)
                 if focusedRow < tableView.numberOfRows(inSection: 0) {
@@ -59,11 +58,36 @@ class FragmentTableController: UITableViewController {
         return fragmentData.index
     }
 
+
     
+    /// Whether the view has appeared at least once.
+    private var viewAppeared = false
+    
+    /// Whether the content cells are loaded.
+    var loadedContentCells = false {
+        didSet (oldValue) {
+            // If the content cells are loaded for the first time, and the view has already appeared, then we run `appearHandler()`.
+            if !oldValue && viewAppeared {
+                self.appearHandler()
+            }
+        }
+    }
+
+    /// Usually, the view is already loaded by the time it appears. However, if that didn't happen, then we won't call `appearHandler()` until the view has been loaded.
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        viewAppeared = true
+        if !loadedContentCells { return }
+        
+        appearHandler()
+    }
+    /// This function will run as soon as both `viewAppeared` and `loadedContentCells` are `true`.
+    private func appearHandler() {
+        
+        if !viewAppeared || !loadedContentCells { return }
+        
+        DispatchQueue.main.async {
             if !self.surveyViewController!.visitedFragments.contains(self) {
                 self.surveyViewController?.visitedFragments.insert(self)
                 self.focusedRow = 0
@@ -107,9 +131,28 @@ class FragmentTableController: UITableViewController {
         
         view.backgroundColor = UIColor(white: 0.94, alpha: 1)
         
+        let label = insertLoadingLabel()
+        
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             self.loadSurveyElements()
+            label.isHidden = true
+            self.loadedContentCells = true
         }
+    }
+    
+    private func insertLoadingLabel() -> UILabel {
+        let label = UILabel()
+        label.text = "Loading content..."
+        label.textColor = .gray
+        label.font = .systemFont(ofSize: 18)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        tableView.insertSubview(label, at: 0)
+        
+        label.centerXAnchor.constraint(equalTo: tableView.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        label.centerYAnchor.constraint(equalTo: tableView.safeAreaLayoutGuide.centerYAnchor,
+                                       constant: -5).isActive = true
+        
+        return label
     }
     
     func loadSurveyElements() {
