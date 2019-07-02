@@ -56,12 +56,14 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        UISelectionFeedbackGenerator().selectionChanged()
         parentCell.surveyPage?.focus(cell: parentCell)
         parentCell.modified = true
         checkboxData.selections.insert(indexPath.row)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        UISelectionFeedbackGenerator().selectionChanged()
         checkboxData.selections.remove(indexPath.row)
     }
     

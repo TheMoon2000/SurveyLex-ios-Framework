@@ -43,7 +43,7 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
         let titleText = UITextView()
         titleText.text = "\(radioGroup.order.fragment).\(radioGroup.order.question) " + radioGroup.title
         titleText.format(as: .title)
-        titleText.textColor = .darkGray
+        titleText.textColor = .black
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
         
@@ -94,12 +94,12 @@ class RadioGroupCell: SurveyElementCell, RatingResponseDelegate {
     
     override func focus() {
         super.focus()
-        title.textColor = .black
+//        title.textColor = .black
     }
     
     override func unfocus() {
         super.unfocus()
-        title.textColor = .darkGray
+//        title.textColor = .darkGray
     }
 
 }

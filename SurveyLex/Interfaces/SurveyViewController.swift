@@ -68,8 +68,6 @@ class SurveyViewController: UIPageViewController,
                            direction: .forward,
                            animated: true,
                            completion: nil)
-
-        visitedFragments.insert(fragmentTables[0])
         
         // Setup navigation bar appearance
         let cancelButton = UIBarButtonItem(title: "Close",

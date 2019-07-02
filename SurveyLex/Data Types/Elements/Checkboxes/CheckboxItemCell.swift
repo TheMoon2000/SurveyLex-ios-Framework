@@ -51,7 +51,7 @@ class CheckboxItemCell: UITableViewCell {
         titleText.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
                                          constant: -SIDE_PADDING).isActive = true
         titleText.topAnchor.constraint(equalTo: checkbox.topAnchor,
-                                       constant: -3).isActive = true
+                                       constant: -4).isActive = true
         titleText.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
                                           constant: -10).isActive = true
         

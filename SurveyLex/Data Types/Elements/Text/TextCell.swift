@@ -39,7 +39,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         let textView = UITextView()
         textView.text = "\(textQuestion.order.fragment).\(textQuestion.order.question) " + textQuestion.title
         textView.format(as: .title)
-        textView.textColor = .gray
+        textView.textColor = .black
         textView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textView)
         
@@ -118,7 +118,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     override func focus() {
         super.focus()
-        title.textColor = .black
+//        title.textColor = .black
         self.textfield.delegate = nil
         self.textfield.becomeFirstResponder()
         self.textfield.delegate = self
@@ -126,7 +126,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     override func unfocus() {
         super.unfocus()
-        title.textColor = .darkGray
+//        title.textColor = .darkGray
         textfield.delegate = nil
         textfield.resignFirstResponder()
         textfield.delegate = self

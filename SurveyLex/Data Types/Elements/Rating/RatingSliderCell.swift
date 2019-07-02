@@ -56,7 +56,7 @@ class RatingSliderCell: SurveyElementCell {
         let textView = UITextView()
         textView.text = "\(ratingQuestion.order.fragment).\(ratingQuestion.order.question) " + ratingQuestion.title
         textView.format(as: .title)
-        textView.textColor = .gray
+        textView.textColor = .black
         textView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textView)
         
@@ -214,7 +214,7 @@ class RatingSliderCell: SurveyElementCell {
     
     override func focus() {
         super.focus()
-        title.textColor = .black
+//        title.textColor = .black
         UIView.performWithoutAnimation {
             slider.thumbTintColor = ratingQuestion.completed ? BLUE_TINT : .lightGray
         }
@@ -222,7 +222,7 @@ class RatingSliderCell: SurveyElementCell {
     
     override func unfocus() {
         super.unfocus()
-        title.textColor = .darkGray
+//        title.textColor = .darkGray
         UIView.performWithoutAnimation {
             slider.thumbTintColor = ratingQuestion.completed ? DISABLED_BLUE : grayColor
             slider.alpha = 1.0

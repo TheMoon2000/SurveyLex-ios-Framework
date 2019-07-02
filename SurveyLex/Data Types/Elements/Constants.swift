@@ -18,7 +18,7 @@ let DARKER_TINT = UIColor(red: 0.33, green: 0.56, blue: 0.94, alpha: 1)
 let SELECTION = UIColor(red: 0.9, green: 0.95, blue: 1, alpha: 1)
 let DISABLED_BLUE = UIColor(red: 0.65, green: 0.79, blue: 0.99, alpha: 1)
 
-let UNFOCUSED_ALPHA: CGFloat = 0.5
+let UNFOCUSED_ALPHA: CGFloat = 0.3
 let SIDE_PADDING: CGFloat = 20.0
 
 extension UITextView {

@@ -28,7 +28,7 @@ class FragmentTableController: UITableViewController {
         didSet (oldValue) {
             if !focusedRowResponse { return }
             if focusedRow == oldValue { return }
-            
+            print("focused row \(focusedRow)")
             if focusedRow != -1 {
                 let index = IndexPath(row: focusedRow, section: 0)
                 if focusedRow < tableView.numberOfRows(inSection: 0) {
@@ -40,8 +40,6 @@ class FragmentTableController: UITableViewController {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                         self.tableView.scrollToRow(at: index, at: pos, animated: true)
                     }
-                }
-                if let cell = tableView.cellForRow(at: index) as? SurveyElementCell {
                     UIView.animate(withDuration: 0.2) { cell.focus() }
                 }
             }
@@ -150,6 +148,10 @@ class FragmentTableController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return contentCells.count
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -30,8 +30,7 @@ class CheckboxesCell: SurveyElementCell {
         let titleText = UITextView()
         titleText.text = "\(checkboxData.order.fragment).\(checkboxData.order.question) " + checkboxData.title
         titleText.format(as: .title)
-        titleText.textAlignment = .center
-        titleText.textColor = .darkGray // Assume unfocused by default
+        titleText.textColor = .black // Assume unfocused by default
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
         
@@ -70,18 +69,4 @@ class CheckboxesCell: SurveyElementCell {
         super.init(coder: aDecoder)
     }
 
-    
-    // MARK: Overriden superclass methods
-    
-    override func focus() {
-        super.focus()
-        
-        title.textColor = .black
-    }
-    
-    override func unfocus() {
-        super.unfocus()
-        
-        title.textColor = .darkGray
-    }
 }
