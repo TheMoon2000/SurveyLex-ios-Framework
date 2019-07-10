@@ -14,12 +14,59 @@ public protocol SurveyResponseDelegate {
     /// Called when the `Survey` instance established a connection to the server and retrieved all necessary information about the survey.
     func surveyDidLoad(_ survey: Survey)
     
-    func surveyReturnedResponse(_ survey: Survey, response: Survey.Response, message: String?)
+    func surveyReturnedError(_ survey: Survey, error: Survey.Error, message: String?)
     
     /// Called when the survey is presented to the user.
     func surveyDidPresent(_ survey: Survey)
+    
+    func surveyWillClose(_ survey: Survey, completed: Bool)
+    
+    func surveyDidClose(_ survey: Survey, completed: Bool)
 }
 
 extension SurveyResponseDelegate {
-    func surveyDidPresent(_ survey: Survey) {}
+    public func surveyDidLoad(_ survey: Survey) {
+        survey.present()
+    }
+    
+    public func surveyDidPresent(_ survey: Survey) {}
+    
+    public func surveyWillClose(_ survey: Survey, completed: Bool) {}
+
+    public func surveyDidClose(_ survey: Survey, completed: Bool) {}
+    
+    public func surveyReturnedError(_ survey: Survey, error: Survey.Error, message: String?) {
+        switch error {
+        case .invalidRequest:
+            self.invalidSurveyWarning(survey)
+        case .connectionError:
+            self.noInternetConnectionWarning(survey)
+        default:
+            break
+        }
+    }
+    
+    private func invalidSurveyWarning(_ survey: Survey) {
+        let alert = UIAlertController(title: "Survey Not Found",
+                                      message: "Please check that the survey ID you provided is valid.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        survey.targetVC?.present(alert, animated: true, completion: nil)
+    }
+    
+    private func noInternetConnectionWarning(_ survey: Survey) {
+        let alert = UIAlertController(title: "Network Failure",
+                                      message: "We were unable to establish connection to the server. Please check your internet connection.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        survey.targetVC?.present(alert, animated: true, completion: nil)
+    }
+    
+    private func emptySurveyWarning(_ survey: Survey) {
+        let alert = UIAlertController(title: "Empty Survey",
+                                      message: "It is required that a survey has at least one page of content.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        survey.targetVC?.present(alert, animated: true, completion: nil)
+    }
 }

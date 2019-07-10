@@ -63,7 +63,7 @@ public class Survey {
         if isAlreadyLoading { return } // An instance is already running
         let address = Survey.BASE_URL + surveyID
         guard let lookupURL = URL(string: address) else {
-            delegate?.surveyReturnedResponse(self, response: .invalidRequest, message: nil)
+            delegate?.surveyReturnedError(self, error: .invalidRequest, message: nil)
             return
         }
 
@@ -82,7 +82,7 @@ public class Survey {
             
             guard error == nil else {
                 DispatchQueue.main.async {
-                    self.delegate?.surveyReturnedResponse(self, response: .connectionError, message: error!.localizedDescription)
+                    self.delegate?.surveyReturnedError(self, error: .connectionError, message: error!.localizedDescription)
                 }
                 return
             }
@@ -101,9 +101,9 @@ public class Survey {
                     msg = json.dictionary?["message"]?.string
                 }
                 DispatchQueue.main.async {
-                    self.delegate?.surveyReturnedResponse(self,
-                                                          response: .invalidRequest,
-                                                          message: msg)
+                    self.delegate?.surveyReturnedError(self,
+                                                       error: .invalidRequest,
+                                                       message: msg)
                 }
             }
         }
@@ -119,28 +119,30 @@ public class Survey {
     
     /// Load the survey and present it to the user when it is ready. *Requires internet connection*.
     public func loadAndPresent() {
-        self.load { self.present() }
+        self.load {
+            self.delegate?.surveyDidLoad(self)
+            self.present()
+        }
     }
 
     /// Present the survey to `target`, provided that is has been loaded from the server.
     public func present() {
         
         guard surveyData != nil else {
-            delegate?.surveyReturnedResponse(self, response: .invalidRequest, message: nil)
+            delegate?.surveyReturnedError(self, error: .invalidRequest, message: nil)
             return
         }
         
         guard surveyData!.fragments.count > 0 else {
-            delegate?.surveyReturnedResponse(self, response: .emptySurvey, message: nil)
+            delegate?.surveyReturnedError(self, error: .emptySurvey, message: nil)
             return
         }
         
         
         let mySurvey = SurveyViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
+        // Copy over the references
         mySurvey.survey = self
-        
-        // The reason we copy both the survey and the survey data is to prevent the possiblity of setting survey.surveyData = nil during the survey's presentation to the user.
         mySurvey.surveyData = surveyData!
         
         let nav = SurveyNavigationController(rootViewController: mySurvey)
@@ -153,21 +155,15 @@ public class Survey {
 extension Survey {
     
     /// The response status of the survey.
-    public enum Response : Int {
-        
-        /// The survey was closed before the user submitted their response.
-        case cancelled = 0
-        
-        /// The survey was successfully submitted.
-        case submitted = 1
+    public enum Error : Int {
         
         /// An invalid survey ID or authorization header was provided.
-        case invalidRequest = -1
+        case invalidRequest = 1
         
         /// The user does not have a valid internet connection.
-        case connectionError = -2
+        case connectionError = 2
         
         /// The survey has no content.
-        case emptySurvey = -3
+        case emptySurvey = 3
     }
 }
