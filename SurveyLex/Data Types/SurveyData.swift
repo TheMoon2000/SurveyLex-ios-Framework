@@ -25,6 +25,12 @@ public class SurveyData: CustomStringConvertible {
     /// An array of survey fragments, each representing a page of the survey.
     var fragments = [Fragment]()
     
+    /// The start time of the survey presentation.
+    var startTime = Date()
+    
+    /// The session ID.
+    let sessionID = UUID().uuidString
+    
     /// Creates a new survey form using a JSON summary of the survey.
     required public init(json: JSON) throws {
         let dictionary = json.dictionaryValue
@@ -45,7 +51,7 @@ public class SurveyData: CustomStringConvertible {
         self.published = published
         
         for i in 0..<fragments.count {
-            let newFragment = Fragment(json: fragments[i], index: i)
+            let newFragment = Fragment(json: fragments[i], index: i, parentSurvey: self)
             self.fragments.append(newFragment)
         }
     }
