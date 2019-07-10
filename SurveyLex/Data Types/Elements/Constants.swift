@@ -49,3 +49,13 @@ extension UITextView {
         }
     }
 }
+
+/*
+extension UITableView {
+    // Correctly estimate heights
+    override open func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        layoutIfNeeded()
+    }
+}
+*/
