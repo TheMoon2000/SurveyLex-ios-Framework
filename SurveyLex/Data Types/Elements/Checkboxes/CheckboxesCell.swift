@@ -59,8 +59,9 @@ class CheckboxesCell: SurveyElementCell {
                                    constant: 20).isActive = true
         table.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
         table.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        table.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
-                                      constant: -20).isActive = true
+        let bottomConstraint = table.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20)
+        bottomConstraint.priority = .defaultHigh
+        bottomConstraint.isActive = true
         
         return table
     }

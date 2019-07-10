@@ -12,14 +12,14 @@ class CheckboxItemCell: UITableViewCell {
     
     var checkboxesData: CheckBoxes!
     var checkbox: UICheckbox!
-    private var titleView: UITextView!
+    private weak var titleLabel: UILabel!
 
     init(title: String) {
         super.init(style: .default, reuseIdentifier: "checkbox")
         
         selectionStyle = .none
         checkbox = makeCheckbox()
-        titleView = makeTitle(title)
+        titleLabel = makeTitle(title)
     }
     
     private func makeCheckbox() -> UICheckbox {
@@ -31,31 +31,31 @@ class CheckboxItemCell: UITableViewCell {
         checkbox.heightAnchor.constraint(equalToConstant: 20).isActive = true
         addSubview(checkbox)
         
-        checkbox.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                   constant: 12).isActive = true
+        checkbox.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor).isActive = true
         checkbox.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                       constant: SIDE_PADDING + 10).isActive = true
+                                       constant: SIDE_PADDING + 2).isActive = true
         
         return checkbox
     }
     
-    private func makeTitle(_ title: String) -> UITextView {
-        let titleText = UITextView()
-        titleText.text = title
-        titleText.format(as: .plain)
-        titleText.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(titleText)
+    private func makeTitle(_ title: String) -> UILabel {
+        let label = UILabel()
+        label.text = title
+        label.font = .systemFont(ofSize: 18)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(label)
         
-        titleText.leftAnchor.constraint(equalTo: checkbox.rightAnchor,
+        label.leftAnchor.constraint(equalTo: checkbox.rightAnchor,
                                         constant: 20).isActive = true
-        titleText.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
+        label.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
                                          constant: -SIDE_PADDING).isActive = true
-        titleText.topAnchor.constraint(equalTo: checkbox.topAnchor,
-                                       constant: -4).isActive = true
-        titleText.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
-                                          constant: -10).isActive = true
+        label.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
+                                       constant: 10).isActive = true
+        let bottomConstraint = label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10)
+        bottomConstraint.priority = .init(999)
+        bottomConstraint.isActive = true
         
-        return titleText
+        return label
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

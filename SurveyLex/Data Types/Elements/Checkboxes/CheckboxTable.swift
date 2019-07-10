@@ -14,8 +14,14 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
     var parentCell: CheckboxesCell!
     
     override var intrinsicContentSize: CGSize {
-//        self.reloadData()
+        self.reloadData()
         return contentSize
+    }
+    
+    // Correctly estimate heights
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        layoutIfNeeded()
     }
     
     init(checkboxes: CheckBoxes, parentCell: CheckboxesCell) {
@@ -44,14 +50,12 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
     // Essential for calculating the correct height for the cells
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         let cell = self.tableView(tableView, cellForRowAt: indexPath)
-        let width = UIScreen.main.bounds.width
-        return cell.preferredHeight(width: width - 55)
+        return cell.preferredHeight(width: cell.frame.width)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = CheckboxItemCell(title: checkboxData.choices[indexPath.row])
         cell.checkbox.isChecked = checkboxData.selections.contains(indexPath.row)
-        
         return cell
     }
     

@@ -16,7 +16,9 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     
     override var intrinsicContentSize: CGSize {
         self.reloadData()
-        selectRow(at: IndexPath(row: radioGroup.selection, section: 0), animated: false, scrollPosition: .none)
+        if radioGroup.selection != -1 {
+            selectRow(at: IndexPath(row: radioGroup.selection, section: 0), animated: false, scrollPosition: .none)
+        }
         return contentSize
     }
 
@@ -40,7 +42,7 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
         let cell = self.tableView(tableView, cellForRowAt: indexPath)
         let width = UIScreen.main.bounds.width
 //        print(cell.preferredHeight(width: width - 55), cell.preferredHeight(width: cell.frame.width))
-        return cell.preferredHeight(width: width - 55)
+        return cell.preferredHeight(width: cell.frame.width)
     }
     
     // MARK: Table view data source

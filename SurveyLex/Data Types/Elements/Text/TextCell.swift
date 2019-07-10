@@ -44,7 +44,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         addSubview(textView)
         
         textView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                      constant: 25).isActive = true
+                                      constant: 20).isActive = true
         textView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
                                        constant: SIDE_PADDING).isActive = true
         textView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
@@ -71,7 +71,9 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         textfield.heightAnchor.constraint(equalToConstant: 56).isActive = true
         textfield.topAnchor.constraint(equalTo: title.bottomAnchor,
                                        constant:0).isActive = true
-        textfield.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor).isActive = true
+        let bottomConstraint = textfield.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+        bottomConstraint.priority = .init(rawValue: 999)
+        bottomConstraint.isActive = true
         
         return textfield
     }
@@ -97,12 +99,15 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         textQuestion.response = textField.text!
-        textfield.returnKeyType = .done
+        if textField.text != "" {
+            textfield.returnKeyType = .done
+        }
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         UISelectionFeedbackGenerator().selectionChanged()
         if textfield.returnKeyType == .next {
+            textField.returnKeyType = .done
             if !textQuestion.parentView!.toNext(from: self) {
                 surveyPage?.focus(cell: self)
             }

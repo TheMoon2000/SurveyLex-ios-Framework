@@ -61,7 +61,7 @@ class RatingSliderCell: SurveyElementCell {
         addSubview(textView)
         
         textView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                      constant: 25).isActive = true
+                                      constant: 20).isActive = true
         textView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
                                        constant: SIDE_PADDING).isActive = true
         textView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
@@ -172,8 +172,9 @@ class RatingSliderCell: SurveyElementCell {
         label.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
         label.topAnchor.constraint(equalTo: slider.bottomAnchor,
                                    constant: 15).isActive = true
-        label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
-                                      constant: -12).isActive = true
+        let bottomConstraint = label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
+        bottomConstraint.priority = .init(999)
+        bottomConstraint.isActive = true
         
         return label
     }

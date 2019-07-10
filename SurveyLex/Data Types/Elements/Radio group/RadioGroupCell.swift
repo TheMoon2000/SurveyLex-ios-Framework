@@ -64,10 +64,11 @@ class RadioGroupCell: SurveyElementCell {
         
         choiceTable.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
         choiceTable.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
-        choiceTable.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
-                                            constant: -30).isActive = true
         choiceTable.topAnchor.constraint(equalTo: title.bottomAnchor,
                                          constant: 20).isActive = true
+        let bottomConstraint = choiceTable.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20)
+        bottomConstraint.priority = .init(999)
+        bottomConstraint.isActive = true
         
         return choiceTable
         

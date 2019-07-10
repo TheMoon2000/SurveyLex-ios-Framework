@@ -57,12 +57,12 @@ class MultipleChoiceCell: UITableViewCell {
             
             return circle
         }()
-        makeLabel()
+        titleLabel = makeLabel()
         
         highlightBackground.backgroundColor = .white
     }
     
-    private func makeLabel() {
+    private func makeLabel() -> UILabel {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18)
         label.numberOfLines = 5
@@ -71,14 +71,17 @@ class MultipleChoiceCell: UITableViewCell {
         self.addSubview(label)
         
         label.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                    constant: 20).isActive = true
+                                    constant: SIDE_PADDING).isActive = true
         label.topAnchor.constraint(equalTo: topAnchor,
-                                   constant: SIDE_PADDING).isActive = true
-        label.bottomAnchor.constraint(equalTo: bottomAnchor,
-                                      constant: -20).isActive = true
+                                   constant: 20).isActive = true
         label.rightAnchor.constraint(equalTo: radioCircle.leftAnchor,
                                      constant: -SIDE_PADDING).isActive = true
-        titleLabel = label
+        
+        let bottomConstraint = label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20)
+        bottomConstraint.priority = .defaultHigh
+        bottomConstraint.isActive = true
+        
+        return label
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
