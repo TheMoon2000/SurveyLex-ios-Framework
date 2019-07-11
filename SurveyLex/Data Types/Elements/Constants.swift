@@ -26,27 +26,13 @@ extension UITextView {
     func format(as type: TextFormatter.TextType) {
         self.isEditable = false
         self.isScrollEnabled = false
+        self.textAlignment = .left
+        self.attributedText = TextFormatter.formatted(text, type: type)
         self.dataDetectorTypes = .link
         self.linkTextAttributes[.foregroundColor] = BLUE_TINT
-        self.attributedText = TextFormatter.formatted(text, type: type)
         self.textContainerInset = .zero
         self.textContainer.lineFragmentPadding = 0.0
-        
-        let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-        let matches = detector.matches(in: text, options: [], range: NSMakeRange(0, text.count))
-        self.isUserInteractionEnabled = !matches.isEmpty
-        
-        switch type {
-        case .plain:
-            self.dataDetectorTypes = []
-            self.textAlignment = .left
-        case .title:
-            self.isSelectable = false
-        case .subtitle:
-            self.textAlignment = .left
-        case .consentText:
-            self.textAlignment = .left
-        }
+        self.backgroundColor = .clear
     }
 }
 

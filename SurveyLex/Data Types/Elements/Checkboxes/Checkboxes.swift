@@ -38,7 +38,9 @@ class CheckBoxes: Question, CustomStringConvertible {
     }
     
     var responseJSON: JSON {
-        return JSON() // Needs to be replaced
+        var json = JSON()
+        json.dictionaryObject?["question\(order.question)"] = Array(selections)
+        return json
     }
     
     // Custom instance variables
@@ -55,18 +57,22 @@ class CheckBoxes: Question, CustomStringConvertible {
     required init(json: JSON, order: (Int, Int), fragment: Fragment?) {
         let dictionary = json.dictionaryValue
         
-        guard let title = dictionary["title"]?.string,
-              let questionData = dictionary["choices"]?.arrayObject as? [String]
+        guard let questionData = dictionary["choices"]?.arrayObject as? [String]
             else {
-                print(json)
-                preconditionFailure("Malformed checkboxes question")
+            print(json)
+            preconditionFailure("Malformed checkboxes question")
+        }
+        
+        if let title = dictionary["title"]?.string {
+            self.title = title
+        } else {
+            self.title = "<Question \(order.1)>"
         }
         
         if let required = dictionary["isRequired"]?.boolValue {
             isRequired = required
         }
         
-        self.title = title
         self.choices = questionData
         self.fragment = fragment
         self.order = order

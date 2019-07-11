@@ -8,20 +8,41 @@
 
 import UIKit
 
-/// A subclass of `UITableViewController` designed to present a single survey fragment (page).
-class FragmentTableController: UITableViewController {
+/// A subclass of `UITableViewController` designed to present multiple questions on a page.
+class FragmentTableController: UITableViewController, SurveyPage {
     
-    /// The native `Fragment` representation of the content of this fragment.
+    // Protocol requirements
+    
     var fragmentData: Fragment!
     
-    /// The parent `SurveyViewController` which will display this fragment as one of its pages.
     var surveyViewController: SurveyViewController?
+    
+    var completed: Bool {
+        return !fragmentData.questions.contains { !$0.completed }
+    }
+    
+    var unlocked: Bool {
+        return !fragmentData.questions.contains { !$0.completed && $0.isRequired }
+    }
+    
+    //
+    //
+    // -------------------------
+    //
+    //
+    
+    // Custom instance variables
     
     /// An array of `SurveyElementCell`s in order, each representing a survey element in the fragment.
     var contentCells = [SurveyElementCell]()
 
     /// A helper variable that controls whether updates to `focusedRow` will trigger any side effects.
     private var focusedRowResponse = true
+    
+    /// Completion status of every question.
+    private var completion: [(completed: Bool, required: Bool)] {
+        return fragmentData.questions.map { ($0.completed, $0.isRequired) }
+    }
     
     /// The index of the row that is currently focused, as seen by the user.
     var focusedRow = -1 {
@@ -43,22 +64,13 @@ class FragmentTableController: UITableViewController {
                 }
             }
             if oldValue != -1 {
-                if let cell = tableView.cellForRow(at: IndexPath(row: oldValue, section: 0)) as? SurveyElementCell {
-                    UIView.animate(withDuration: 0.2) { cell.unfocus() }
+                UIView.animate(withDuration: 0.2) {
+                    self.contentCells[oldValue].unfocus()
                 }
             }
         }
     }
     
-    // /// The maximum value `focusedRow` has taken.
-    
-    
-    /// Convenient shortcut that returns the fragment index of the current page.
-    var fragmentIndex: Int {
-        return fragmentData.index
-    }
-
-
     
     /// Whether the view has appeared at least once.
     private var viewAppeared = false
@@ -72,12 +84,16 @@ class FragmentTableController: UITableViewController {
             }
         }
     }
-
+    
     /// Usually, the view is already loaded by the time it appears. However, if that didn't happen, then we won't call `appearHandler()` until the view has been loaded.
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         viewAppeared = true
+        
+        // Update the navigation bar
+        surveyViewController?.fragmentIndex = pageIndex
+        
         if !loadedContentCells { return }
         
         appearHandler()
@@ -88,35 +104,17 @@ class FragmentTableController: UITableViewController {
         if !viewAppeared || !loadedContentCells { return }
         
         DispatchQueue.main.async {
-            if !self.surveyViewController!.visitedFragments.contains(self) {
-                self.surveyViewController?.visitedFragments.insert(self)
+            if !self.surveyViewController!.visited.contains(self.pageIndex) {
+                self.surveyViewController?.visited.insert(self.pageIndex)
                 self.focusedRow = 0
             } else if self.fragmentData.questions.count == 1 {
                 self.focusedRow = 0
-            } else if self.focusedRow != -1 {
+            } else if self.focusedRow != -1 && false {
                 self.contentCells[self.focusedRow].focus()
-            }
-            
-            if let audioCell = self.contentCells.first as? AudioResponseCell {
-                audioCell.viewDidAppear()
             }
         }
     }
     
-     /// A boolean array with the completion status of each survey element. This information is distributed to individual survey elements.
-    private var completion: [(completed: Bool, required: Bool)] {
-        return fragmentData.questions.map { ($0.completed, $0.isRequired) }
-    }
-    
-    /// Whether the user can swipe right and proceed with the next page. That is, all the required questions have been completed.
-    var unlocked: Bool {
-        return !fragmentData.questions.contains { !$0.completed && $0.isRequired }
-    }
-    
-    /// Whether all questions (required and optional) are completed by the user.
-    var allCompleted: Bool {
-        return !fragmentData.questions.contains { !$0.completed }
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,17 +123,27 @@ class FragmentTableController: UITableViewController {
         
         tableView.allowsSelection = true
         tableView.separatorStyle = .none
-//        tableView.rowHeight = UITableView.automaticDimension
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.keyboardDismissMode = .interactive
         
         view.backgroundColor = UIColor(white: 0.94, alpha: 1)
         
         let label = insertLoadingLabel()
+//        tableView.isHidden = true
         
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
+        for question in fragmentData.questions {
+            question.parentView = surveyViewController
+            
+            let cell = question.makeContentCell()
+            cell.surveyPage = self
+            cell.unfocus()
+            contentCells.append(cell)
+        }
+        
+        DispatchQueue.main.async {
             self.loadSurveyElements()
             label.isHidden = true
+//            self.tableView.isHidden = false
             self.loadedContentCells = true
         }
     }
@@ -156,14 +164,6 @@ class FragmentTableController: UITableViewController {
     }
     
     func loadSurveyElements() {
-        for question in fragmentData.questions {
-            question.parentView = surveyViewController
-            
-            let cell = question.makeContentCell()
-            cell.surveyPage = self
-            cell.unfocus()
-            contentCells.append(cell)
-        }
         tableView.reloadSections(IndexSet(arrayLiteral: 0), with: .none)
     }
     
@@ -193,11 +193,13 @@ class FragmentTableController: UITableViewController {
         return contentCells.count
     }
     
-    /* Cannot implement this datasource method or weird things happen during device  orientation change
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 0
-    }*/
-    
+        let cell = contentCells[indexPath.row]
+        let width = UIScreen.main.bounds.width - 55
+        let preferred = cell.preferredHeight(width: width)
+        return preferred
+    }
+ 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         // Not very memory efficient, but we can assume that a survey
@@ -217,24 +219,15 @@ class FragmentTableController: UITableViewController {
         focusedRow = indexPath.row
     }
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.contentView.alpha = 0
-        
-        UIView.animate(
-            withDuration: 0.4,
-            delay: 0.2 * Double(indexPath.row),
-            animations: {
-                cell.contentView.alpha = 1
-        })
-    }
-    
     /// Fixes the bug with device rotation by resetting the content offset.
+    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         let spaceBelow = tableView.contentSize.height - tableView.contentOffset.y
         let upwardOffset = max(0, size.height - spaceBelow)
         let proposedOffset = max(0, tableView.contentOffset.y - upwardOffset)
         coordinator.animate(alongsideTransition: {context in
             self.tableView.contentOffset = CGPoint(x: 0.0, y: proposedOffset)
+//            self.tableView.reloadData()
         }, completion: nil)
     }
 

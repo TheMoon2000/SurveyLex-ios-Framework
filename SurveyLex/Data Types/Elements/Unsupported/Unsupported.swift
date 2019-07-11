@@ -33,7 +33,7 @@ class UnsupportedQuestion: Question, CustomStringConvertible {
     }
     
     var responseJSON: JSON {
-        return JSON() // Need to be replaced
+        return JSON()
     }
     
     // Custom instance variables
@@ -47,13 +47,13 @@ class UnsupportedQuestion: Question, CustomStringConvertible {
     required init(json: JSON, order: (Int, Int), fragment: Fragment?) {
         let dictionary = json.dictionaryValue
 
-        guard let title = dictionary["title"]?.string else {
-            print(json)
-            preconditionFailure("Attribute 'title' is not given")
+        if let title = dictionary["title"]?.string {
+            self.title = title
+        } else {
+            self.title = "<Question \(order.1)>"
         }
         
         self.fragment = fragment
         self.order = order
-        self.title = title
     }
 }

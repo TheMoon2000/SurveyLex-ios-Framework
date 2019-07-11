@@ -12,8 +12,11 @@ import SwiftyJSON
 /// Second class of survey objects. A `Fragment` is a collection of individual survey elements, intended to be presented together.
 class Fragment: CustomStringConvertible {
     
+    let parent: SurveyData!
+    let fragmentData: JSON!
+    
     /// The fragment id.
-    internal var id = ""
+    var id = ""
     
     /// Specifies the type of fragment this one is.
     var type: FragmentType
@@ -21,10 +24,16 @@ class Fragment: CustomStringConvertible {
     /// An order list of all the questions that appear in this fragment.
     var questions = [Question]()
     
-    /// The index of the fragment (starting at 1).
+    /// The index of the fragment (starting at 0).
     let index: Int
     
-    public init(json: JSON, index: Int) {
+    /// The response ID for the page.
+    let responseId = UUID().uuidString
+    
+    public init(json: JSON, index: Int, parentSurvey: SurveyData) {
+        
+        parent = parentSurvey
+        
         let dictionary = json.dictionaryValue
         
         guard let fragmentId = dictionary["fragmentId"]?.string,
@@ -35,6 +44,7 @@ class Fragment: CustomStringConvertible {
             preconditionFailure("Malformed fragment data")
         }
         
+        self.fragmentData = data
         self.id = fragmentId
         self.index = index
         self.type = FragmentType(rawValue: type)!
@@ -95,28 +105,43 @@ class Fragment: CustomStringConvertible {
         return "Fragment <\(idParts[0])...\(idParts[4])>: \n  " + questionsDescription.joined(separator: "\n  ")
     }
     
-    /// Returns a `FragmentTableController` object to be used for the survey UI.
-    var contentVC: FragmentTableController {
-        let fragmentTable = FragmentTableController()
-        fragmentTable.fragmentData = self
-        return fragmentTable
+    /// Returns a `UIViewController` object to be used for the survey UI.
+    var contentVC: SurveyPage {
+        
+        switch type {
+        case .audio:
+            let vc = AudioPage(audioQuestion: questions.first as! Audio)
+            vc.fragmentData = self
+            return vc
+        default:
+            let fragmentPage = FragmentTableController()
+            fragmentPage.fragmentData = self
+            return fragmentPage
+        }
     }
     
     /// Prepares the fragment in JSON form for submission.
     var fragmentJSON: JSON {
         var response = JSON()
+        response.dictionaryObject?["responseId"] = self.responseId
         response.dictionaryObject?["fragmentId"] = self.id
-        let typeJSON = JSON(parseJSON: "{type: \(self.type.rawValue)}")
-        response.dictionaryObject?["type"] = typeJSON
+        response.dictionaryObject?["fragmentType"] = type.rawValue
+        response.dictionaryObject?["fragmentData"] = fragmentData
+        response.dictionaryObject?["sessionId"] = parent.sessionID
+        response.dictionaryObject?["surveyId"] = parent.surveyId
         
         switch self.type {
         case .textSurvey:
             var data = JSON()
-            questions.forEach { q in
-                data.arrayObject?.append(q.responseJSON)
+            self.questions.forEach { q in
+                data.dictionaryObject?.merge(q.responseJSON.dictionaryValue) { (current, _) in
+                    return current
+                }
             }
             response.dictionaryObject?["data"] = data
             return response
+        case .info:
+            return JSON()
         default:
             return response
         }

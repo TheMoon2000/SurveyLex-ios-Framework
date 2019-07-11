@@ -28,9 +28,9 @@ class CheckboxesCell: SurveyElementCell {
     
     private func makeTitle() -> UITextView {
         let titleText = UITextView()
-        titleText.text = "\(checkboxData.order.fragment).\(checkboxData.order.question) " + checkboxData.title
+        titleText.text = checkboxData.title
         titleText.format(as: .title)
-        titleText.textColor = .black // Assume unfocused by default
+        titleText.textColor = .black
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
         

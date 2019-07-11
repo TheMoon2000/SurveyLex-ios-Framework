@@ -54,15 +54,8 @@ class Info: Question, CustomStringConvertible {
     required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
-        guard let title = dictionary["title"]?.string,
-            let content = dictionary["content"]?.string
-            else {
-                print(json)
-                preconditionFailure("Malformed info data")
-        }
-        
-        self.title = title
-        self.content = content
+        self.title = dictionary["title"]?.string ?? "Untitled Info screen"
+        self.content = dictionary["content"]?.string ?? "No content"
         self.fragment = fragment
         self.order = order
     }

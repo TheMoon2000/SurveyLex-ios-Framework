@@ -29,7 +29,9 @@ public class SurveyData: CustomStringConvertible {
     var startTime = Date()
     
     /// The session ID.
-    let sessionID = UUID().uuidString
+    let sessionID = UUID().uuidString.lowercased()
+    
+    var fragmentIndex = 0
     
     /// Creates a new survey form using a JSON summary of the survey.
     required public init(json: JSON) throws {

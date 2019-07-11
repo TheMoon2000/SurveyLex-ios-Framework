@@ -41,9 +41,8 @@ class RadioGroupCell: SurveyElementCell {
     
     private func makeTitleView() -> UITextView {
         let titleText = UITextView()
-        titleText.text = "\(radioGroup.order.fragment).\(radioGroup.order.question) " + radioGroup.title
+        titleText.text = radioGroup.title
         titleText.format(as: .title)
-        titleText.textColor = .black
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
         
@@ -101,6 +100,13 @@ class RadioGroupCell: SurveyElementCell {
     override func focus() {
         super.focus()
 //        title.textColor = .black
+//        UIView.animate(withDuration: 0.2) {
+        /*
+        self.choiceTable.isScrollEnabled = false
+        self.choiceTable.layoutIfNeeded()
+        self.surveyPage?.tableView.reloadRows(at: [IndexPath(row: self.surveyPage!.focusedRow, section: 0)], with: .none)
+*/
+//        }
     }
     
     override func unfocus() {

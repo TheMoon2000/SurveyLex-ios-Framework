@@ -57,21 +57,19 @@ class Consent: Question, CustomStringConvertible {
     required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
-        guard let title = dictionary["title"]?.string,
-              let consentText = dictionary["consentText"]?.string,
-              let prompt = dictionary["prompt"]?.string
-        else {
-            print(json)
-            preconditionFailure("Malformed consent data")
+        if let title = dictionary["title"]?.string {
+            self.title = title
+        } else {
+            self.title = fragment?.parent.title ?? ""
         }
+        
+        self.consentText = dictionary["consentText"]?.string ?? ""
         
         if let isRequired = dictionary["isRequired"]?.bool {
             self.isRequired = isRequired
         }
     
-        self.title = title
-        self.consentText = consentText
-        self.prompt = prompt
+        self.prompt = dictionary["prompt"]?.string ?? ""
         self.fragment = fragment
         self.order = order
     }

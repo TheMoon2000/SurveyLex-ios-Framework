@@ -12,14 +12,8 @@ import UIKit
 class MultipleChoiceCell: UITableViewCell {
     
     var radioCircle: UICheckbox!
-    private var titleLabel: UILabel!
+    var titleLabel: UILabel!
     private var highlightBackground: UIView!
-    
-    var titleText: String = "" {
-        didSet {
-            titleLabel.text = titleText
-        }
-    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -64,9 +58,7 @@ class MultipleChoiceCell: UITableViewCell {
     
     private func makeLabel() -> UILabel {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18)
-        label.numberOfLines = 5
-        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(label)
         

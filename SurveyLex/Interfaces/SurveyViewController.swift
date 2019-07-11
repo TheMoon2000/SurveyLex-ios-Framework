@@ -23,25 +23,31 @@ class SurveyViewController: UIPageViewController,
     /// Updates the navigation bar according to the survey progress made by
     /// the user.
     var fragmentIndex = -1 {
-        didSet {
-            if fragmentIndex == -1 { return }
-            navigationItem.title = surveyData.title + " (\(fragmentIndex + 1)/\(fragmentTables.count))"
-            let percentage = Float(fragmentIndex + 1) / Float(self.fragmentTables.count)
-            progressIndicator?.setProgress(percentage, animated: true)
+        didSet (oldValue) {
+            surveyData.fragmentIndex = fragmentIndex
+            print("set to \(fragmentIndex)")
+            if fragmentIndex == -1 || fragmentIndex == oldValue { return }
+            if fragmentIndex == fragmentPages.count {
+                navigationItem.title = "Response Submission"
+            } else {
+                navigationItem.title = surveyData.title + " (\(fragmentIndex + 1)/\(fragmentPages.count))"
+                let percentage = Float(fragmentIndex + 1) / Float(fragmentPages.count)
+                progressIndicator?.setProgress(percentage, animated: true)
+            }
         }
     }
     
-    /// Convenient shortcut for accessing the current fragment table.
-    var currentFragment: FragmentTableController {
-        return fragmentTables[fragmentIndex]
+    /// Convenient shortcut for accessing the current fragment page.
+    var currentFragment: SurveyPage {
+        return fragmentPages[fragmentIndex]
     }
     
     /// Stores all the subviews for the survey elements, generated once
     /// before the survey is presented.
-    private var fragmentTables = [FragmentTableController]()
+    private var fragmentPages = [SurveyPage]()
     
     /// Contains the set of `FragmentTableController`s that have already been displayed at least once to the user.
-    var visitedFragments = Set<FragmentTableController>()
+    var visited = Set<Int>()
     
     /// The top bar that displays the survey progress.
     var progressIndicator: UIProgressView!
@@ -51,25 +57,34 @@ class SurveyViewController: UIPageViewController,
         
         precondition(surveyData != nil)
         
-        fragmentTables = surveyData.fragments.map { fragment in
-            let fragmentTableController = fragment.contentVC
-            fragmentTableController.surveyViewController = self
-            return fragmentTableController
+        // Set start time
+        surveyData.startTime = Date()
+        
+        // Set the `surveyViewController` attribute of every fragment to self.
+        fragmentPages = surveyData.fragments.map { fragment in
+            let page = fragment.contentVC
+            page.surveyViewController = self
+            return page
         }
         
+        
+        // Set up progress indicator in the navigation bar and load the first page.
         progressIndicator = addProgressBar()
-        fragmentIndex = 0
-        
-        view.backgroundColor = .white
-        dataSource = self
-        delegate = self
-        
-        setViewControllers([fragmentTables[0]],
+        print(surveyData.fragmentIndex)
+        fragmentIndex = surveyData.fragmentIndex
+        setViewControllers([fragmentPages[fragmentIndex]],
                            direction: .forward,
                            animated: true,
                            completion: nil)
         
-        // Setup navigation bar appearance
+        // Background color
+        view.backgroundColor = .white
+        
+        // Set page view datasource and delegate
+        dataSource = self
+        delegate = self
+        
+        // Setup navigation bar appearance for cancel button
         let cancelButton = UIBarButtonItem(title: "Close",
                                            style: .done,
                                            target: self,
@@ -99,8 +114,17 @@ class SurveyViewController: UIPageViewController,
     }
     
     @objc private func surveyCancelled() {
-        survey.delegate?.surveyReturnedResponse(survey, response: .cancelled, message: nil)
-        dismiss(animated: true, completion: nil)
+        let alert = UIAlertController(title: "Are you sure?",
+                                      message: "You are about the leave the survey. Any information you have entered will be discarded.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { action -> Void in
+            self.survey.delegate?.surveyWillClose(self.survey, completed: false)
+            self.dismiss(animated: true) {
+                self.survey.delegate?.surveyDidClose(self.survey, completed: false)
+            }
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
     // Datasource methods for UIPageController
@@ -111,37 +135,30 @@ class SurveyViewController: UIPageViewController,
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
-        let index = fragmentTables.firstIndex(of: viewController as! FragmentTableController) ?? 0
+        let index = (viewController as! SurveyPage).pageIndex
         
         if (index == 0) {
             return nil
         }
         
-        return fragmentTables[index - 1]
+        return fragmentPages[index - 1]
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
     
-        guard let index = fragmentTables.firstIndex(of: viewController as! FragmentTableController) else {
-            preconditionFailure("View controller not found")
-        }
+        let index = (viewController as! SurveyPage).pageIndex
         
-        if (index + 1 == fragmentTables.count) {
-            return nil
-        } else if (!fragmentTables[index].unlocked) {
+        // User has not yet completed the required questions on the current page, so do not proceed with the next one.
+        if (!fragmentPages[index].unlocked) {
             return nil
         }
-                
-        return fragmentTables[index + 1]
-    }
-    
-    // MARK: UIPageController delegate
-    
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         
-        // newFragment only exists if the page flip is complete.
-        if let newFragment = pageViewController.viewControllers?.last as? FragmentTableController {
-            fragmentIndex = newFragment.fragmentIndex
+        if index + 1 < fragmentPages.count {
+            return fragmentPages[index + 1]
+        } else {
+            let vc = SurveySubmission()
+            vc.surveyViewController = self
+            return vc
         }
     }
     
@@ -155,16 +172,21 @@ class SurveyViewController: UIPageViewController,
     */
     
     func flipPageIfNeeded(allCompleted: Bool = true) -> Bool {
-        let cond = allCompleted ? currentFragment.allCompleted : currentFragment.unlocked
-        if cond && fragmentIndex + 1 < fragmentTables.count {
-            fragmentIndex += 1
-            self.setViewControllers([fragmentTables[fragmentIndex]],
+        let cond = allCompleted ? currentFragment.completed : currentFragment.unlocked
+        if cond && fragmentIndex + 1 < fragmentPages.count {
+//            fragmentIndex += 1
+            self.setViewControllers([fragmentPages[fragmentIndex + 1]],
                                     direction: .forward,
                                     animated: true,
                                     completion: nil)
             return true
-        } else if fragmentIndex + 1 == fragmentTables.count {
-            print("reached the end of survey")
+        } else if fragmentIndex + 1 == fragmentPages.count {
+            let vc = SurveySubmission()
+            vc.surveyViewController = self
+            self.setViewControllers([vc],
+                                    direction: .forward,
+                                    animated: true,
+                                    completion: nil)
         }
         return false
     }
@@ -178,33 +200,28 @@ class SurveyViewController: UIPageViewController,
     
     func toNext(from cell: SurveyElementCell) -> Bool {
         reloadDatasource()
-        var focusChanged = false
-        let nextRow = currentFragment.contentCells.firstIndex(of: cell)! + 1
-        if nextRow < currentFragment.contentCells.count && !currentFragment.contentCells[nextRow].completed {
-            currentFragment.focusedRow = nextRow
-            focusChanged = true
-        } else if currentFragment.contentCells.last == cell {
-            focusChanged = flipPageIfNeeded()
+
+        if let fragmentTable = currentFragment as? FragmentTableController {
+            let nextRow = fragmentTable.contentCells.firstIndex(of: cell)! + 1
+            
+            // Check if the next row exists and has not yet been completed
+            let nextRowExists = nextRow < fragmentTable.contentCells.count
+            let nextRowIsCompleted = fragmentTable.contentCells[nextRow].completed
+            if nextRowExists && !nextRowIsCompleted {
+                fragmentTable.focusedRow = nextRow
+                return true
+            } else if fragmentTable.contentCells.last == cell {
+                return flipPageIfNeeded()
+            }
         }
         
-        return focusChanged
+        return false
     }
     
     /// Reloads the datasource.
     func reloadDatasource() {
         dataSource = nil
         dataSource = self
-    }
-    
-    /// Flips back to the previous page.
-    func previousPage() {
-        if fragmentIndex > 0 {
-            fragmentIndex -= 1
-            self.setViewControllers([fragmentTables[fragmentIndex]],
-                                    direction: .reverse,
-                                    animated: true,
-                                    completion: nil)
-        }
     }
 
 }

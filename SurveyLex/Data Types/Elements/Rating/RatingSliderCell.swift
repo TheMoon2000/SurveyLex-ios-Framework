@@ -54,7 +54,7 @@ class RatingSliderCell: SurveyElementCell {
     
     private func makeTextView() -> UITextView {
         let textView = UITextView()
-        textView.text = "\(ratingQuestion.order.fragment).\(ratingQuestion.order.question) " + ratingQuestion.title
+        textView.text = ratingQuestion.title
         textView.format(as: .title)
         textView.textColor = .black
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -172,7 +172,7 @@ class RatingSliderCell: SurveyElementCell {
         label.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
         label.topAnchor.constraint(equalTo: slider.bottomAnchor,
                                    constant: 15).isActive = true
-        let bottomConstraint = label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -12)
+        let bottomConstraint = label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -15)
         bottomConstraint.priority = .init(999)
         bottomConstraint.isActive = true
         

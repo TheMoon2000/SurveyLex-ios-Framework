@@ -33,7 +33,10 @@ class RadioGroup: Question, CustomStringConvertible {
     }
     
     var responseJSON: JSON {
-        return JSON() // Need to be replaced
+        var json = JSON()
+        json.dictionaryObject?["question\(order.question)"] = selection == -1 ? JSON.null : choices[selection]
+        
+        return json
     }
     
     // Custom instance variables
@@ -58,18 +61,22 @@ class RadioGroup: Question, CustomStringConvertible {
     required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
-        guard let title = dictionary["title"]?.string,
-              let questionData = dictionary["choices"]?.arrayObject as? [String]
+        guard let questionData = dictionary["choices"]?.arrayObject as? [String]
         else {
             print(json)
             preconditionFailure("Malformed radiogroup question")
+        }
+        
+        if let title = dictionary["title"]?.string {
+            self.title = title
+        } else {
+            self.title = "<Question \(order.1)>"
         }
         
         if let required = dictionary["isRequired"]?.bool {
             self.isRequired = required
         }
         
-        self.title = title
         self.choices = questionData
         self.fragment = fragment
         self.order = order

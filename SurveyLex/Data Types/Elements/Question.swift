@@ -32,7 +32,7 @@ protocol Question: class, CustomStringConvertible {
     /// A boolean indicating whether the question has received a response.
     var completed: Bool { get }
     
-    /// Indicating the order of the question in the survey.
+    /// Indicating the order of the question in the survey. They are both indexed from 1.
     var order: (fragment: Int, question: Int) { get set }
     
     /// The overarching `SurveyViewController` front-end object that contains the entire survey.

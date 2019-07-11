@@ -37,7 +37,10 @@ class Text: Question, CustomStringConvertible {
     }
     
     var responseJSON: JSON {
-        return JSON() // Need to be replaced
+        var json = JSON()
+        json.dictionaryObject?["question\(order.question)"] = response
+        
+        return json
     }
     
     // Custom instance variables
@@ -58,15 +61,15 @@ class Text: Question, CustomStringConvertible {
     required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
-        guard let title = dictionary["title"]?.string else {
-            print(json)
-            preconditionFailure("Malformed text question")
+        if let title = dictionary["title"]?.string {
+            self.title = title
+        } else {
+            self.title = "<Question \(order.1)>"
         }
         
         if let isRequired = dictionary["isRequired"]?.boolValue {
             self.isRequired = isRequired
         }
-        self.title = title
         self.fragment = fragment
         self.order = order
     }

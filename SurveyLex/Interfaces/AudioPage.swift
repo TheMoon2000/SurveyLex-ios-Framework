@@ -1,20 +1,30 @@
 //
-//  AudioResponseCell.swift
+//  AudioPage.swift
 //  SurveyLex
 //
-//  Created by Jia Rui Shan on 2019/5/15.
+//  Created by Jia Rui Shan on 2019/7/11.
 //  Copyright © 2019 UC Berkeley. All rights reserved.
 //
 
 import UIKit
 
-/// An audio question page.
-class AudioResponseCell: SurveyElementCell, RecordingDelegate {
+class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
+
+    // MARK: Protocol requirements
     
-    /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
-    override var completed: Bool {
+    var fragmentData: Fragment!
+    
+    var surveyViewController: SurveyViewController?
+    
+    var completed: Bool {
         return audioQuestion.completed
     }
+    
+    var unlocked: Bool {
+        return completed || !audioQuestion.isRequired
+    }
+    
+    // MARK: Custom instance variables
     
     /// A pointer to the skip button located below the record button.
     var skipButton: UIButton!
@@ -38,27 +48,27 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         }
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+    // MARK: UI setup
     
     /// Initialize an audio response cell.
     required init(audioQuestion: Audio) {
-        super.init()
-        self.backgroundColor = .white
-
+        super.init(nibName: nil, bundle: nil)
+        view.backgroundColor = .white
+        
         self.audioQuestion = audioQuestion // must be set first
         self.titleLabel = makeTitle()
         self.recordButton = makeRecordButton()
         self.skipButton = makeSkipButton()
         self.finishMessage = makeFinishMessage()
-        
-        // 60 is the constant height of the navigation bar & status bar
-        self.heightAnchor.constraint(greaterThanOrEqualToConstant: UIScreen.main.bounds.height - 60 - UIApplication.shared.keyWindow!.safeAreaInsets.bottom).isActive = true
     }
     
-    func viewDidAppear() {
-        print("audio response appeared")
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        print("audio question appeared")
+        
+        surveyViewController?.fragmentIndex += 1
+        
         if audioQuestion.autoStart && !completed {
             recordButton.startRecording()
         }
@@ -71,14 +81,14 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         label.format(as: .title)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(label)
+        view.addSubview(label)
         
-        label.leftAnchor.constraint(equalTo: leftAnchor,
+        label.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor,
                                     constant: SIDE_PADDING).isActive = true
-        label.rightAnchor.constraint(equalTo: rightAnchor,
+        label.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor,
                                      constant: -SIDE_PADDING).isActive = true
-        label.topAnchor.constraint(equalTo: topAnchor,
-                                   constant: 40).isActive = true
+        label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                                   constant: 35).isActive = true
         return label
     }
     
@@ -90,9 +100,8 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
                                   recorder: recorder)
         button.tintColor = BUTTON_TINT
         button.delegate = self
-        self.addSubview(button)
-        button.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        button.topAnchor.constraint(greaterThanOrEqualTo: titleLabel.bottomAnchor, constant: 120).isActive = true
+        view.addSubview(button)
+        button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
         return button
     }
     
@@ -103,14 +112,14 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         skip.titleLabel?.font = .systemFont(ofSize: 16.8, weight: .medium)
         skip.setTitle("Skip", for: .normal)
         skip.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(skip)
+        view.addSubview(skip)
         skip.widthAnchor.constraint(equalTo: recordButton.widthAnchor,
                                     constant: -5).isActive = true
-        skip.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        skip.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
         skip.topAnchor.constraint(equalTo: recordButton.bottomAnchor,
                                   constant: 20).isActive = true
-        skip.bottomAnchor.constraint(equalTo: bottomAnchor,
-                                     constant: -45).isActive = true
+        skip.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                     constant: -20).isActive = true
         skip.isHidden = audioQuestion.isRequired
         skip.addTarget(self, action: #selector(flip), for: .touchUpInside)
         
@@ -131,10 +140,10 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
             caption.text = timeLimitString
         }
         caption.translatesAutoresizingMaskIntoConstraints = false
-        self.addSubview(caption)
+        view.addSubview(caption)
         
-        caption.leftAnchor.constraint(equalTo: leftAnchor, constant: 20).isActive = true
-        caption.rightAnchor.constraint(equalTo: rightAnchor,
+        caption.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20).isActive = true
+        caption.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor,
                                        constant: -20).isActive = true
         caption.centerYAnchor.constraint(equalTo: skipButton.centerYAnchor).isActive = true
         
@@ -145,7 +154,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
     var timeLimitString: String {
         return "Time limit: \(Int(audioQuestion.duration))s"
     }
-
+    
     // MARK: Recording delegate
     
     /// Because we reset `finishMessage.text` after a two-second delay, we need to make sure that we abort the process if the user has started to record again. If set to `true`, it means that we do not reset `finishMessage.text` to "Recording was too short" after the 2 seconds are over.
@@ -191,7 +200,7 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
                 }
             }
         } else {
-           
+            
             // Called when the duration is shorter than 2 seconds
             audioQuestion.completed = false
             if audioQuestion.isRequired {
@@ -246,7 +255,8 @@ class AudioResponseCell: SurveyElementCell, RecordingDelegate {
         audioQuestion.didFailToRecord(sender, error: error)
     }
     
-    /// An audio cell should always be focused.
-    override func unfocus() {}
-    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+
 }

@@ -61,7 +61,7 @@ class Audio: Question, CustomStringConvertible {
             preconditionFailure("Malformed text question")
         }
         
-        if let duration = dictionary["maxLength"]?.double {
+        if let duration = Double(dictionary["maxLength"]?.stringValue ?? "60") {
             self.duration = duration
         }
         

@@ -88,12 +88,8 @@ class ConsentCell: SurveyElementCell {
     
     private func makeConsentText() -> UITextView {
         let consent = UITextView()
-        consent.attributedText = TextFormatter.formatted(consentInfo.consentText, type: .consentText)
-        consent.textAlignment = .left
-        consent.isEditable = false
-        consent.dataDetectorTypes = .link
-        consent.linkTextAttributes[.foregroundColor] = BLUE_TINT
-        consent.isScrollEnabled = false
+        consent.text = consentInfo.consentText
+        consent.format(as: .consentText)
         consent.translatesAutoresizingMaskIntoConstraints = false
         addSubview(consent)
         

@@ -31,7 +31,7 @@ class CheckboxItemCell: UITableViewCell {
         checkbox.heightAnchor.constraint(equalToConstant: 20).isActive = true
         addSubview(checkbox)
         
-        checkbox.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor).isActive = true
+        checkbox.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 12).isActive = true
         checkbox.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
                                        constant: SIDE_PADDING + 2).isActive = true
         
@@ -40,8 +40,8 @@ class CheckboxItemCell: UITableViewCell {
     
     private func makeTitle(_ title: String) -> UILabel {
         let label = UILabel()
-        label.text = title
-        label.font = .systemFont(ofSize: 18)
+        label.numberOfLines = 0
+        label.attributedText = TextFormatter.formatted(title, type: .plain)
         label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
         
@@ -50,8 +50,8 @@ class CheckboxItemCell: UITableViewCell {
         label.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
                                          constant: -SIDE_PADDING).isActive = true
         label.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                       constant: 10).isActive = true
-        let bottomConstraint = label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10)
+                                       constant: 9).isActive = true
+        let bottomConstraint = label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -11)
         bottomConstraint.priority = .init(999)
         bottomConstraint.isActive = true
         

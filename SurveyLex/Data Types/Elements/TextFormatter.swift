@@ -38,6 +38,10 @@ class TextFormatter {
                 line-height: 1.5;
                 letter-spacing: 2%;
             }
+
+            h1, h2, h3, h4, h5, h6 {
+                font-weight: 500;
+            }
 """
         let consentStyle = """
             body {
@@ -45,6 +49,10 @@ class TextFormatter {
                 font-size: 17px;
                 line-height: 1.5;
                 letter-spacing: 1%;
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+                font-weight: 500;
             }
 """
         let subtitleStyle = """
@@ -54,15 +62,35 @@ class TextFormatter {
                 line-height: 1.4;
                 letter-spacing: 1%;
             }
+
+            h1, h2, h3, h4, h5, h6 {
+                font-weight: 600;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            h3 {
+                font-size: 19px;
+            }
 """
 
         let titleStyle = """
             body {
                 font-family: -apple-system, BlinkMacSystemFont;
                 font-weight: 500;
-                font-size: 22px;
+                font-size: 23px;
                 line-height: 1.4;
                 letter-spacing: 2px;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                font-weight: 500;
             }
 """
         
@@ -72,6 +100,10 @@ class TextFormatter {
                 font-size: 18px;
                 line-height: 1.4;
                 letter-spacing: 1%;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                font-weight: 500;
             }
 """
         

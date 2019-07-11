@@ -15,11 +15,15 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     var parentCell: RadioGroupCell!
     
     override var intrinsicContentSize: CGSize {
-        self.reloadData()
-        if radioGroup.selection != -1 {
-            selectRow(at: IndexPath(row: radioGroup.selection, section: 0), animated: false, scrollPosition: .none)
+        if !isScrollEnabled {
+            self.reloadData()
+            if radioGroup.selection != -1 {
+                selectRow(at: IndexPath(row: radioGroup.selection, section: 0), animated: false, scrollPosition: .none)
+            }
+            return contentSize
+        } else {
+            return super.intrinsicContentSize
         }
-        return contentSize
     }
 
     init(radioGroup: RadioGroup, parentCell: RadioGroupCell) {
@@ -32,6 +36,7 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
         self.delegate = self
         self.dataSource = self
         separatorInset = .zero
+        separatorColor = .init(white: 0.85, alpha: 1)
         self.rowHeight = UITableView.automaticDimension
         self.register(MultipleChoiceCell.classForCoder(),
                       forCellReuseIdentifier: "choice")
@@ -53,13 +58,14 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "choice") as! MultipleChoiceCell
-        cell.titleText = radioGroup.choices[indexPath.row]
+        cell.titleLabel.attributedText = TextFormatter.formatted(radioGroup.choices[indexPath.row], type: .plain)
         return cell
     }
 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         parentCell.didSelectRow(row: indexPath.row)
+        UISelectionFeedbackGenerator().selectionChanged()
     }
     
     
@@ -74,6 +80,7 @@ extension UIView {
     /// Extension method that finds the optimal height for the view, given its current width.
     func preferredHeight(width: CGFloat) -> CGFloat {
         let widthConstraint = self.widthAnchor.constraint(equalToConstant: width)
+        widthConstraint.priority = .init(999)
         self.addConstraint(widthConstraint)
         let height = systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
         self.removeConstraint(widthConstraint)

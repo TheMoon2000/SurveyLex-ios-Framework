@@ -34,7 +34,10 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     }
     
     var responseJSON: JSON {
-        return JSON() // Need to be replaced
+        var json = JSON()
+        let value: Any = currentSelection == -1 ? JSON.null : options[currentSelection].value
+        json.dictionaryObject?["question\(order.question)"] = value
+        return json
     }
     
     // Custom instance variables
@@ -61,14 +64,18 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     required init(json: JSON, order: (Int, Int), fragment: Fragment? = nil) {
         let dictionary = json.dictionaryValue
         
-        guard let title = dictionary["title"]?.string,
-              let rateValues = dictionary["rateValues"]?.array
+        guard let rateValues = dictionary["rateValues"]?.array
         else {
             print(json)
             preconditionFailure("Malformed text question")
         }
         
-        self.title = title
+        if let title = dictionary["title"]?.string {
+            self.title = title
+        } else {
+            self.title = "<Question \(order.1)>"
+        }
+        
         self.fragment = fragment
         self.order = order
         

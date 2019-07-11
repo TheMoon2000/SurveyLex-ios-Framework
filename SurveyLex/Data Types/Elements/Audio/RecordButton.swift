@@ -36,10 +36,6 @@ class RecordButton: UIButton {
         super.init(coder: aDecoder)
     }
     
-    override func tintColorDidChange() {
-        self.layer.borderColor = tintColor.cgColor
-    }
-    
     init(duration: Double, radius: CGFloat, recorder: Recorder) {
 
         super.init(frame: .zero)
@@ -53,14 +49,20 @@ class RecordButton: UIButton {
         self.heightAnchor.constraint(equalToConstant: radius * 2).isActive = true
         
         // Layer appearance
-        self.layer.borderColor = UIColor.gray.cgColor
-        self.layer.borderWidth = 1.5
         self.layer.cornerRadius = radius
         layer.masksToBounds = true
         self.clipsToBounds = true
+        
+        /*
         self.setTitle("Record", for: .normal)
         self.setTitleColor(.gray, for: .normal)
         self.titleLabel?.font = .systemFont(ofSize: 17)
+         */
+        
+        self.backgroundColor = BLUE_TINT
+        self.setImage(#imageLiteral(resourceName: "mic"), for: .normal)
+        self.setImage(#imageLiteral(resourceName: "mic"), for: .highlighted)
+        
         self.translatesAutoresizingMaskIntoConstraints = false
         
         self.addTarget(self,
@@ -73,24 +75,22 @@ class RecordButton: UIButton {
         
         self.addTarget(self,
                        action: #selector(buttonLifted),
-                       for: [.touchUpInside, .touchUpOutside, .touchDragOutside])
+                       for: [.touchUpOutside, .touchDragOutside])
         
         self.setNeedsDisplay()
     }
     
     @objc private func buttonPressed() {
-        self.setTitleColor(UIColor(white: 0.91, alpha: 1), for: .normal)
-        self.layer.borderColor = BUTTON_LIGHT_TINT.cgColor
+        self.backgroundColor = DARKER_TINT
     }
     
     @objc private func buttonLifted() {
         let animation = {
-            self.setTitleColor(.gray, for: .normal)
-            self.layer.borderColor = self.tintColor.cgColor
+            self.backgroundColor = BLUE_TINT
         }
         
         UIView.transition(with: self,
-                          duration: 0.18,
+                          duration: 0.2,
                           options: .transitionCrossDissolve,
                           animations: animation,
                           completion: nil)
@@ -99,10 +99,21 @@ class RecordButton: UIButton {
     private func stopRecording(interrupted: Bool) {
         
         recorder.stopRecording() // Saves the file if possible
-        setTitle("Record", for: .normal)
         shapeLayer.removeAllAnimations()
         shapeLayer.removeFromSuperlayer()
         timer?.invalidate()
+        self.setImage(#imageLiteral(resourceName: "mic"), for: .normal)
+        self.setImage(#imageLiteral(resourceName: "mic"), for: .highlighted)
+        
+        UIView.transition(with: self,
+                          duration: 0.2,
+                          options: .curveEaseInOut,
+                          animations: {
+                            self.layer.cornerRadius = self.frame.width / 2
+                            self.backgroundColor = BLUE_TINT
+                            },
+                          completion: nil)
+        
         
         if interrupted {
             delegate?.didFailToRecord(self, error: .interrupted)
@@ -113,11 +124,11 @@ class RecordButton: UIButton {
 
         do {
             let _ = try Data(contentsOf: recorder.audioFilename)
-            delegate?.didFinishRecording(self, duration: elapsed)
         } catch {
             delegate?.didFailToRecord(self, error: .fileWrite)
         }
         
+        delegate?.didFinishRecording(self, duration: elapsed)
     }
 
     @objc private func record() {
@@ -125,28 +136,6 @@ class RecordButton: UIButton {
             stopRecording(interrupted: false)
         } else {
             UINotificationFeedbackGenerator().notificationOccurred(.success)
-            let progress = UIBezierPath(arcCenter: CGPoint(x: bounds.maxX / 2,
-                                                           y: bounds.maxY / 2),
-                                        radius: self.frame.width / 2 - 3,
-                                        startAngle: .pi * 1.5,
-                                        endAngle: -.pi * 0.5,
-                                        clockwise: false)
-            
-            let addAnimation = {
-                self.shapeLayer.path = progress.cgPath
-                self.shapeLayer.strokeColor = RECORD_TINT.cgColor
-                self.shapeLayer.lineWidth = 4
-                self.shapeLayer.fillColor = UIColor.clear.cgColor
-                self.layer.addSublayer(self.shapeLayer)
-                self.shapeLayer.strokeEnd = 0.0
-                
-                let animation = CABasicAnimation(keyPath: "strokeEnd")
-                animation.fromValue = 1.0
-                animation.toValue = 0.0
-                animation.duration = CFTimeInterval(self.duration)
-                animation.isRemovedOnCompletion = true
-                self.shapeLayer.add(animation, forKey: "drawCircleAnimation")
-            }
             
             recorder.startRecording { status in
                 
@@ -161,10 +150,19 @@ class RecordButton: UIButton {
                 self.finishTime = Date().addingTimeInterval(Double(self.duration))
                 self.delegate?.didBeginRecording(self)
                 
-                addAnimation()
+                let animation = {
+                    self.layer.cornerRadius = 5
+                    self.backgroundColor = UIColor(red: 1.0, green: 0.4, blue: 0.4, alpha: 1)
+                }
+                
+                UIView.transition(with: self,
+                                  duration: 0.2,
+                                  options: .curveEaseInOut,
+                                  animations: animation,
+                                  completion: nil)
                 
                 self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
-                    if (self.shapeLayer.animation(forKey: "drawCircleAnimation") == nil) { // User interrupted recording
+                    if false { // User interrupted recording
                         timer.invalidate()
                         self.stopRecording(interrupted: true)
                         return;
@@ -173,7 +171,7 @@ class RecordButton: UIButton {
                         self.stopRecording(interrupted: false)
                         return
                     }
-                    self.setTitle("Stop", for: .normal)
+                    self.setImage(#imageLiteral(resourceName: "stop"), for: .normal)
                 }
                 self.timer?.fire()
             }

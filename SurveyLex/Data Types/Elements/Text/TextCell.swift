@@ -37,9 +37,10 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     private func makeTitleView() -> UITextView {
         let textView = UITextView()
-        textView.text = "\(textQuestion.order.fragment).\(textQuestion.order.question) " + textQuestion.title
+        textView.text = textQuestion.title
         textView.format(as: .title)
         textView.textColor = .black
+        
         textView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textView)
         
@@ -57,6 +58,15 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         let textfield = UITextField()
         textfield.delegate = self
         textfield.borderStyle = .none
+        if textQuestion.title.lowercased().contains("email") {
+            textfield.keyboardType = .emailAddress
+            textfield.autocapitalizationType = .none
+            textfield.autocorrectionType = .no
+        } else if textQuestion.title.contains("URL") {
+            textfield.keyboardType = .URL
+            textfield.autocapitalizationType = .none
+            textfield.autocorrectionType = .no
+        }
         textfield.clearButtonMode = .whileEditing
         textfield.returnKeyType = .next
         textfield.enablesReturnKeyAutomatically = textQuestion.isRequired
@@ -80,15 +90,17 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     private func makeLine() {
         let line = UIView()
-        line.backgroundColor = .init(white: 0.9, alpha: 0.9)
+        line.backgroundColor = .init(white: 0.88, alpha: 1)
         line.translatesAutoresizingMaskIntoConstraints = false
         addSubview(line)
         
         line.leftAnchor.constraint(equalTo: textfield.leftAnchor).isActive = true
         line.rightAnchor.constraint(equalTo: textfield.rightAnchor).isActive = true
         line.heightAnchor.constraint(equalToConstant: 1.0).isActive = true
-        line.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
-                                     constant: -8).isActive = true
+        
+        let bottomConstraint = line.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -8)
+        bottomConstraint.priority = .init(999)
+        bottomConstraint.isActive = true
     }
 
     // MARK: Text field delegate
