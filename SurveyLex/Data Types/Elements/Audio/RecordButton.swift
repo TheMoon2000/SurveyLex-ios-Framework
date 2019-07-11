@@ -17,6 +17,7 @@ class RecordButton: UIButton {
     internal var duration: CGFloat = 0
     private let shapeLayer = CAShapeLayer()
     private var finishTime = Date()
+    private var isRecording = false
     
     /// When recording, represents the number of seconds left
     var timeRemaining: TimeInterval {
@@ -75,18 +76,18 @@ class RecordButton: UIButton {
         
         self.addTarget(self,
                        action: #selector(buttonLifted),
-                       for: [.touchUpOutside, .touchDragOutside])
+                       for: [.touchUpOutside, .touchDragOutside, .touchDragExit, .touchCancel])
         
         self.setNeedsDisplay()
     }
     
     @objc private func buttonPressed() {
-        self.backgroundColor = DARKER_TINT
+        self.backgroundColor = isRecording ? RECORDING_PRESSED : DARKER_TINT
     }
     
     @objc private func buttonLifted() {
         let animation = {
-            self.backgroundColor = BLUE_TINT
+            self.backgroundColor = self.isRecording ? RECORDING_PRESSED : BLUE_TINT
         }
         
         UIView.transition(with: self,
@@ -99,6 +100,7 @@ class RecordButton: UIButton {
     private func stopRecording(interrupted: Bool) {
         
         recorder.stopRecording() // Saves the file if possible
+        isRecording = false
         shapeLayer.removeAllAnimations()
         shapeLayer.removeFromSuperlayer()
         timer?.invalidate()
@@ -151,8 +153,8 @@ class RecordButton: UIButton {
                 self.delegate?.didBeginRecording(self)
                 
                 let animation = {
-                    self.layer.cornerRadius = 5
-                    self.backgroundColor = UIColor(red: 1.0, green: 0.4, blue: 0.4, alpha: 1)
+                    self.layer.cornerRadius = 8
+                    self.backgroundColor = RECORDING
                 }
                 
                 UIView.transition(with: self,
@@ -160,6 +162,8 @@ class RecordButton: UIButton {
                                   options: .curveEaseInOut,
                                   animations: animation,
                                   completion: nil)
+                
+                self.isRecording = true
                 
                 self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
                     if false { // User interrupted recording
@@ -172,6 +176,7 @@ class RecordButton: UIButton {
                         return
                     }
                     self.setImage(#imageLiteral(resourceName: "stop"), for: .normal)
+                    self.setImage(#imageLiteral(resourceName: "stop"), for: .highlighted)
                 }
                 self.timer?.fire()
             }
