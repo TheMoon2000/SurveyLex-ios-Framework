@@ -138,7 +138,7 @@ public class Survey {
             return
         }
         
-        
+        // Initialize a new page controller
         let mySurvey = SurveyViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
         // Copy over the references
