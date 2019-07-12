@@ -109,7 +109,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     private func makeSkipButton() -> UIButton {
         let skip = UIButton(type: .system)
         skip.tintColor = BUTTON_DEEP_BLUE
-        skip.titleLabel?.font = .systemFont(ofSize: 16.8, weight: .medium)
+        skip.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
         skip.setTitle("Skip", for: .normal)
         skip.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(skip)
@@ -119,7 +119,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         skip.topAnchor.constraint(equalTo: recordButton.bottomAnchor,
                                   constant: 20).isActive = true
         skip.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                                     constant: -20).isActive = true
+                                     constant: -25).isActive = true
         skip.isHidden = audioQuestion.isRequired
         skip.addTarget(self, action: #selector(flip), for: .touchUpInside)
         

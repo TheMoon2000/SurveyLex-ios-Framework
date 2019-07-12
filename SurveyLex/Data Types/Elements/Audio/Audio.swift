@@ -76,21 +76,7 @@ class Audio: Question, CustomStringConvertible {
     }
     
     func makeContentCell() -> SurveyElementCell {
-        let cell = AudioResponseCell(audioQuestion: self)
-        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("Recordings", isDirectory: true)
-        
-        do {
-            try FileManager().createDirectory(at: url,
-                                              withIntermediateDirectories: true,
-                                              attributes: nil)
-        } catch {
-            preconditionFailure("No write permission to write audio.")
-        }
-        
-        cell.saveURL = url.appendingPathComponent(fragment!.id)
-        
-        
-        return cell
+        return SurveyElementCell()
     }
     
     // Cell actions
