@@ -12,21 +12,17 @@ import UIKit
 class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSource {
     
     var radioGroup: RadioGroup!
-    var parentCell: RadioGroupCell!
+    var parentCell: RadioGroupBottomCell!
     
     override var intrinsicContentSize: CGSize {
-        if !isScrollEnabled {
-            self.reloadData()
-            if radioGroup.selection != -1 {
-                selectRow(at: IndexPath(row: radioGroup.selection, section: 0), animated: false, scrollPosition: .none)
-            }
-            return contentSize
-        } else {
-            return super.intrinsicContentSize
+        self.reloadData()
+        if radioGroup.selection != -1 {
+            selectRow(at: IndexPath(row: radioGroup.selection, section: 0), animated: false, scrollPosition: .none)
         }
+        return contentSize
     }
 
-    init(radioGroup: RadioGroup, parentCell: RadioGroupCell) {
+    init(radioGroup: RadioGroup, parentCell: RadioGroupBottomCell) {
         super.init(frame: .zero, style: .plain)
         
         self.radioGroup = radioGroup

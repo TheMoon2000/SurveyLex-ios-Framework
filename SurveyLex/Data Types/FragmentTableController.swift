@@ -25,11 +25,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         return !fragmentData.questions.contains { !$0.completed && $0.isRequired }
     }
     
-    //
-    //
     // -------------------------
-    //
-    //
     
     // Custom instance variables
     
@@ -131,14 +127,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         let label = insertLoadingLabel()
 //        tableView.isHidden = true
         
-        for question in fragmentData.questions {
-            question.parentView = surveyViewController
-            
-            let cell = question.makeContentCell()
-            cell.surveyPage = self
-            cell.unfocus()
-            contentCells.append(cell)
-        }
+        // Load content cells
         
         DispatchQueue.main.async {
             self.loadSurveyElements()
@@ -164,6 +153,18 @@ class FragmentTableController: UITableViewController, SurveyPage {
     }
     
     func loadSurveyElements() {
+        
+        for question in fragmentData.questions {
+            question.parentView = surveyViewController
+            
+            let cell = question.makeContentCell()
+            cell.surveyPage = self
+            cell.unfocus()
+            contentCells.append(cell)
+            
+            contentCells.append(cell.cellBelow)
+        }
+        
         tableView.reloadSections(IndexSet(arrayLiteral: 0), with: .none)
     }
     
@@ -175,6 +176,19 @@ class FragmentTableController: UITableViewController, SurveyPage {
         } else {
             preconditionFailure("cell not found")
         }
+    }
+    
+    func expand(from cell: SurveyElementCell) {
+        if let row = self.contentCells.firstIndex(of: cell) {
+            let targetIndex = IndexPath(row: row + 1, section: 0)
+            
+            tableView.reloadRows(at: [targetIndex], with: .none)
+            tableView.scrollToRow(at: targetIndex, at: .none, animated: true)
+        }
+    }
+    
+    func collapse(from cell: SurveyElementCell) {
+        expand(from: cell)
     }
     
     func isCellFocused(cell: SurveyElementCell) -> Bool {
@@ -193,8 +207,19 @@ class FragmentTableController: UITableViewController, SurveyPage {
         return contentCells.count
     }
     
-    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let cell = contentCells[indexPath.row]
+        if !cell.expanded { return 0 }
+        
+        return super.tableView(tableView, heightForRowAt: indexPath)
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        let cell = contentCells[indexPath.row]
+        
+        if !cell.expanded { return 0 }
+        
         let width = UIScreen.main.bounds.width - 55
         let preferred = cell.preferredHeight(width: width)
         return preferred

@@ -13,6 +13,8 @@ class SurveyElementCell: UITableViewCell {
     /// Reference to the Fragment Table View Controller that displays the current survey element.
     var surveyPage: FragmentTableController?
     
+    /// Whether the cell is expanded. Non-expanded cells have 0 height.
+    var expanded = true
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -23,10 +25,18 @@ class SurveyElementCell: UITableViewCell {
         return false
     }
     
+    var cellBelow: SurveyElementCell {
+        let cell = SurveyElementCell()
+        cell.expanded = false
+        
+        return cell
+    }
+    
     init() {
         super.init(style: .default, reuseIdentifier: nil)
         
         selectionStyle = .none
+        backgroundColor = .white
     }
     
     /// Focus the cell by initiating a series of visual changes.
