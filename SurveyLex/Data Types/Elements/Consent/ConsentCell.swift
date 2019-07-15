@@ -108,6 +108,7 @@ class ConsentCell: SurveyElementCell {
     private func makeCheckbox() -> UICheckbox {
         let check = UICheckbox()
         check.format(type: .square)
+        check.isChecked = consentInfo.agreed
         check.translatesAutoresizingMaskIntoConstraints = false
         check.widthAnchor.constraint(equalToConstant: 20).isActive = true
         check.heightAnchor.constraint(equalToConstant: 20).isActive = true
@@ -132,6 +133,7 @@ class ConsentCell: SurveyElementCell {
             agreeButton.isEnabled = false
             agreeButton.backgroundColor = DISABLED_BLUE
         }
+        consentInfo.agreed = checkbox.isChecked
         consentInfo.completed = checkbox.isChecked
         consentInfo.parentView?.reloadDatasource()
     }
