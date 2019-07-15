@@ -92,7 +92,7 @@ class RatingSliderCell: SurveyElementCell {
         slider.isContinuous = true
         slider.addTarget(self, action: #selector(sliderChanged), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderPressed), for: .touchDown)
-        slider.addTarget(self, action: #selector(sliderLifted), for: .touchUpInside)
+        slider.addTarget(self, action: #selector(sliderLifted), for: [.touchUpInside, .touchUpOutside])
         
         return slider
     }
