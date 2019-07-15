@@ -21,8 +21,12 @@ class RadioGroupBottomCell: SurveyElementCell {
         self.topCell = topCell
         
         self.radioTable = makeChoiceTable()
-        
         self.expanded = false
+        
+        /* Debugging only
+         layer.borderColor = UIColor.orange.cgColor
+         layer.borderWidth = 1
+         */
     }
 
     private func makeChoiceTable() -> MultipleChoiceView {
@@ -48,38 +52,13 @@ class RadioGroupBottomCell: SurveyElementCell {
         
         if !radioGroup.completed {
             radioGroup.completed = true
-            if (surveyPage?.isCellFocused(cell: self) ?? false) {
-                if !radioGroup.parentView!.toNext(from: self) {
-                    // This is the last cell on the page, so keep it focused
-                    surveyPage?.focus(cell: self)
-                }
-            } else {
-                // The cell was not focused when a selection was made, so now focus it.
+            if !radioGroup.parentView!.toNext(from: topCell) {
+                // This is the last cell on the page, so keep it focused
                 surveyPage?.focus(cell: self)
             }
         } else {
             // The cell has already been selected once, so keep it focused.
             surveyPage?.focus(cell: self)
-        }
-    }
-    
-    override func focus() {
-        super.focus()
-        
-        self.alpha = 1
-        
-        if topCell.title.alpha == UNFOCUSED_ALPHA {
-            topCell.focus()
-        }
-    }
-    
-    override func unfocus() {
-        super.unfocus()
-        
-        self.alpha = UNFOCUSED_ALPHA
-        
-        if topCell.title.alpha == 1.0 {
-            topCell.unfocus()
         }
     }
     
