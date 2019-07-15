@@ -32,6 +32,10 @@ class RadioGroupCell: SurveyElementCell {
     
     private var expansionIndicator: UIImageView!
     private var bottomCell: RadioGroupBottomCell!
+    private var expandButton: UIButton!
+    
+    /// Whether expansion events for the bottom row are suppressed.
+    private var suppressExpansion = false
     
     init(radioGroup: RadioGroup) {
         super.init()
@@ -75,7 +79,7 @@ class RadioGroupCell: SurveyElementCell {
         button.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
                                       constant: -SIDE_PADDING).isActive = true
         
-        button.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10).isActive = true
+        button.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 15).isActive = true
         button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10).isActive = true
         
         button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
@@ -86,6 +90,8 @@ class RadioGroupCell: SurveyElementCell {
             .touchDragOutside,
             .touchDragExit])
         button.addTarget(self, action: #selector(buttonEventTriggered(_:)), for: .touchUpInside)
+        
+        expandButton = button
         
         
         let expand = UIImageView(image: #imageLiteral(resourceName: "expand"))
@@ -113,8 +119,6 @@ class RadioGroupCell: SurveyElementCell {
                             sender.setTitleColor(.lightGray, for: .normal)
                           },
                           completion: nil)
-        
-        surveyPage?.focus(cell: self)
     }
     
     @objc private func buttonLifted(_ sender: UIButton) {
@@ -129,11 +133,26 @@ class RadioGroupCell: SurveyElementCell {
     }
     
     @objc private func buttonEventTriggered(_ sender: UIButton) {
+        
+        guard !suppressExpansion else {
+            return
+        }
+        
+        suppressExpansion = true
+        surveyPage?.focus(cell: self)
+        suppressExpansion = false
+        
+        toggleExpansion(sender)
+    }
+    
+    private func toggleExpansion(_ sender: UIButton) {
+        
         bottomCell.expanded.toggle()
-        self.surveyPage?.expand(from: self)
+        self.surveyPage?.expandOrCollapse(from: self)
         bottomCell.focus()
         if self.bottomCell.expanded {
             UIView.animate(withDuration: 0.25) {
+                //  This is stupid but you need to set the angle to a negative value for the indicator to always rotate on the right side. Rotation animations always takes the path that requires the least motion.
                 self.expansionIndicator.transform = CGAffineTransform(rotationAngle: -0.00001)
                 sender.setTitle("Tap to Collapse", for: .normal)
             }
@@ -145,29 +164,33 @@ class RadioGroupCell: SurveyElementCell {
         }
     }
     
-    
     // MARK: Customized focus / unfocus appearance
     
     override func focus() {
         super.focus()
       
-        if bottomCell.radioTable.alpha == UNFOCUSED_ALPHA {
-            bottomCell.focus()
+        bottomCell.focus()
+        
+        if !radioGroup.completed && !bottomCell.expanded && !suppressExpansion {
+            toggleExpansion(expandButton)
+            
+            // Temporarily set `hasAutoExpanded` to true to block the button press event from being triggered.
+            suppressExpansion = true
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                self.suppressExpansion = false
+            }
         }
         
-        DispatchQueue.main.async {
-            self.surveyPage?.expand(from: self)
-        }
     }
     
     override func unfocus() {
         super.unfocus()
         
-        if bottomCell.radioTable.alpha == 1.0 {
-            bottomCell.unfocus()
-        }
+        bottomCell.unfocus()
         
-        surveyPage?.collapse(from: self)
+//        DispatchQueue.main.async {
+//            self.surveyPage?.collapse(from: self)
+//        }
     }
     
     required init?(coder aDecoder: NSCoder) {
