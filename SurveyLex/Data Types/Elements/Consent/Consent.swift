@@ -47,6 +47,9 @@ class Consent: Question, CustomStringConvertible {
     /// The prompt for the consent form.
     let prompt: String
     
+    /// Whether the survey taker agreed to the consent form.
+    var agreed = false
+    
     /**
      Construct a new consent form from the provided data.
      - Parameters:
