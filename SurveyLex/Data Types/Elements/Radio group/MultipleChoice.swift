@@ -14,6 +14,9 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     var radioGroup: RadioGroup!
     var parentCell: RadioGroupBottomCell!
     
+    /// An array of pre-generated cells to be displayed as choices for the multiple choice question.
+    var choiceCells = [MultipleChoiceCell]()
+    
     override var intrinsicContentSize: CGSize {
         self.reloadData()
         if radioGroup.selection != -1 {
@@ -33,9 +36,14 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
         self.dataSource = self
         separatorInset = .zero
         separatorColor = .init(white: 0.85, alpha: 1)
-        self.rowHeight = UITableView.automaticDimension
-        self.register(MultipleChoiceCell.classForCoder(),
-                      forCellReuseIdentifier: "choice")
+        
+        // Make the pre-generaated cells
+        register(MultipleChoiceCell.classForCoder(), forCellReuseIdentifier: "choice")
+        for choice in radioGroup.choices {
+            let cell = dequeueReusableCell(withIdentifier: "choice") as! MultipleChoiceCell
+            cell.titleLabel.attributedText = TextFormatter.formatted(choice, type: .plain)
+            choiceCells.append(cell)
+        }
     }
     
     // Essential for calculating the correct height for the cells
@@ -53,15 +61,16 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "choice") as! MultipleChoiceCell
-        cell.titleLabel.attributedText = TextFormatter.formatted(radioGroup.choices[indexPath.row], type: .plain)
-        return cell
+        
+        return choiceCells[indexPath.row]
     }
 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if radioGroup.selection != indexPath.row {
+            UISelectionFeedbackGenerator().selectionChanged()
+        }
         parentCell.didSelectRow(row: indexPath.row)
-        UISelectionFeedbackGenerator().selectionChanged()
     }
     
     
