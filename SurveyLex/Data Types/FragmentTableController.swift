@@ -31,9 +31,6 @@ class FragmentTableController: UITableViewController, SurveyPage {
     
     /// An array of `SurveyElementCell`s in order, each representing a survey element in the fragment.
     var contentCells = [SurveyElementCell]()
-
-    /// A helper variable that controls whether updates to `focusedRow` will trigger any side effects.
-    private var focusedRowResponse = true
     
     /// Completion status of every question.
     private var completion: [(completed: Bool, required: Bool)] {
@@ -43,8 +40,12 @@ class FragmentTableController: UITableViewController, SurveyPage {
     /// The index of the row that is currently focused, as seen by the user.
     var focusedRow = -1 {
         didSet (oldValue) {
-            if !focusedRowResponse { return }
             if focusedRow == oldValue { return }
+            
+            precondition(focusedRow % 2 == 0, "Only focus on top cells!")
+            
+            fragmentData.focusedRow = focusedRow
+            
             if focusedRow != -1 {
                 let index = IndexPath(row: focusedRow, section: 0)
                 if focusedRow < tableView.numberOfRows(inSection: 0) {
@@ -102,11 +103,19 @@ class FragmentTableController: UITableViewController, SurveyPage {
         DispatchQueue.main.async {
             if !self.surveyViewController!.visited.contains(self.pageIndex) {
                 self.surveyViewController?.visited.insert(self.pageIndex)
-                self.focusedRow = 0
+                self.focusedRow = self.fragmentData.focusedRow
             } else if self.fragmentData.questions.count == 1 {
                 self.focusedRow = 0
-            } else if self.focusedRow != -1 && false {
-                self.contentCells[self.focusedRow].focus()
+            } else if self.focusedRow != -1 {
+                var pos = UITableView.ScrollPosition.middle
+                let cell = self.contentCells[self.focusedRow]
+                if cell.frame.height > self.tableView.frame.height || self.tableView.numberOfRows(inSection: 0) == 1 {
+                    pos = .top
+                }
+                self.tableView.scrollToRow(at: IndexPath(row: self.focusedRow, section: 0), at: pos, animated: true)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                    self.contentCells[self.focusedRow].focus()
+                }
             }
         }
     }
@@ -161,6 +170,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
             cell.surveyPage = self
             cell.unfocus()
             contentCells.append(cell)
+            cell.cellBelow.surveyPage = self
             
             contentCells.append(cell.cellBelow)
         }
@@ -171,29 +181,38 @@ class FragmentTableController: UITableViewController, SurveyPage {
     func focus(cell: SurveyElementCell) {
         if let row = self.contentCells.firstIndex(of: cell) {
             UIView.animate(withDuration: 0.2) {
-                self.focusedRow = row
+                self.focusedRow = (row - row % 2) // Never directly focus on the bottom cell. Instead, focus the top cell
             }
         } else {
             preconditionFailure("cell not found")
         }
     }
     
-    func expand(from cell: SurveyElementCell) {
+    /**
+     Updates the visibility status of the given cell if needed.
+     
+     - Parameters:
+        - cell: A cell (with odd index) whose visibility status is to be updated.
+     */
+    func expandOrCollapse(from cell: SurveyElementCell) {
         if let row = self.contentCells.firstIndex(of: cell) {
             let targetIndex = IndexPath(row: row + 1, section: 0)
             
-            tableView.reloadRows(at: [targetIndex], with: .none)
-            tableView.scrollToRow(at: targetIndex, at: .none, animated: true)
+            self.tableView.reloadRows(at: [targetIndex], with: .automatic)
+            
+            // Scroll to the newly expanded row. We need to wait for the expansion animation to finish before scrolling to the row.
+            if self.contentCells[row + 1].expanded {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    self.tableView.scrollToRow(at: targetIndex, at: .none, animated: true)
+                }
+            }
         }
-    }
-    
-    func collapse(from cell: SurveyElementCell) {
-        expand(from: cell)
     }
     
     func isCellFocused(cell: SurveyElementCell) -> Bool {
         let row = tableView.indexPath(for: cell)?.row ?? -1
-        return row == focusedRow
+        print("focused row = \(focusedRow)")
+        return (row - row % 2) == focusedRow
     }
 
 
@@ -208,8 +227,11 @@ class FragmentTableController: UITableViewController, SurveyPage {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+                
         let cell = contentCells[indexPath.row]
-        if !cell.expanded { return 0 }
+        if !cell.expanded {
+            return 0
+        }
         
         return super.tableView(tableView, heightForRowAt: indexPath)
     }
@@ -217,8 +239,9 @@ class FragmentTableController: UITableViewController, SurveyPage {
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         
         let cell = contentCells[indexPath.row]
-        
+
         if !cell.expanded { return 0 }
+        
         
         let width = UIScreen.main.bounds.width - 55
         let preferred = cell.preferredHeight(width: width)
@@ -237,14 +260,19 @@ class FragmentTableController: UITableViewController, SurveyPage {
             contentCells[indexPath.row].unfocus()
         }*/
         
-        return contentCells[indexPath.row]
+        if indexPath.row % 2 == 0 || contentCells[indexPath.row].expanded {
+            return contentCells[indexPath.row]
+        } else {
+            return SurveyElementCell()
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        focusedRow = indexPath.row
+        focusedRow = (indexPath.row - indexPath.row % 2)
     }
     
     /// Fixes the bug with device rotation by resetting the content offset.
+    
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         let spaceBelow = tableView.contentSize.height - tableView.contentOffset.y
@@ -254,6 +282,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
             self.tableView.contentOffset = CGPoint(x: 0.0, y: proposedOffset)
 //            self.tableView.reloadData()
         }, completion: nil)
+ 
     }
 
 }
