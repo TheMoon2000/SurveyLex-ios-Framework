@@ -27,12 +27,15 @@ class RadioGroupCell: SurveyElementCell {
     /// The text view for the title of the radio group question.
     var title: UITextView!
     
-    /// The table subview embedded in this cell.
-    private var choiceTable: MultipleChoiceView!
-    
+    // UI elements responsible for the expansion trigger.
     private var expansionIndicator: UIImageView!
     private var bottomCell: RadioGroupBottomCell!
     private var expandButton: UIButton!
+    
+    // Quick access.
+    private var allowMenuCollapse: Bool {
+        return radioGroup.parentView!.survey.allowMenuCollapse
+    }
     
     /// Whether expansion events for the bottom row are suppressed.
     private var suppressExpansion = false
@@ -67,20 +70,19 @@ class RadioGroupCell: SurveyElementCell {
     private func makeExpansionIndicator() -> UIImageView {
         let button = UIButton()
         button.contentVerticalAlignment = .top
-        button.setTitle("Tap to Expand", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16.5, weight: .medium)
         button.setTitleColor(.darkGray, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         addSubview(button)
         
-        button.heightAnchor.constraint(equalToConstant: 65).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 40).isActive = true
         button.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
                                      constant: SIDE_PADDING).isActive = true
         button.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
                                       constant: -SIDE_PADDING).isActive = true
         
-        button.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 15).isActive = true
-        button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10).isActive = true
+        button.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 2).isActive = true
+        button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor).isActive = true
         
         button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
         button.addTarget(self, action: #selector(buttonLifted(_:)), for: [
@@ -95,15 +97,14 @@ class RadioGroupCell: SurveyElementCell {
         
         
         let expand = UIImageView(image: #imageLiteral(resourceName: "expand"))
-        expand.transform = CGAffineTransform(rotationAngle: .pi)
         expand.contentMode = .scaleAspectFit
         expand.translatesAutoresizingMaskIntoConstraints = false
-        expand.widthAnchor.constraint(equalToConstant: 19).isActive = true
-        expand.heightAnchor.constraint(equalToConstant: 19).isActive = true
+        expand.widthAnchor.constraint(equalToConstant: 22).isActive = true
+        expand.heightAnchor.constraint(equalToConstant: 22).isActive = true
         insertSubview(expand, belowSubview: button)
 
         expand.centerXAnchor.constraint(equalTo: button.centerXAnchor).isActive = true
-        expand.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: -10).isActive = true
+        expand.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         
         return expand
     }
@@ -116,7 +117,6 @@ class RadioGroupCell: SurveyElementCell {
                           options: .transitionCrossDissolve,
                           animations: {
                             self.expansionIndicator.image = #imageLiteral(resourceName: "expand_pressed")
-                            sender.setTitleColor(.lightGray, for: .normal)
                           },
                           completion: nil)
     }
@@ -127,7 +127,6 @@ class RadioGroupCell: SurveyElementCell {
                           options: .transitionCrossDissolve,
                           animations: {
                             self.expansionIndicator.image = #imageLiteral(resourceName: "expand")
-                            sender.setTitleColor(.darkGray, for: .normal)
                           }, completion: nil)
         
     }
@@ -147,19 +146,28 @@ class RadioGroupCell: SurveyElementCell {
     
     private func toggleExpansion(_ sender: UIButton) {
         
+        if !allowMenuCollapse {
+            sender.isUserInteractionEnabled = false
+            UIView.transition(with: self,
+                              duration: 0.25,
+                              options: .transitionCrossDissolve,
+                              animations: {
+                                self.expansionIndicator.image = #imageLiteral(resourceName: "disabled 3x")
+                              }, completion: nil)
+        }
+        
         bottomCell.expanded.toggle()
         self.surveyPage?.expandOrCollapse(from: self)
         bottomCell.focus()
         if self.bottomCell.expanded {
             UIView.animate(withDuration: 0.25) {
-                //  This is stupid but you need to set the angle to a negative value for the indicator to always rotate on the right side. Rotation animations always takes the path that requires the least motion.
-                self.expansionIndicator.transform = CGAffineTransform(rotationAngle: -0.00001)
-                sender.setTitle("Tap to Collapse", for: .normal)
+                //  This is stupid but you need to set the angle to a value slightly less than π for the indicator to always rotate on the right side. Rotation animations always takes the path that requires the least motion.
+                self.expansionIndicator.transform = CGAffineTransform(rotationAngle: .pi - 0.0001)
             }
-        } else {
+            
+        } else if !allowMenuCollapse {
             UIView.animate(withDuration: 0.25) {
-                self.expansionIndicator.transform = CGAffineTransform(rotationAngle: .pi)
-                sender.setTitle("Tap to Expand", for: .normal)
+                self.expansionIndicator.transform = CGAffineTransform(rotationAngle: 0)
             }
         }
     }
@@ -187,10 +195,6 @@ class RadioGroupCell: SurveyElementCell {
         super.unfocus()
         
         bottomCell.unfocus()
-        
-//        DispatchQueue.main.async {
-//            self.surveyPage?.collapse(from: self)
-//        }
     }
     
     required init?(coder aDecoder: NSCoder) {
