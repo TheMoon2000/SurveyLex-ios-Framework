@@ -214,7 +214,6 @@ class FragmentTableController: UITableViewController, SurveyPage {
     
     func isCellFocused(cell: SurveyElementCell) -> Bool {
         let row = tableView.indexPath(for: cell)?.row ?? -1
-        print("focused row = \(focusedRow)")
         return row == focusedRow
     }
 
@@ -262,7 +261,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         } else {
             contentCells[indexPath.row].unfocus()
         }*/
-        
+                
         if indexPath.row % 2 == 0 || contentCells[indexPath.row].expanded {
             return contentCells[indexPath.row]
         } else {
@@ -281,6 +280,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         let spaceBelow = tableView.contentSize.height - tableView.contentOffset.y
         let upwardOffset = max(0, size.height - spaceBelow)
         let proposedOffset = max(0, tableView.contentOffset.y - upwardOffset)
+        tableView.reloadData()
         coordinator.animate(alongsideTransition: {context in
             self.tableView.contentOffset = CGPoint(x: 0.0, y: proposedOffset)
         }, completion: nil)

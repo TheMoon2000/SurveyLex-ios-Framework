@@ -110,7 +110,7 @@ class SurveyViewController: UIPageViewController,
     }
     
     @objc private func surveyCancelled() {
-        let alert = FixedAlertController(title: "Are you sure?",
+        let alert = UIAlertController(title: "Are you sure?",
                                       message: "You are about the leave the survey. Any information you have entered will be discarded.",
                                       preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
@@ -229,11 +229,5 @@ class SurveyViewController: UIPageViewController,
     func reloadDatasource() {
         dataSource = nil
         dataSource = self
-    }
-}
-
-class FixedAlertController: UIAlertController {
-    override var shouldAutorotate: Bool {
-        return false
     }
 }
