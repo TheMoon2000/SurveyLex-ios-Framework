@@ -47,10 +47,6 @@ class RatingSliderCell: SurveyElementCell {
         addTicks()
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
     
     private func makeTextView() -> UITextView {
         let textView = UITextView()
@@ -75,7 +71,7 @@ class RatingSliderCell: SurveyElementCell {
         slider.minimumTrackTintColor = .clear
         slider.maximumValue = 100
         slider.value = currentValue
-        slider.thumbTintColor = DARKER_TINT
+        slider.thumbTintColor = .lightGray
         /*
         slider.layer.borderWidth = 1
         slider.layer.borderColor = UIColor.orange.cgColor
@@ -87,7 +83,6 @@ class RatingSliderCell: SurveyElementCell {
         slider.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: sideMargins).isActive = true
         slider.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -sideMargins).isActive = true
         slider.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20).isActive = true
-//        slider.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -50).isActive = true
         
         slider.isContinuous = true
         slider.addTarget(self, action: #selector(sliderChanged), for: .valueChanged)
@@ -215,7 +210,6 @@ class RatingSliderCell: SurveyElementCell {
     
     override func focus() {
         super.focus()
-//        title.textColor = .black
         UIView.performWithoutAnimation {
             slider.thumbTintColor = ratingQuestion.completed ? BLUE_TINT : .lightGray
         }
@@ -223,11 +217,16 @@ class RatingSliderCell: SurveyElementCell {
     
     override func unfocus() {
         super.unfocus()
-//        title.textColor = .darkGray
-        UIView.performWithoutAnimation {
-            slider.thumbTintColor = ratingQuestion.completed ? DISABLED_BLUE : grayColor
-            slider.alpha = 1.0
+        if autofocus {
+            UIView.performWithoutAnimation {
+                slider.thumbTintColor = ratingQuestion.completed ? DISABLED_BLUE : grayColor
+                slider.alpha = 1.0
+            }
         }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
     
 }
