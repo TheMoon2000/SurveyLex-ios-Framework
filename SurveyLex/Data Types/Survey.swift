@@ -28,6 +28,16 @@ public class Survey {
     /// Optional delegate that handles survey responses.
     public var delegate: SurveyResponseDelegate?
     
+    // MARK: Environment variables
+    
+    /// Whether multiple choice / checkbox menus are allowed to collapse once expanded.
+    public var allowMenuCollapse = false
+    
+    /// Whether the current survey element has higher opacity relative to others.
+    public var autofocus = true
+    
+    // MARK: Survey class implementation
+    
     /**
      Initializes a new `Survey` front-end by providing a JSON data source. **This constructor is not recommended**.
     
