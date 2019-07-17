@@ -47,8 +47,6 @@ class FragmentTableController: UITableViewController, SurveyPage {
             if oldValue != -1 && topRow == oldValue - oldValue % 2 {
                 return // The focus did not change
             }
-                        
-            fragmentData.focusedRow = focusedRow
             
             if focusedRow != -1 {
                 let index = IndexPath(row: focusedRow, section: 0)
@@ -110,7 +108,6 @@ class FragmentTableController: UITableViewController, SurveyPage {
         DispatchQueue.main.async {
             if !self.surveyViewController!.visited.contains(self.pageIndex) {
                 self.surveyViewController?.visited.insert(self.pageIndex)
-                self.focusedRow = self.fragmentData.focusedRow
             } else if self.fragmentData.questions.count == 1 {
                 self.focusedRow = 0
             } else if self.focusedRow != -1 {
