@@ -12,14 +12,14 @@ class CheckboxItemCell: UITableViewCell {
     
     var checkboxesData: CheckBoxes!
     var checkbox: UICheckbox!
-    private weak var titleLabel: UILabel!
+    weak var titleLabel: UILabel!
 
-    init(title: String) {
-        super.init(style: .default, reuseIdentifier: "checkbox")
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         selectionStyle = .none
         checkbox = makeCheckbox()
-        titleLabel = makeTitle(title)
+        titleLabel = makeTitle()
     }
     
     private func makeCheckbox() -> UICheckbox {
@@ -38,10 +38,9 @@ class CheckboxItemCell: UITableViewCell {
         return checkbox
     }
     
-    private func makeTitle(_ title: String) -> UILabel {
+    private func makeTitle() -> UILabel {
         let label = UILabel()
         label.numberOfLines = 0
-        label.attributedText = TextFormatter.formatted(title, type: .plain)
         label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
         
@@ -56,12 +55,6 @@ class CheckboxItemCell: UITableViewCell {
         bottomConstraint.isActive = true
         
         return label
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        checkbox.isChecked = selected
     }
     
     required init?(coder aDecoder: NSCoder) {
