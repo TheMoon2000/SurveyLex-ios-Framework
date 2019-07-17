@@ -209,6 +209,10 @@ class ConsentCell: SurveyElementCell {
         if consentInfo.parentView!.flipPageIfNeeded() {
             checkbox.isEnabled = false
         }
+        
+        agreeButton.isUserInteractionEnabled = false
+        agreeButton.backgroundColor = DISABLED_BLUE
+        agreeButton.setTitle("Agreed", for: .normal)
     }
 
     
