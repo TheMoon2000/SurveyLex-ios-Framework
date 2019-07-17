@@ -11,24 +11,32 @@ import UIKit
 class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
 
     var checkboxData: CheckBoxes!
-    var parentCell: CheckboxesCell!
+    var parentCell: CheckboxesBottomCell!
+    private var choiceCells = [CheckboxItemCell]()
     
     override var intrinsicContentSize: CGSize {
         self.reloadData()
         return contentSize
     }
     
-    init(checkboxes: CheckBoxes, parentCell: CheckboxesCell) {
+    init(checkboxes: CheckBoxes, parentCell: CheckboxesBottomCell) {
         super.init(frame: .zero, style: .plain)
         
         checkboxData = checkboxes
         self.parentCell = parentCell
         
-        allowsMultipleSelection = true
         separatorStyle = .none
         tableFooterView = UIView(frame: .zero)
-        delegate = self; dataSource = self
-        rowHeight = UITableView.automaticDimension
+        delegate = self
+        dataSource = self
+        
+        register(CheckboxItemCell.classForCoder(), forCellReuseIdentifier: "checkbox")
+        
+        for choice in checkboxes.choices {
+            let cell = dequeueReusableCell(withIdentifier: "checkbox") as! CheckboxItemCell
+            cell.titleLabel.attributedText = TextFormatter.formatted(choice, type: .plain)
+            choiceCells.append(cell)
+        }
     }
     
     // MARK: Table view data source
@@ -38,31 +46,30 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return checkboxData.choices.count
+        return choiceCells.count
     }
     
     // Essential for calculating the correct height for the cells
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        let cell = self.tableView(tableView, cellForRowAt: indexPath)
-        return cell.preferredHeight(width: UIScreen.main.bounds.width - 55)
+        return choiceCells[indexPath.row].preferredHeight(width: parentCell.surveyPage!.tableView.safeAreaLayoutGuide.layoutFrame.width)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = CheckboxItemCell(title: checkboxData.choices[indexPath.row])
-        cell.checkbox.isChecked = checkboxData.selections.contains(indexPath.row)
-        return cell
+        return choiceCells[indexPath.row]
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         UISelectionFeedbackGenerator().selectionChanged()
+        tableView.deselectRow(at: indexPath, animated: false)
         parentCell.surveyPage?.focus(cell: parentCell)
-        parentCell.modified = true
-        checkboxData.selections.insert(indexPath.row)
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        UISelectionFeedbackGenerator().selectionChanged()
-        checkboxData.selections.remove(indexPath.row)
+        parentCell.topCell.modified = true
+        
+        choiceCells[indexPath.row].checkbox.isChecked.toggle()
+        if choiceCells[indexPath.row].checkbox.isChecked {
+            checkboxData.selections.insert(indexPath.row)
+        } else {
+            checkboxData.selections.remove(indexPath.row)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
