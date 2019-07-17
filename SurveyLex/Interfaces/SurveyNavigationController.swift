@@ -19,5 +19,9 @@ class SurveyNavigationController: UINavigationController {
         navigationBar.isTranslucent = false
         navigationBar.shadowImage = UIImage()
     }
+    
+    override var shouldAutorotate: Bool {
+        return false
+    }
 
 }
