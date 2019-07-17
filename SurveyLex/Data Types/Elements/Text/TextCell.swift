@@ -25,7 +25,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     /// The text field where the user inputs their text response.
     var textfield: UITextField!
     
-    // MARK: Main components setup
+    // MARK: UI setup
     
     init(textQuestion: Text) {
         super.init()
@@ -131,11 +131,11 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         return true
     }
     
-    // MARK: Overriden methods
+    // MARK: Customized focus/unfocus visual effects
     
     override func focus() {
         super.focus()
-//        title.textColor = .black
+        
         self.textfield.delegate = nil
         self.textfield.becomeFirstResponder()
         self.textfield.delegate = self
@@ -143,7 +143,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     
     override func unfocus() {
         super.unfocus()
-//        title.textColor = .darkGray
+        
         textfield.delegate = nil
         textfield.resignFirstResponder()
         textfield.delegate = self

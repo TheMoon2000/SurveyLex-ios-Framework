@@ -12,7 +12,7 @@ import SwiftyJSON
 /// Represents the information for a consent form in a SurveyLex survey.
 class Consent: Question, CustomStringConvertible {
     
-    // Inherited
+    // MARK: Protocol requirements
     
     var fragment: Fragment?
     var completed = false
@@ -36,7 +36,7 @@ class Consent: Question, CustomStringConvertible {
         return JSON() // Need to be replaced
     }
     
-    // Custom instance variables
+    // MARK: Custom instance variables
     
     /// The title of the consent form.
     let title: String
@@ -49,6 +49,9 @@ class Consent: Question, CustomStringConvertible {
     
     /// Whether the survey taker agreed to the consent form.
     var agreed = false
+    
+    
+    // Setup
     
     /**
      Construct a new consent form from the provided data.

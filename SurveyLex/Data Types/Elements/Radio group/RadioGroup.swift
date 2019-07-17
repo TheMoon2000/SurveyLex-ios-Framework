@@ -12,7 +12,7 @@ import SwiftyJSON
 /// Represents the information for a radio group question in a SurveyLex survey.
 class RadioGroup: Question, CustomStringConvertible {
     
-    // Inherited
+    // MARK: Protocol requirements
     
     var fragment: Fragment?
     var isRequired = false
@@ -39,7 +39,7 @@ class RadioGroup: Question, CustomStringConvertible {
         return json
     }
     
-    // Custom instance variables
+    // MARK: Custom instance variables
     
     /// The title of the radio group question.
     let title: String
@@ -50,6 +50,8 @@ class RadioGroup: Question, CustomStringConvertible {
     /// The index of the current selection. -1 means nothing is selected.
     var selection = -1
     
+    
+    // MARK: Setup
     
     /**
      Construct a new `RadioGroup` question from the provided data.

@@ -12,7 +12,7 @@ import SwiftyJSON
 /// Represents the information for a rating question in a SurveyLex survey.
 class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     
-    // Inherited
+    // MARK: Protocol requirements
     
     var fragment: Fragment?
     var isRequired = false
@@ -40,7 +40,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
         return json
     }
     
-    // Custom instance variables
+    // MARK: Custom instance variables
     
     /// The title of the rating question.
     let title: String
@@ -53,6 +53,9 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     
     /// The index of the current selection
     var currentSelection = -1
+    
+    
+    // MARK: Setup
     
     /**
      Construct a new `Rating` question from the provided data.

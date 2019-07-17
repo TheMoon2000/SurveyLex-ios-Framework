@@ -8,7 +8,7 @@
 
 import UIKit
 
-/// A subclass of `SurveyElementCell` that display a radio group question.
+/// A subclass of `SurveyElementCell` that displays the top half of a radio group question.
 class RadioGroupCell: SurveyElementCell {
     
     /// Shortcut for the completion status of the cell, accessible from the `SurveyElementCell` class.
@@ -40,6 +40,9 @@ class RadioGroupCell: SurveyElementCell {
     /// Whether expansion events for the bottom row are suppressed.
     private var suppressExpansion = false
     
+    
+    // MARK: UI Setup
+    
     init(radioGroup: RadioGroup) {
         super.init()
         self.radioGroup = radioGroup
@@ -48,8 +51,6 @@ class RadioGroupCell: SurveyElementCell {
         expansionIndicator = makeExpansionIndicator()
         bottomCell = RadioGroupBottomCell(radioGroup: radioGroup, topCell: self)
     }
-    
-    // MARK: Main components (title & radio group)
     
     private func makeTitleView() -> UITextView {
         let titleText = UITextView()
@@ -172,7 +173,7 @@ class RadioGroupCell: SurveyElementCell {
         }
     }
     
-    // MARK: Customized focus / unfocus appearance
+    // MARK: Customized focus/unfocus visual effects
     
     override func focus() {
         super.focus()

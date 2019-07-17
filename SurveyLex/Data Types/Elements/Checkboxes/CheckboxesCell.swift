@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A subclass of `SurveyElementCell` that displays the top half of a checkbox question. The bottom half, represented by a `CheckboxesBottomCell`, will be expanded when this cell is focused.
 class CheckboxesCell: SurveyElementCell {
     
     var checkboxData: CheckBoxes!
@@ -39,6 +40,9 @@ class CheckboxesCell: SurveyElementCell {
     /// Whether expansion events for the bottom row are suppressed.
     private var suppressExpansion = false
 
+    
+    // MARK: UI Setup
+    
     init(checkboxes: CheckBoxes) {
         super.init()
         

@@ -19,6 +19,9 @@ class InfoCell: SurveyElementCell {
     private var content: UITextView!
     private var continueButton: UIButton!
     
+    
+    // MARK: UI setup
+    
     init(info: Info) {
         super.init()
         
@@ -108,6 +111,8 @@ class InfoCell: SurveyElementCell {
         
         return button
     }
+    
+    // MARK: Control handlers
     
     @objc private func buttonPressed(_ sender: UIButton) {
         sender.backgroundColor = BUTTON_PRESSED

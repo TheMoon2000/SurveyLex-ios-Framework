@@ -35,6 +35,9 @@ class RatingSliderCell: SurveyElementCell {
             caption.text = option.text
         }
     }
+    
+    
+    // MARK: UI Setup
 
     init(ratingQuestion: Rating) {
         super.init()
@@ -174,7 +177,8 @@ class RatingSliderCell: SurveyElementCell {
         return label
     }
     
-
+    // MARK: Control handlers
+    
     @objc private func sliderChanged() {
         let segment: Float = 100.0 / (Float(ratingQuestion.options.count) - 1)
         slider.value = round(slider.value / segment) * segment
@@ -203,10 +207,7 @@ class RatingSliderCell: SurveyElementCell {
         }
     }
     
-    
-    override func draw(_ rect: CGRect) {
-        super.draw(rect)
-    }
+    // MARK: Customized focus/unfocus visual effects
     
     override func focus() {
         super.focus()

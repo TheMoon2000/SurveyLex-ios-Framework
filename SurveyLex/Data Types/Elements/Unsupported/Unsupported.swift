@@ -12,7 +12,7 @@ import SwiftyJSON
 /// Represents a generic, unsupported cell in a SurveyLex survey.
 class UnsupportedQuestion: Question, CustomStringConvertible {
     
-    // Inherited
+    // MARK: Protocol requirements
     
     var fragment: Fragment?
     var completed = true
@@ -36,7 +36,7 @@ class UnsupportedQuestion: Question, CustomStringConvertible {
         return JSON()
     }
     
-    // Custom instance variables
+    // MARK: Custom instance variables
     
     /// The title of the unsupported question.
     let title: String

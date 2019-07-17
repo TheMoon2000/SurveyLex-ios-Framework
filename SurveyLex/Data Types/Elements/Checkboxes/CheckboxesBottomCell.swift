@@ -8,10 +8,16 @@
 
 import UIKit
 
+/// A subclass of `SurveyElementCell` that displays the bottom half of a checkbox question — the checkbox table.
 class CheckboxesBottomCell: SurveyElementCell {
     
+    /// A reference to the top cell.
     var topCell: CheckboxesCell!
+    
+    /// A reference to the `Checkboxes` question data which this cell is partially displaying.
     private var checkboxes: CheckBoxes!
+    
+    /// The table view that displays the checkbox choices.
     private var checkboxTable: CheckboxTable!
     
     required init(checkboxes: CheckBoxes, topCell: CheckboxesCell) {

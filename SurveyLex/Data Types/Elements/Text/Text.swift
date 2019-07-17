@@ -12,7 +12,7 @@ import SwiftyJSON
 /// Represents the information about a text response question in a SurveyLex survey.
 class Text: Question, CustomStringConvertible {
     
-    // Inherited
+    // Protocol requirements
     
     var fragment: Fragment?
     var isRequired = false

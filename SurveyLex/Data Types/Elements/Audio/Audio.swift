@@ -12,7 +12,7 @@ import SwiftyJSON
 /// Represents the information for an audio question in a SurveyLex survey. One single audio response takes up an entire `Fragment`.
 class Audio: Question, CustomStringConvertible {
     
-    // Inherited
+    // MARK: Protocol requirements
     
     var fragment: Fragment?
     var isRequired = false
@@ -32,7 +32,7 @@ class Audio: Question, CustomStringConvertible {
         return JSON() // Need to be replaced
     }
     
-    // Custom instance variables
+    // MARK: Custom instance variables
     
     /// The prompt of the audio question.
     let prompt: String
@@ -46,6 +46,9 @@ class Audio: Question, CustomStringConvertible {
     /// Self-explanatory.
     private var lengthOfMostRecentRecording = 0.0
 
+    
+    // MARK: Setup
+    
     /**
      Construct a new audio response question from the provided data.
      - Parameters:
@@ -79,7 +82,7 @@ class Audio: Question, CustomStringConvertible {
         return SurveyElementCell()
     }
     
-    // Cell actions
+    // MARK: Cell actions
     
     func didBeginRecording(_ sender: RecordButton) {
         print("begin recording")

@@ -9,9 +9,10 @@
 import UIKit
 import SwiftyJSON
 
+/// Represents the information for a checkbox question in a SurveyLex survey.
 class CheckBoxes: Question, CustomStringConvertible {
     
-    // Inherited
+    // MARK: Protocol requirements
     
     var fragment: Fragment?
     var isRequired = false
@@ -43,7 +44,7 @@ class CheckBoxes: Question, CustomStringConvertible {
         return json
     }
     
-    // Custom instance variables
+    // MARK: Custom instance variables
     
     /// The title of the checkbox question.
     let title: String
@@ -53,6 +54,17 @@ class CheckBoxes: Question, CustomStringConvertible {
     
     /// The indexes of the current selections.
     var selections = Set<Int>()
+    
+    
+    // MARK: Setup
+    
+    /**
+     Construct a new checkbox question data object from the provided data.
+     - Parameters:
+     -  json: The JSON that contains all the information that makes up the checkbox question.
+     - order: A tuple that gives the index of the form in the survey (# fragment, # element), although it won't be displayed.
+     - fragment: The parent `Fragment` object which the checkbox question belongs to.
+     */
     
     required init(json: JSON, order: (Int, Int), fragment: Fragment?) {
         let dictionary = json.dictionaryValue

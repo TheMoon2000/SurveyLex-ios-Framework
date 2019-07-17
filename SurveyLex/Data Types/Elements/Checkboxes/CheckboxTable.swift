@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A special subclass of `UITableView` that displays a group of checkboxes.
 class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
 
     var checkboxData: CheckBoxes!

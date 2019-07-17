@@ -27,7 +27,7 @@ class ConsentCell: SurveyElementCell {
     private var checkbox: UICheckbox!
     private var prompt: UITextView!
 
-    // MARK: Consent form setup
+    // MARK: UI setup
 
     init(consent: Consent) {
         super.init()
@@ -124,21 +124,6 @@ class ConsentCell: SurveyElementCell {
         return check
     }
     
-    
-    @objc private func checkboxPressed() {
-        if checkbox.isChecked {
-            agreeButton.isEnabled = true
-            agreeButton.backgroundColor = BLUE_TINT
-        } else {
-            agreeButton.isEnabled = false
-            agreeButton.backgroundColor = DISABLED_BLUE
-        }
-        consentInfo.agreed = checkbox.isChecked
-        consentInfo.completed = checkbox.isChecked
-        consentInfo.parentView?.reloadDatasource()
-    }
-    
-    
     private func makePromptText() -> UITextView {
         let prompt = UITextView()
         prompt.attributedText = TextFormatter.formatted(consentInfo.prompt,
@@ -161,8 +146,6 @@ class ConsentCell: SurveyElementCell {
         
         return prompt
     }
-    
-    // MARK: Agree button
     
     private func makeAgreeButton() -> UIButton {
         let button = UIButton()
@@ -189,6 +172,21 @@ class ConsentCell: SurveyElementCell {
                                        constant: -40).isActive = true
         
         return button
+    }
+    
+    // MARK: Control handlers
+    
+    @objc private func checkboxPressed() {
+        if checkbox.isChecked {
+            agreeButton.isEnabled = true
+            agreeButton.backgroundColor = BLUE_TINT
+        } else {
+            agreeButton.isEnabled = false
+            agreeButton.backgroundColor = DISABLED_BLUE
+        }
+        consentInfo.agreed = checkbox.isChecked
+        consentInfo.completed = checkbox.isChecked
+        consentInfo.parentView?.reloadDatasource()
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {

@@ -12,7 +12,7 @@ import SwiftyJSON
 /// Represents the information for an info screen in a SurveyLex survey.
 class Info: Question, CustomStringConvertible {
     
-    // Inherited
+    // MARK: Protocol requirements
     
     var fragment: Fragment?
     var completed = true
@@ -36,13 +36,16 @@ class Info: Question, CustomStringConvertible {
         return JSON() // Need to be replaced
     }
     
-    // Custom instance variables
+    // MARK: Custom instance variables
     
     /// The title of the info screen.
     let title: String
     
     /// A raw text representation of the body of the info screen.
     let content: String
+    
+    
+    // MARK: Setup
     
     /**
      Construct a new info screen from the provided data.
