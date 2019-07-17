@@ -32,6 +32,10 @@ class SurveyElementCell: UITableViewCell {
         return cell
     }
     
+    var autofocus: Bool {
+        return surveyPage?.surveyViewController?.survey.autofocus ?? true
+    }
+    
     init() {
         super.init(style: .default, reuseIdentifier: nil)
         
@@ -46,7 +50,7 @@ class SurveyElementCell: UITableViewCell {
     
     /// Unfocus the cell by initiating a series of visual changes.
     func unfocus() {
-        subviews.forEach { $0.alpha = UNFOCUSED_ALPHA }
+        subviews.forEach { $0.alpha = autofocus ? UNFOCUSED_ALPHA : 1.0 }
     }
 
 
