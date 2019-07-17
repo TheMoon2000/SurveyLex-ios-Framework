@@ -25,7 +25,6 @@ class SurveyViewController: UIPageViewController,
     var fragmentIndex = -1 {
         didSet (oldValue) {
             surveyData.fragmentIndex = fragmentIndex
-            print("set to \(fragmentIndex)")
             if fragmentIndex == -1 || fragmentIndex == oldValue { return }
             if fragmentIndex == fragmentPages.count {
                 navigationItem.title = "Response Submission"
@@ -55,8 +54,6 @@ class SurveyViewController: UIPageViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        precondition(surveyData != nil)
-        
         // Set start time
         surveyData.startTime = Date()
         
@@ -70,13 +67,12 @@ class SurveyViewController: UIPageViewController,
         
         // Set up progress indicator in the navigation bar and load the first page.
         progressIndicator = addProgressBar()
-        print(surveyData.fragmentIndex)
         fragmentIndex = surveyData.fragmentIndex
         setViewControllers([fragmentPages[fragmentIndex]],
                            direction: .forward,
-                           animated: true,
+                           animated: false,
                            completion: nil)
-        
+                
         // Background color
         view.backgroundColor = .white
         
@@ -114,7 +110,7 @@ class SurveyViewController: UIPageViewController,
     }
     
     @objc private func surveyCancelled() {
-        let alert = UIAlertController(title: "Are you sure?",
+        let alert = FixedAlertController(title: "Are you sure?",
                                       message: "You are about the leave the survey. Any information you have entered will be discarded.",
                                       preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
@@ -146,7 +142,9 @@ class SurveyViewController: UIPageViewController,
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
     
-        let index = (viewController as! SurveyPage).pageIndex
+        guard let index = (viewController as? SurveyPage)?.pageIndex else {
+            return nil // There is no page after the submission page
+        }
         
         // User has not yet completed the required questions on the current page, so do not proceed with the next one.
         if (!fragmentPages[index].unlocked) {
@@ -202,15 +200,24 @@ class SurveyViewController: UIPageViewController,
         reloadDatasource()
 
         if let fragmentTable = currentFragment as? FragmentTableController {
-            let nextRow = fragmentTable.contentCells.firstIndex(of: cell)! + 1
+            var nextRow = fragmentTable.contentCells.firstIndex(of: cell)! + 1
+            
+            if nextRow % 2 == 1 { nextRow += 1 }
             
             // Check if the next row exists and has not yet been completed
             let nextRowExists = nextRow < fragmentTable.contentCells.count
-            let nextRowIsCompleted = fragmentTable.contentCells[nextRow].completed
-            if nextRowExists && !nextRowIsCompleted {
-                fragmentTable.focusedRow = nextRow
-                return true
-            } else if fragmentTable.contentCells.last == cell {
+            if nextRowExists {
+                let nextCell = fragmentTable.contentCells[nextRow]
+                
+                if fragmentTable.focusedRow == nextRow {
+                    return false // The next row is the currently focused row.
+                } else if !nextCell.completed {
+                    fragmentTable.focusedRow = nextRow
+                    return true
+                } else {
+                    return toNext(from: nextCell)
+                }
+            } else {
                 return flipPageIfNeeded()
             }
         }
@@ -223,5 +230,10 @@ class SurveyViewController: UIPageViewController,
         dataSource = nil
         dataSource = self
     }
+}
 
+class FixedAlertController: UIAlertController {
+    override var shouldAutorotate: Bool {
+        return false
+    }
 }
