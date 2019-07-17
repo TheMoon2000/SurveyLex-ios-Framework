@@ -35,10 +35,10 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
 //        textView.text = "5f108ef0-5d23-11e9-8d7e-bb5f7e5229ff"
         
         // Custom (everything in one survey)
-        textView.text = "b1d9d390-9b5c-11e9-a279-9f8e317e3dcc"
+//        textView.text = "b1d9d390-9b5c-11e9-a279-9f8e317e3dcc"
         
         // Comprehensive test
-//        textView.text = "cc3330f0-a332-11e9-81d0-29f9b1295ce4"
+        textView.text = "cc3330f0-a332-11e9-81d0-29f9b1295ce4"
     }
     
     

@@ -12,6 +12,9 @@
 		CC048CB522D7DED400B1A7E9 /* AudioPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC048CB422D7DED400B1A7E9 /* AudioPage.swift */; };
 		CC048CB722D7DF0800B1A7E9 /* SurveyPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC048CB622D7DF0800B1A7E9 /* SurveyPage.swift */; };
 		CC048CB822D7DF0800B1A7E9 /* SurveyPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC048CB622D7DF0800B1A7E9 /* SurveyPage.swift */; };
+		CC09045222DCCFD5004260BD /* CheckboxesBottomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC09045122DCCFD5004260BD /* CheckboxesBottomCell.swift */; };
+		CC2A8BE622D8182900C349A5 /* AudioPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC048CB422D7DED400B1A7E9 /* AudioPage.swift */; };
+		CC2A8BE822D8D81600C349A5 /* RadioGroupBottomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2A8BE722D8D81600C349A5 /* RadioGroupBottomCell.swift */; };
 		CC333BFF2286528500B5D8C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC333BFE2286528500B5D8C9 /* AppDelegate.swift */; };
 		CC333C042286528500B5D8C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC333C022286528500B5D8C9 /* Main.storyboard */; };
 		CC333C062286528700B5D8C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC333C052286528700B5D8C9 /* Assets.xcassets */; };
@@ -57,8 +60,6 @@
 		CC7D7D7022C44FB100DDD3B3 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4322C44FB100DDD3B3 /* Recorder.swift */; };
 		CC7D7D7122C44FB100DDD3B3 /* RecordingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4422C44FB100DDD3B3 /* RecordingDelegate.swift */; };
 		CC7D7D7222C44FB100DDD3B3 /* RecordingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4422C44FB100DDD3B3 /* RecordingDelegate.swift */; };
-		CC7D7D7322C44FB100DDD3B3 /* AudioResponseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4522C44FB100DDD3B3 /* AudioResponseCell.swift */; };
-		CC7D7D7422C44FB100DDD3B3 /* AudioResponseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4522C44FB100DDD3B3 /* AudioResponseCell.swift */; };
 		CC7D7D7522C44FB100DDD3B3 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4622C44FB100DDD3B3 /* Audio.swift */; };
 		CC7D7D7622C44FB100DDD3B3 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4622C44FB100DDD3B3 /* Audio.swift */; };
 		CC7D7D7722C44FB100DDD3B3 /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D4722C44FB100DDD3B3 /* RecordButton.swift */; };
@@ -158,6 +159,8 @@
 		B2C0ACD2D9D17E40A4AB89C1 /* Pods-SurveyLex.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SurveyLex.release.xcconfig"; path = "Pods/Target Support Files/Pods-SurveyLex/Pods-SurveyLex.release.xcconfig"; sourceTree = "<group>"; };
 		CC048CB422D7DED400B1A7E9 /* AudioPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPage.swift; sourceTree = "<group>"; };
 		CC048CB622D7DF0800B1A7E9 /* SurveyPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyPage.swift; sourceTree = "<group>"; };
+		CC09045122DCCFD5004260BD /* CheckboxesBottomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxesBottomCell.swift; sourceTree = "<group>"; };
+		CC2A8BE722D8D81600C349A5 /* RadioGroupBottomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioGroupBottomCell.swift; sourceTree = "<group>"; };
 		CC333BFB2286528500B5D8C9 /* SurveyLex Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SurveyLex Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC333BFE2286528500B5D8C9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CC333C032286528500B5D8C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -188,7 +191,6 @@
 		CC7D7D4122C44FB100DDD3B3 /* Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Question.swift; sourceTree = "<group>"; };
 		CC7D7D4322C44FB100DDD3B3 /* Recorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		CC7D7D4422C44FB100DDD3B3 /* RecordingDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingDelegate.swift; sourceTree = "<group>"; };
-		CC7D7D4522C44FB100DDD3B3 /* AudioResponseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioResponseCell.swift; sourceTree = "<group>"; };
 		CC7D7D4622C44FB100DDD3B3 /* Audio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		CC7D7D4722C44FB100DDD3B3 /* RecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
 		CC7D7D4922C44FB100DDD3B3 /* Consent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Consent.swift; sourceTree = "<group>"; };
@@ -328,7 +330,6 @@
 				CC7D7D2E22C44FA700DDD3B3 /* SurveyNavigationController.swift */,
 				CC7D7D3722C44FB100DDD3B3 /* FragmentTableController.swift */,
 				CC048CB622D7DF0800B1A7E9 /* SurveyPage.swift */,
-				CC048CB422D7DED400B1A7E9 /* AudioPage.swift */,
 				CCF1B24F22CEC9B1007537AE /* SurveySubmission.swift */,
 			);
 			path = Interfaces;
@@ -378,7 +379,7 @@
 			isa = PBXGroup;
 			children = (
 				CC7D7D4622C44FB100DDD3B3 /* Audio.swift */,
-				CC7D7D4522C44FB100DDD3B3 /* AudioResponseCell.swift */,
+				CC048CB422D7DED400B1A7E9 /* AudioPage.swift */,
 				CC7D7D4422C44FB100DDD3B3 /* RecordingDelegate.swift */,
 				CC7D7D4722C44FB100DDD3B3 /* RecordButton.swift */,
 				CC7D7D4322C44FB100DDD3B3 /* Recorder.swift */,
@@ -410,6 +411,7 @@
 			children = (
 				CC7D7D5022C44FB100DDD3B3 /* RadioGroup.swift */,
 				CC7D7D5222C44FB100DDD3B3 /* RadioGroupCell.swift */,
+				CC2A8BE722D8D81600C349A5 /* RadioGroupBottomCell.swift */,
 				CC7D7D5122C44FB100DDD3B3 /* MultipleChoice.swift */,
 				CC7D7D5522C44FB100DDD3B3 /* MultipleChoiceCell.swift */,
 				CC7D7D5422C44FB100DDD3B3 /* RatingResponseDelegate.swift */,
@@ -422,6 +424,7 @@
 			children = (
 				CC3E5EF122C9861500D603CF /* Checkboxes.swift */,
 				CC3E5EF422C987DD00D603CF /* CheckboxesCell.swift */,
+				CC09045122DCCFD5004260BD /* CheckboxesBottomCell.swift */,
 				CC3E5EFA22C9A26B00D603CF /* CheckboxTable.swift */,
 				CC3E5EF722C988F200D603CF /* CheckboxItemCell.swift */,
 			);
@@ -614,8 +617,9 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-SurveyLexTests/Pods-SurveyLexTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON-iOS12.2/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON-iOS11.0/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -683,7 +687,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-SurveyLex Demo/Pods-SurveyLex Demo-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Down/Down.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON-iOS11.0/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -741,6 +745,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC7D7D7522C44FB100DDD3B3 /* Audio.swift in Sources */,
+				CC09045222DCCFD5004260BD /* CheckboxesBottomCell.swift in Sources */,
 				CC7D7D6F22C44FB100DDD3B3 /* Recorder.swift in Sources */,
 				CC3E5EF522C987DD00D603CF /* CheckboxesCell.swift in Sources */,
 				CC7D7D5D22C44FB100DDD3B3 /* FragmentTableController.swift in Sources */,
@@ -776,8 +781,8 @@
 				CC048CB522D7DED400B1A7E9 /* AudioPage.swift in Sources */,
 				CC7D7D8722C44FB100DDD3B3 /* RadioGroupCell.swift in Sources */,
 				CC3E5EFB22C9A26B00D603CF /* CheckboxTable.swift in Sources */,
-				CC7D7D7322C44FB100DDD3B3 /* AudioResponseCell.swift in Sources */,
 				CC048CB722D7DF0800B1A7E9 /* SurveyPage.swift in Sources */,
+				CC2A8BE822D8D81600C349A5 /* RadioGroupBottomCell.swift in Sources */,
 				CCD6C94C22C937B2007615F9 /* InfoCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -811,7 +816,6 @@
 				CC3E5EF322C9861500D603CF /* Checkboxes.swift in Sources */,
 				CC3E5EF622C987DD00D603CF /* CheckboxesCell.swift in Sources */,
 				CC7D7D8822C44FB100DDD3B3 /* RadioGroupCell.swift in Sources */,
-				CC7D7D7422C44FB100DDD3B3 /* AudioResponseCell.swift in Sources */,
 				CC7D7D5C22C44FB100DDD3B3 /* Survey.swift in Sources */,
 				CC7D7D5822C44FB100DDD3B3 /* SurveyElementCell.swift in Sources */,
 				CC7D7D1C22C44F6000DDD3B3 /* SurveyLexTests.swift in Sources */,
@@ -822,6 +826,7 @@
 				CC7D7D8022C44FB100DDD3B3 /* TextCell.swift in Sources */,
 				CC7D7D9022C44FB100DDD3B3 /* Fragment.swift in Sources */,
 				CC7D7D7022C44FB100DDD3B3 /* Recorder.swift in Sources */,
+				CC2A8BE622D8182900C349A5 /* AudioPage.swift in Sources */,
 				CC7D7D9322C44FCF00DDD3B3 /* QuestionElementsTest.swift in Sources */,
 				CCA484DD22C9408300E0A7E8 /* Info.swift in Sources */,
 				CC048CB822D7DF0800B1A7E9 /* SurveyPage.swift in Sources */,
