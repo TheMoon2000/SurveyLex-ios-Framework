@@ -23,6 +23,17 @@ class RadioGroupBottomCell: SurveyElementCell {
         self.radioTable = makeChoiceTable()
         self.expanded = false
         
+        let line = UIView()
+        line.backgroundColor = .init(white: 0.84, alpha: 1)
+        line.translatesAutoresizingMaskIntoConstraints = false
+        line.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        addSubview(line)
+
+        line.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        line.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        line.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        line.bottomAnchor.constraint(equalTo: radioTable.topAnchor).isActive = true
+        
         /* Debugging only
          layer.borderColor = UIColor.orange.cgColor
          layer.borderWidth = 1
@@ -35,11 +46,11 @@ class RadioGroupBottomCell: SurveyElementCell {
         choiceTable.isScrollEnabled = false
         addSubview(choiceTable)
         
-        choiceTable.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor).isActive = true
-        choiceTable.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor).isActive = true
-        choiceTable.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        let bottomConstraint = choiceTable.bottomAnchor.constraint(equalTo: bottomAnchor)
-        bottomConstraint.priority = .defaultHigh
+        choiceTable.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        choiceTable.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        choiceTable.topAnchor.constraint(equalTo: topAnchor, constant: 1).isActive = true
+        let bottomConstraint = choiceTable.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
+        bottomConstraint.priority = .init(999)
         bottomConstraint.isActive = true
         
         return choiceTable
