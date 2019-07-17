@@ -25,9 +25,7 @@ public protocol SurveyResponseDelegate {
 }
 
 extension SurveyResponseDelegate {
-    public func surveyDidLoad(_ survey: Survey) {
-        survey.present()
-    }
+    public func surveyDidLoad(_ survey: Survey) {}
     
     public func surveyDidPresent(_ survey: Survey) {}
     
