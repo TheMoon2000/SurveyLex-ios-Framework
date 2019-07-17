@@ -48,16 +48,13 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     
     // Essential for calculating the correct height for the cells
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        let cell = self.tableView(tableView, cellForRowAt: indexPath)
-        let width = UIScreen.main.bounds.width
-//        print(cell.preferredHeight(width: width - 55), cell.preferredHeight(width: cell.frame.width))
-        return cell.preferredHeight(width: cell.frame.width)
+        return choiceCells[indexPath.row].preferredHeight(width: parentCell.surveyPage!.tableView.safeAreaLayoutGuide.layoutFrame.width)
     }
     
     // MARK: Table view data source
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return radioGroup.choices.count
+        return choiceCells.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
