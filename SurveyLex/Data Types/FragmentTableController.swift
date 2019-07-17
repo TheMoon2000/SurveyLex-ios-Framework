@@ -108,6 +108,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         DispatchQueue.main.async {
             if !self.surveyViewController!.visited.contains(self.pageIndex) {
                 self.surveyViewController?.visited.insert(self.pageIndex)
+                self.focusedRow = 0 // Focus on the first row if none is focused.
             } else if self.fragmentData.questions.count == 1 {
                 self.focusedRow = 0
             } else if self.focusedRow != -1 {
