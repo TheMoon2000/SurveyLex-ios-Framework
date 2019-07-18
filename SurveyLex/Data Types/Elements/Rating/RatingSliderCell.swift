@@ -33,6 +33,7 @@ class RatingSliderCell: SurveyElementCell {
             let index = Int(round(currentValue / segmentLength))
             let option = ratingQuestion.options[index]
             caption.text = option.text
+            ratingQuestion.selectionString = option.text
         }
     }
     
@@ -107,7 +108,7 @@ class RatingSliderCell: SurveyElementCell {
         
         let segmentCount = CGFloat(ratingQuestion.options.count) - 1
         let thumbWidth = slider.thumbRect(forBounds: slider.bounds,
-                                          trackRect: slider.trackRect(forBounds: slider.bounds), value: 0).width - 3
+                                          trackRect: slider.trackRect(forBounds: slider.bounds), value: 0).width - 4
         
         let track = UIView()
         track.backgroundColor = grayColor
@@ -136,23 +137,23 @@ class RatingSliderCell: SurveyElementCell {
             return tick
         }
         
-        let left = makeTickmark()
-        left.leftAnchor.constraint(equalTo: slider.leftAnchor, constant: thumbWidth / 2).isActive = true
-        
         for i in 0..<ratingQuestion.options.count {
             let tickmark = makeTickmark()
             
-            /*
-             Pseudocode:
-             tick.centerX = (slider.right - thumbWidth) * i / segmentCount + thumbWidth / 2
-             */
+            
+            //  Pseudocode:
+            //  tick.centerX = (slider.right - thumbWidth) * i / segmentCount + thumbWidth / 2
+            
+            
+            //  Note: The `multiplier` property cannot be zero, so we need to use a sufficiently small but positive number instead.
             
             NSLayoutConstraint(item: tickmark,
                                attribute: .centerX,
                                relatedBy: .equal,
                                toItem: ticks,
                                attribute: .right,
-                               multiplier: max(.leastNonzeroMagnitude, CGFloat(i) / segmentCount),
+                               multiplier: max(.tinyPositive,
+                                               CGFloat(i) / segmentCount),
                                constant: -thumbWidth * CGFloat(i) / segmentCount + thumbWidth / 2).isActive = true
     
         }
@@ -170,9 +171,8 @@ class RatingSliderCell: SurveyElementCell {
         label.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
         label.topAnchor.constraint(equalTo: slider.bottomAnchor,
                                    constant: 15).isActive = true
-        let bottomConstraint = label.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -15)
-        bottomConstraint.priority = .init(999)
-        bottomConstraint.isActive = true
+        label.bottomAnchor.constraint(equalTo: bottomAnchor,
+                                      constant: -15).isActive = true
         
         return label
     }
