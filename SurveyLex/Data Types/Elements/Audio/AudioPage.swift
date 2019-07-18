@@ -24,10 +24,14 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         return completed || !audioQuestion.isRequired
     }
     
+    var uploaded: Bool {
+        return uploadedFragmentData && uploadedSample
+    }
+    
     // MARK: Custom instance variables
     
     /// A pointer to the skip button located below the record button.
-    var skipButton: UIButton!
+    var auxiliaryButton: UIButton!
     
     /// The `Audio` instance which the current cell is presenting.
     var audioQuestion: Audio!
@@ -36,17 +40,33 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     var recordButton: RecordButton!
     
     /// the `UILabel` under the record button.
-    var finishMessage: UILabel!
+    var captionMessage: UILabel!
     
     /// The title UI element the audio response question.
     private var titleLabel: UITextView!
     
-    /// The URL where the audio file will be saved.
-    var saveURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("tmp.m4a") {
-        didSet {
-            recordButton.recorder = Recorder(fileURL: saveURL)
-        }
+    /// The sample ID for the recording.
+    private var sampleId = UUID().uuidString.lowercased()
+    
+    /// Produces a formatted string that displays the time limit of the audio question.
+    var timeLimitString: String {
+        return "Time limit: \(Int(audioQuestion.duration))s"
     }
+    
+    /// The URL where the audio file will be saved.
+    var saveURL: URL!
+    
+    /// A repeating timer instance that manages the countdown display while the user is recording.
+    private var timer: Timer?
+    
+    /// A non-repeating timer instance that contains the code to display an error message, firing after 3 seconds.
+    private var displayErrorMessage: Timer?
+    
+    /// Whether the fragment data JSON is uploaded.
+    var uploadedFragmentData = false
+    
+    /// Whether the audio WAV file is uploaded.
+    var uploadedSample = false
     
     // MARK: UI setup
     
@@ -55,17 +75,39 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         super.init(nibName: nil, bundle: nil)
         view.backgroundColor = .white
         
+        // Setup the path to save the audio file
+        saveURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("SurveyLex", isDirectory: true)
+        
+        try? FileManager.default.createDirectory(at: saveURL, withIntermediateDirectories: true, attributes: nil)
+        
+        saveURL.appendPathComponent(sampleId + ".wav")
+        
         self.audioQuestion = audioQuestion // must be set first
         self.titleLabel = makeTitle()
         self.recordButton = makeRecordButton()
-        self.skipButton = makeSkipButton()
-        self.finishMessage = makeFinishMessage()
+        self.auxiliaryButton = makeAuxiliaryButton()
+        self.captionMessage = {
+            let caption = UILabel()
+            caption.textColor = UIColor(white: 0.35, alpha: 1)
+            caption.font = .systemFont(ofSize: 16.5)
+            caption.textAlignment = .center
+            if audioQuestion.isRequired {
+                caption.text = timeLimitString
+            }
+            caption.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(caption)
+            
+            caption.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20).isActive = true
+            caption.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor,
+                                           constant: -20).isActive = true
+            caption.centerYAnchor.constraint(equalTo: auxiliaryButton.centerYAnchor).isActive = true
+            
+            return caption
+        }()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        print("audio question appeared")
         
         surveyViewController?.fragmentIndex += 1
         
@@ -74,7 +116,6 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         }
     }
     
-    /// UI setup (1).
     private func makeTitle() -> UITextView {
         let label = UITextView()
         label.text = audioQuestion.prompt
@@ -92,7 +133,6 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         return label
     }
     
-    /// UI setup (2).
     private func makeRecordButton() -> RecordButton {
         let recorder = Recorder(fileURL: saveURL)
         let button = RecordButton(duration: audioQuestion!.duration,
@@ -105,154 +145,173 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         return button
     }
     
-    /// UI setup (3).
-    private func makeSkipButton() -> UIButton {
-        let skip = UIButton(type: .system)
-        skip.tintColor = BUTTON_DEEP_BLUE
-        skip.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
-        skip.setTitle("Skip", for: .normal)
-        skip.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(skip)
-        skip.widthAnchor.constraint(equalTo: recordButton.widthAnchor,
-                                    constant: -5).isActive = true
-        skip.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        skip.topAnchor.constraint(equalTo: recordButton.bottomAnchor,
-                                  constant: 20).isActive = true
-        skip.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                                     constant: -25).isActive = true
-        skip.isHidden = audioQuestion.isRequired
-        skip.addTarget(self, action: #selector(flip), for: .touchUpInside)
-        
-        return skip
-    }
-    
-    @objc private func flip() {
-        let _ = audioQuestion.parentView?.flipPageIfNeeded(allCompleted: false)
-    }
-    
-    /// UI setup (4).
-    private func makeFinishMessage() -> UILabel {
-        let caption = UILabel()
-        caption.textColor = UIColor(white: 0.35, alpha: 1)
-        caption.font = .systemFont(ofSize: 16.5)
-        caption.textAlignment = .center
+    private func makeAuxiliaryButton() -> UIButton {
+        let button = UIButton(type: .system)
+        button.tintColor = BUTTON_DEEP_BLUE
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
         if audioQuestion.isRequired {
-            caption.text = timeLimitString
+            button.isHidden = true
+        } else {
+            button.setTitle("Skip", for: .normal)
         }
-        caption.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(caption)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(button)
+        button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        button.topAnchor.constraint(equalTo: recordButton.bottomAnchor,
+                                    constant: 20).isActive = true
+        button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                       constant: -25).isActive = true
         
-        caption.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20).isActive = true
-        caption.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor,
-                                       constant: -20).isActive = true
-        caption.centerYAnchor.constraint(equalTo: skipButton.centerYAnchor).isActive = true
+        button.addTarget(self, action: #selector(auxiliaryAction), for: .touchUpInside)
         
-        return caption
+        return button
     }
     
-    /// Produces a formatted string that displays the time limit of the audio question.
-    var timeLimitString: String {
-        return "Time limit: \(Int(audioQuestion.duration))s"
+    @objc private func auxiliaryAction() {
+        if auxiliaryButton.title(for: .normal) == "Skip" {
+            let _ = audioQuestion.parentView?.flipPageIfNeeded(allCompleted: false)
+        } else {
+            clearRecording()
+        }
     }
     
     // MARK: Recording delegate
     
-    /// Because we reset `finishMessage.text` after a two-second delay, we need to make sure that we abort the process if the user has started to record again. If set to `true`, it means that we do not reset `finishMessage.text` to "Recording was too short" after the 2 seconds are over.
-    var shouldCancelCaptionReset = false
-    
     func didFinishRecording(_ sender: RecordButton, duration: Double) {
         print("Recording with duration \(round(duration * 10) / 10)s saved to \(sender.saveURL).")
         timer?.invalidate()
-        if duration >= min(7.0, Double(sender.duration)) {
-            
-            // We treat duration ≥ 7 arbitrarily as a successful recording.
-            
-            skipButton.isHidden = true
-            finishMessage.text = "Your audio response was captured."
-            
-            // This is the only place where the audio question's `completion` property is set to true.
-            audioQuestion.completed = true
-            
-            // Flip the page if the next page exists.
-            // audioQuestion.parentView?.flipPageIfNeeded()
-            
-        } else if duration >= 2 {
-            
-            // If the user records something between 2 and 7 seconds
-            
-            self.finishMessage.text = "Recording was too short!"
-            
-            // Update the progress bar in `SurveyViewController` to reflect that the current audio question is not (or no longer) completed
-            audioQuestion.completed = false
-            
-            // Default to false, which means that we do reset the caption
-            shouldCancelCaptionReset = false
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                if !self.shouldCancelCaptionReset {
-                    if self.audioQuestion.isRequired {
-                        self.finishMessage.text = self.timeLimitString
-                        self.skipButton.isHidden = true
-                    } else {
-                        self.finishMessage.text = ""
-                        self.skipButton.isHidden = false
-                    }
-                }
-            }
-        } else {
-            
-            // Called when the duration is shorter than 2 seconds
-            audioQuestion.completed = false
-            if audioQuestion.isRequired {
-                finishMessage.text = timeLimitString
-                skipButton.isHidden = true
-            } else {
-                finishMessage.text = ""
-                skipButton.isHidden = false
-            }
-        }
         
+        auxiliaryButton.setTitle("Clear Recording", for: .normal)
+        auxiliaryButton.isHidden = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.auxiliaryButton.isHidden = false
+            self.captionMessage.text = ""
+        }
+
+        captionMessage.text = "Your audio response was captured."
+        
+        // This is the only place where the audio question's `completion` property is set to true.
+        audioQuestion.completed = true
+
+        // Unlock the next page of the survey.
         audioQuestion.parentView?.reloadDatasource()
     }
     
-    /// A local instance variable that manages the countdown timer
-    private var timer: Timer?
+    /// Clear the current recording.
+    func clearRecording() {
+        audioQuestion.completed = false
+        if audioQuestion.isRequired {
+            captionMessage.text = timeLimitString
+            auxiliaryButton.isHidden = true
+        } else {
+            captionMessage.text = ""
+            auxiliaryButton.setTitle("Skip", for: .normal)
+            auxiliaryButton.isHidden = false
+        }
+        recordButton.clearRecording()
+    }
     
+    /// Displays the time remaining message once the recording starts.
     func didBeginRecording(_ sender: RecordButton) {
         let df = DateComponentsFormatter()
-        df.allowedUnits = [.minute, .second]
+        df.allowedUnits = .second
         df.collapsesLargestUnit = false
         df.unitsStyle = .abbreviated
         df.zeroFormattingBehavior = .dropLeading
         timer?.invalidate()
+        displayErrorMessage?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
             let timeRemaining = ceil(self.recordButton.timeRemaining)
             if timeRemaining <= 0 {
                 timer.invalidate()
             } else {
-                self.finishMessage.text = df.string(from: timeRemaining)
+                self.captionMessage.text = df.string(from: timeRemaining)
             }
         }
         timer!.fire() // start the countdown
-        skipButton.isHidden = true // The countdown text replaces the skip button
-        
-        // Since we restarted recording, the previous 2-second delayed reset should be invalidated.
-        shouldCancelCaptionReset = true
+        auxiliaryButton.isHidden = true // The countdown text replaces the skip button
+
         
         // Update completion status
         audioQuestion.completed = false
     }
     
-    /// Error handling is implemented in Audio.swift, so we reset the UI and then delegate the error to the Audio instance for more actions
     func didFailToRecord(_ sender: RecordButton, error: Recorder.Error) {
         timer?.invalidate()
-        skipButton.isHidden = audioQuestion.isRequired
+        auxiliaryButton.isHidden = audioQuestion.isRequired
         if audioQuestion.isRequired {
-            finishMessage.text = timeLimitString
+            captionMessage.text = timeLimitString
         } else {
-            finishMessage.text = ""
+            captionMessage.text = ""
         }
-        audioQuestion.didFailToRecord(sender, error: error)
+        
+        switch error {
+        case .tooShort:
+            self.captionMessage.text = "Recording was too short!"
+            
+            // Update the progress bar in `SurveyViewController` to reflect that the current audio question is not (or no longer) completed
+            audioQuestion.completed = false
+            
+            displayErrorMessage = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { timer in
+                if self.audioQuestion.isRequired {
+                    self.captionMessage.text = self.timeLimitString
+                    self.auxiliaryButton.isHidden = true
+                } else {
+                    self.captionMessage.text = ""
+                    self.auxiliaryButton.isHidden = false
+                }
+            }
+        case .micAccess:
+            let alert = UIAlertController(title: "No Mic Access",
+                                          message: "Please enable microphone access in Settings.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            audioQuestion.parentView?.present(alert, animated: true, completion: nil)
+        case .fileWrite:
+            let alert = UIAlertController(title: "No Write Permission",
+                                          message: "Internal error.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            audioQuestion.parentView?.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    // MARK: Upload
+    
+    func uploadResponse(_ completion: ((Bool) -> ())?) {
+        
+        if !uploadedFragmentData {
+            var responseRequest = URLRequest(url: API_RESPONSE)
+            responseRequest.httpMethod = "POST"
+            responseRequest.httpBody = try? fragmentData.fragmentJSON.rawData()
+            responseRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            
+            let responseTask = CUSTOM_SESSION.dataTask(with: responseRequest) {
+                data, response, error in
+                
+                guard error == nil else {
+                    print(error!)
+                    completion?(false)
+                    return
+                }
+                
+                if let msg = String(data: data!, encoding: .utf8) {
+                    print(msg)
+                    self.uploadedFragmentData = true
+                }
+            }
+            
+            responseTask.resume()
+        }
+        
+        if !uploadedSample {
+            var sampleRequest = URLRequest(url: API_AUDIO_SAMPLE)
+            sampleRequest.httpMethod = "POST"
+            sampleRequest.httpBody = try? Data(contentsOf: recordButton.saveURL)
+            
+        
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -13,11 +13,17 @@ class RecordButton: UIButton {
     
     var delegate: RecordingDelegate?
     
-    internal var recorder: Recorder!
-    internal var duration: CGFloat = 0
-    private let shapeLayer = CAShapeLayer()
+    var recorder: Recorder!
+    var maxLength = 60.0
     private var finishTime = Date()
     private var isRecording = false
+    
+    let minRecordingLength = 7.0
+    var currentRecordingDuration = 0.0
+    
+    var hasSuccessfulRecording: Bool {
+        return currentRecordingDuration > 0
+    }
     
     /// When recording, represents the number of seconds left
     var timeRemaining: TimeInterval {
@@ -33,16 +39,12 @@ class RecordButton: UIButton {
         return .custom
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
     init(duration: Double, radius: CGFloat, recorder: Recorder) {
 
         super.init(frame: .zero)
         
         // If the given duration is too short, bound it below by 10 seconds
-        self.duration = max(CGFloat(duration), 10.0)
+        self.maxLength = max(duration, 10.0)
         self.recorder = recorder
         
         // Apply layout constraints
@@ -54,12 +56,6 @@ class RecordButton: UIButton {
         layer.masksToBounds = true
         self.clipsToBounds = true
         
-        /*
-        self.setTitle("Record", for: .normal)
-        self.setTitleColor(.gray, for: .normal)
-        self.titleLabel?.font = .systemFont(ofSize: 17)
-         */
-        
         self.backgroundColor = BLUE_TINT
         self.setImage(#imageLiteral(resourceName: "mic"), for: .normal)
         self.setImage(#imageLiteral(resourceName: "mic"), for: .highlighted)
@@ -67,7 +63,7 @@ class RecordButton: UIButton {
         self.translatesAutoresizingMaskIntoConstraints = false
         
         self.addTarget(self,
-                       action: #selector(record),
+                       action: #selector(buttonTriggered),
                        for: .touchUpInside)
         
         self.addTarget(self,
@@ -76,7 +72,7 @@ class RecordButton: UIButton {
         
         self.addTarget(self,
                        action: #selector(buttonLifted),
-                       for: [.touchUpOutside, .touchDragOutside, .touchDragExit, .touchCancel])
+                       for: [.touchUpInside, .touchUpOutside, .touchDragOutside, .touchDragExit, .touchCancel])
         
         self.setNeedsDisplay()
     }
@@ -97,12 +93,81 @@ class RecordButton: UIButton {
                           completion: nil)
     }
     
-    private func stopRecording(interrupted: Bool) {
+    private var playbackTimer: Timer?
+    
+    @objc private func buttonTriggered() {
+        if recorder.audioRecorder.isRecording {
+            stopRecording()
+        } else if !hasSuccessfulRecording {
+            startRecording()
+        } else if (recorder.audioPlayer?.isPlaying ?? false) {
+            // Already playing back the recording, so stop it.
+            playbackTimer?.invalidate()
+            resetPlayback()
+        } else {
+            // Playback the recording
+            recorder.playCapture()
+            setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+            setImage(#imageLiteral(resourceName: "pause"), for: .highlighted)
+
+            playbackTimer = Timer.scheduledTimer(withTimeInterval: currentRecordingDuration, repeats: false) { timer in
+                self.resetPlayback()
+            }
+        }
+    }
+    
+    @objc func resetPlayback() {
+        self.recorder.stopPlayingCapture()
+        self.setImage(#imageLiteral(resourceName: "play"), for: .normal)
+        self.setImage(#imageLiteral(resourceName: "play"), for: .highlighted)
+    }
+    
+    func startRecording() {
         
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        
+        recorder.startRecording { status in
+            
+            // No access, gives alert message
+            if !status {
+                self.delegate?.didFailToRecord(self, error: .micAccess)
+                return
+            }
+            
+            // Has mic access, continue to record
+            
+            self.finishTime = Date().addingTimeInterval(self.maxLength)
+            self.delegate?.didBeginRecording(self)
+            
+            let animation = {
+                self.layer.cornerRadius = 8
+                self.backgroundColor = RECORDING
+            }
+            
+            UIView.transition(with: self,
+                              duration: 0.2,
+                              options: .curveEaseInOut,
+                              animations: animation,
+                              completion: nil)
+            
+            self.isRecording = true
+            
+            self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+                if self.timeRemaining <= 0 {
+                    timer.invalidate()
+                    self.stopRecording()
+                    return
+                }
+                self.setImage(#imageLiteral(resourceName: "stop"), for: .normal)
+                self.setImage(#imageLiteral(resourceName: "stop"), for: .highlighted)
+            }
+            self.timer?.fire()
+        }
+    }
+    
+    func stopRecording() {
         recorder.stopRecording() // Saves the file if possible
         isRecording = false
-        shapeLayer.removeAllAnimations()
-        shapeLayer.removeFromSuperlayer()
         timer?.invalidate()
         self.setImage(#imageLiteral(resourceName: "mic"), for: .normal)
         self.setImage(#imageLiteral(resourceName: "mic"), for: .highlighted)
@@ -113,78 +178,45 @@ class RecordButton: UIButton {
                           animations: {
                             self.layer.cornerRadius = self.frame.width / 2
                             self.backgroundColor = BLUE_TINT
-                            },
+                          },
                           completion: nil)
         
+        let elapsed = Double(maxLength) - finishTime.timeIntervalSinceNow
         
-        if interrupted {
-            delegate?.didFailToRecord(self, error: .interrupted)
+        
+        // Error type 1: The recording was too short
+        if elapsed < minRecordingLength {
+            delegate?.didFailToRecord(self, error: .tooShort)
             return
         }
         
-        let elapsed = Double(duration) - finishTime.timeIntervalSinceNow
-
+        // Error type 2: The audio was wasn't saved.
         do {
             let _ = try Data(contentsOf: recorder.audioFilename)
         } catch {
             delegate?.didFailToRecord(self, error: .fileWrite)
+            return
         }
         
+        // The recording is successful.
+        currentRecordingDuration = elapsed
+        self.setImage(#imageLiteral(resourceName: "play"), for: .normal)
+        self.setImage(#imageLiteral(resourceName: "play"), for: .highlighted)
+        
+        // No error occurred, call delegate to handle finished recording.
         delegate?.didFinishRecording(self, duration: elapsed)
     }
 
-    @objc private func record() {
-        if recorder.audioRecorder.isRecording {
-            stopRecording(interrupted: false)
-        } else {
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-            
-            recorder.startRecording { status in
-                
-                // No access, gives alert message
-                if !status {
-                    self.delegate?.didFailToRecord(self, error: .micAccess)
-                    return
-                }
-                
-                // Has mic access, continue to record
-                
-                self.finishTime = Date().addingTimeInterval(Double(self.duration))
-                self.delegate?.didBeginRecording(self)
-                
-                let animation = {
-                    self.layer.cornerRadius = 8
-                    self.backgroundColor = RECORDING
-                }
-                
-                UIView.transition(with: self,
-                                  duration: 0.2,
-                                  options: .curveEaseInOut,
-                                  animations: animation,
-                                  completion: nil)
-                
-                self.isRecording = true
-                
-                self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
-                    if false { // User interrupted recording
-                        timer.invalidate()
-                        self.stopRecording(interrupted: true)
-                        return;
-                    } else if self.timeRemaining <= 0 {
-                        timer.invalidate()
-                        self.stopRecording(interrupted: false)
-                        return
-                    }
-                    self.setImage(#imageLiteral(resourceName: "stop"), for: .normal)
-                    self.setImage(#imageLiteral(resourceName: "stop"), for: .highlighted)
-                }
-                self.timer?.fire()
-            }
-        }
+    func clearRecording() {
+        setImage(#imageLiteral(resourceName: "mic"), for: .normal)
+        setImage(#imageLiteral(resourceName: "mic"), for: .highlighted)
+        currentRecordingDuration = 0.0
+        try? FileManager.default.removeItem(at: saveURL)
     }
     
-    func startRecording() {
-        record()
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
-
+    
 }

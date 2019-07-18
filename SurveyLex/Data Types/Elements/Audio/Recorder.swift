@@ -9,17 +9,18 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
 
     var recordingSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
-    var audioFilename = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-    var audioPlayer:AVAudioPlayer!
+    var audioFilename: URL!
+    var audioPlayer: AVAudioPlayer!
     var metertimer : Timer? = nil
     var hasMicPermission: Bool = false
     
-    init(fileURL: URL) {
+    required init(fileURL: URL) {
         super.init()
-        self.recordingSession = AVAudioSession.sharedInstance()
         
-        self.audioFilename = fileURL
-        self.createRecorder()
+        recordingSession = AVAudioSession.sharedInstance()
+        audioFilename = fileURL
+        createRecorder()
+        
         do {
             try self.recordingSession.setCategory(AVAudioSession.Category.record)
             try self.recordingSession.setActive(true)
@@ -80,50 +81,33 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
     
     private func createRecorder() -> Bool {
         let settings = [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 48000,
+            AVSampleRateKey: 44000,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
         
-        do {
-            self.audioRecorder = try AVAudioRecorder(url: self.audioFilename, settings: settings)
-        } catch {
-            return false
-        }
+        self.audioRecorder = try! AVAudioRecorder(url: self.audioFilename, settings: settings)
         
         self.audioRecorder.delegate = self
         return true
     }
     
-    /*
+    /// Playback the recording.
     func playCapture() {
         do {
-            try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSessionPortOverride.speaker)
+            try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
             try audioPlayer = AVAudioPlayer(contentsOf: self.audioFilename!)
             audioPlayer.prepareToPlay()
             audioPlayer.play()
         } catch {
-            self.webView?.evaluateJavaScript("nativemsgs('errorplaying')")
+            print("unable to play back")
         }
-    }*/
+    }
     
     @objc private func updateAudioMeter() {
         self.audioRecorder.updateMeters()
         let dBLevel = self.audioRecorder.averagePower(forChannel: 0)
         let peaklevel = self.audioRecorder.peakPower(forChannel: 0)
-    }
-    
-    internal func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-        if (flag) {
-            do {
-                let data: NSData = try NSData(contentsOfFile: self.audioFilename.path)
-                // Convert swift dictionary into encoded json
-                let encodedData = data.base64EncodedString(options: .endLineWithLineFeed)
-            } catch {
-                // failed to record!
-            }
-        }
     }
     
     /// All types of errors that could have occurred during an attempt to record an audio.
@@ -134,7 +118,7 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
         /// The app is unable to write to the audio data to the designated path.
         case fileWrite
         
-        /// The recording was interrupted (e.g. user returned to home screen).
-        case interrupted
+        /// Recording length was less than the minimum requirement.
+        case tooShort
     }
 }

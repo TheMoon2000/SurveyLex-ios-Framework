@@ -82,33 +82,4 @@ class Audio: Question, CustomStringConvertible {
         return SurveyElementCell()
     }
     
-    // MARK: Cell actions
-    
-    func didBeginRecording(_ sender: RecordButton) {
-        print("begin recording")
-    }
-    
-    func didFailToRecord(_ sender: RecordButton, error: Recorder.Error) {
-        switch error {
-        case .micAccess:
-            let alert = UIAlertController(title: "No Mic Access",
-                                          message: "Please enable microphone access in Settings.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            parentView?.present(alert, animated: true, completion: nil)
-        case .fileWrite:
-            let alert = UIAlertController(title: "No Write Permission",
-                                          message: "Internal error.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            parentView?.present(alert, animated: true, completion: nil)
-        case .interrupted:
-            let alert = UIAlertController(title: "Recording Interrupted",
-                                          message: "Please do not close close or leave this screen while recording.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Try Again", style: .default, handler: nil))
-            parentView?.present(alert, animated: true, completion: nil)
-        }
-    }
-    
 }
