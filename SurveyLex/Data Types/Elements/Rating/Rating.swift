@@ -35,7 +35,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     
     var responseJSON: JSON {
         var json = JSON()
-        let value: Any = currentSelection == -1 ? JSON.null : options[currentSelection].value
+        let value: Any = selectionString == "" ? JSON.null : selectionString
         json.dictionaryObject?["question\(order.question)"] = value
         return json
     }
@@ -52,7 +52,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     var choices: [String] { return options.map { $0.text } }
     
     /// The index of the current selection
-    var currentSelection = -1
+    var selectionString = ""
     
     
     // MARK: Setup
@@ -98,7 +98,6 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     
     /// Delegate method that is called when the user makes a selection.
     func didSelectRow(row: Int) {
-        currentSelection = row
         UISelectionFeedbackGenerator().selectionChanged()
         completed = true
     }
