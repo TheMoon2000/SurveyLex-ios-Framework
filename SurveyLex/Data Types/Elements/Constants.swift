@@ -70,6 +70,10 @@ let CUSTOM_SESSION: URLSession = {
     return URLSession(configuration: config)
 }()
 
+extension CGFloat {
+    static let tinyPositive: CGFloat = 0.000001
+}
+
 
 // Attempted to generate a custom user agent string for iOS devices, but the server didn't accept this format, so the code below is not being used.
 let userAgentMetadata: JSON = {

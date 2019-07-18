@@ -164,7 +164,7 @@ class CheckboxesCell: SurveyElementCell {
         if self.bottomCell.expanded {
             UIView.animate(withDuration: 0.25) {
                 //  This is stupid but you need to set the angle to a value slightly less than π for the indicator to always rotate on the right side. Rotation animations always takes the path that requires the least motion.
-                self.expansionIndicator.transform = CGAffineTransform(rotationAngle: .pi - 0.0001)
+                self.expansionIndicator.transform = CGAffineTransform(rotationAngle: .pi - .tinyPositive)
             }
             
         } else if !allowMenuCollapse {
