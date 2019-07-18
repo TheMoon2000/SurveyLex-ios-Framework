@@ -109,7 +109,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        surveyViewController?.fragmentIndex += 1
+        // Update the page number in the navigation bar. We need to minus 1 here because the `order` property indexes fragments and questions from 1 instead of 0.
+        surveyViewController?.fragmentIndex = audioQuestion.order.fragment - 1
         
         if audioQuestion.autoStart && !completed {
             recordButton.startRecording()
@@ -160,7 +161,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         button.topAnchor.constraint(equalTo: recordButton.bottomAnchor,
                                     constant: 20).isActive = true
         button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                                       constant: -25).isActive = true
+                                       constant: -30).isActive = true
         
         button.addTarget(self, action: #selector(auxiliaryAction), for: .touchUpInside)
         

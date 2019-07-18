@@ -46,6 +46,10 @@ class RecordButton: UIButton {
         // If the given duration is too short, bound it below by 10 seconds
         self.maxLength = max(duration, 10.0)
         self.recorder = recorder
+        self.recorder.resetPlaybackHandler = { [weak self] status in
+            self?.setImage(#imageLiteral(resourceName: "play"), for: .normal)
+            self?.setImage(#imageLiteral(resourceName: "play"), for: .highlighted)
+        }
         
         // Apply layout constraints
         self.widthAnchor.constraint(equalToConstant: radius * 2).isActive = true
@@ -83,7 +87,7 @@ class RecordButton: UIButton {
     
     @objc private func buttonLifted() {
         let animation = {
-            self.backgroundColor = self.isRecording ? RECORDING_PRESSED : BLUE_TINT
+            self.backgroundColor = self.isRecording ? RECORDING : BLUE_TINT
         }
         
         UIView.transition(with: self,
@@ -93,8 +97,6 @@ class RecordButton: UIButton {
                           completion: nil)
     }
     
-    private var playbackTimer: Timer?
-    
     @objc private func buttonTriggered() {
         if recorder.audioRecorder.isRecording {
             stopRecording()
@@ -102,29 +104,17 @@ class RecordButton: UIButton {
             startRecording()
         } else if (recorder.audioPlayer?.isPlaying ?? false) {
             // Already playing back the recording, so stop it.
-            playbackTimer?.invalidate()
-            resetPlayback()
+            recorder.stopPlayingCapture()
         } else {
             // Playback the recording
-            recorder.playCapture()
-            setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-            setImage(#imageLiteral(resourceName: "pause"), for: .highlighted)
-
-            playbackTimer = Timer.scheduledTimer(withTimeInterval: currentRecordingDuration, repeats: false) { timer in
-                self.resetPlayback()
+            if recorder.playCapture() {
+                setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+                setImage(#imageLiteral(resourceName: "pause"), for: .highlighted)
             }
         }
     }
     
-    @objc func resetPlayback() {
-        self.recorder.stopPlayingCapture()
-        self.setImage(#imageLiteral(resourceName: "play"), for: .normal)
-        self.setImage(#imageLiteral(resourceName: "play"), for: .highlighted)
-    }
-    
     func startRecording() {
-        
-        UINotificationFeedbackGenerator().notificationOccurred(.success)
         
         recorder.startRecording { status in
             
@@ -166,6 +156,9 @@ class RecordButton: UIButton {
     }
     
     func stopRecording() {
+        
+        UISelectionFeedbackGenerator().selectionChanged()
+
         recorder.stopRecording() // Saves the file if possible
         isRecording = false
         timer?.invalidate()

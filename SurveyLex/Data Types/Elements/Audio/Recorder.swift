@@ -5,7 +5,7 @@
 import Foundation
 import AVFoundation
 
-class Recorder: NSObject, AVAudioRecorderDelegate {
+class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
 
     var recordingSession: AVAudioSession!
     var audioRecorder: AVAudioRecorder!
@@ -13,6 +13,9 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
     var audioPlayer: AVAudioPlayer!
     var metertimer : Timer? = nil
     var hasMicPermission: Bool = false
+    
+    /// The function that's called when a playback has finished.
+    var resetPlaybackHandler: ((Bool) -> ())?
     
     required init(fileURL: URL) {
         super.init()
@@ -22,8 +25,8 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
         createRecorder()
         
         do {
-            try self.recordingSession.setCategory(AVAudioSession.Category.record)
-            try self.recordingSession.setActive(true)
+            try recordingSession.setCategory(.playAndRecord)
+            try recordingSession.setActive(true)
         } catch {
             // failed to record!
             print("failed to record")
@@ -76,7 +79,9 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
     }
     
     func stopPlayingCapture() {
-        self.audioPlayer.stop()
+        audioPlayer?.stop()
+        audioPlayer = nil
+        resetPlaybackHandler?(false)
     }
     
     private func createRecorder() -> Bool {
@@ -92,16 +97,25 @@ class Recorder: NSObject, AVAudioRecorderDelegate {
         return true
     }
     
-    /// Playback the recording.
-    func playCapture() {
+    /// Playback the recording using the device's speaker.
+    /// - Returns: A boolean indicating whether the playback was successfully initiated.
+    func playCapture() -> Bool {
         do {
-            try AVAudioSession.sharedInstance().overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
+            try recordingSession.overrideOutputAudioPort(.speaker)
             try audioPlayer = AVAudioPlayer(contentsOf: self.audioFilename!)
+            audioPlayer.delegate = self
             audioPlayer.prepareToPlay()
             audioPlayer.play()
-        } catch {
-            print("unable to play back")
+            return true
+        } catch let error {
+            print(error)
+            return false
         }
+    }
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        audioPlayer = nil
+        resetPlaybackHandler?(flag)
     }
     
     @objc private func updateAudioMeter() {
