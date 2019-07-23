@@ -40,7 +40,8 @@ class CheckBoxes: Question, CustomStringConvertible {
     
     var responseJSON: JSON {
         var json = JSON()
-        json.dictionaryObject?["question\(order.question)"] = Array(selections)
+        let selectedChoices = selections.map { choices[$0] }
+        json.dictionaryObject?["question\(order.question)"] = selectedChoices
         return json
     }
     
