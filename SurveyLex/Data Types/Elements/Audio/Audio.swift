@@ -41,11 +41,10 @@ class Audio: Question, CustomStringConvertible {
     var duration = 60.0
     
     /// Whether the recording automatically starts.
-    var autoStart = false
+    var autoStart = true // false
     
-    /// Self-explanatory.
-    private var lengthOfMostRecentRecording = 0.0
-
+    /// Whether the audio question was skipped.
+    var skipped = true
     
     // MARK: Setup
     
@@ -68,8 +67,12 @@ class Audio: Question, CustomStringConvertible {
             self.duration = duration
         }
         
-        if let isRequired = dictionary["isRequired"]?.boolValue {
+        if let isRequired = dictionary["isRequired"]?.bool {
             self.isRequired = isRequired
+        }
+        
+        if let autoStart = dictionary["autoStart"]?.bool {
+            self.autoStart = autoStart
         }
         
         
@@ -78,6 +81,7 @@ class Audio: Question, CustomStringConvertible {
         self.order = order
     }
     
+    // For audio questions, the function below is not used.
     func makeContentCell() -> SurveyElementCell {
         return SurveyElementCell()
     }
