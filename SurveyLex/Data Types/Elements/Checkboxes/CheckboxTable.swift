@@ -31,10 +31,8 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
         delegate = self
         dataSource = self
         
-        register(CheckboxItemCell.classForCoder(), forCellReuseIdentifier: "checkbox")
-        
         for choice in checkboxes.choices {
-            let cell = dequeueReusableCell(withIdentifier: "checkbox") as! CheckboxItemCell
+            let cell = CheckboxItemCell()
             cell.titleLabel.attributedText = TextFormatter.formatted(choice, type: .plain)
             choiceCells.append(cell)
         }
@@ -62,8 +60,17 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         UISelectionFeedbackGenerator().selectionChanged()
         tableView.deselectRow(at: indexPath, animated: false)
+        
+        // Focus the current checkbox question
         parentCell.surveyPage?.focus(cell: parentCell)
+        
+        // Tell the fragment page controller that its information needs to be uploaded again
+        parentCell.surveyPage?.uploaded = false
+        
+        // Cell has been modified
         parentCell.topCell.modified = true
+        
+        parentCell.topCell.surveyPage?.scrollToCell(cell: parentCell)
         
         choiceCells[indexPath.row].checkbox.isChecked.toggle()
         if choiceCells[indexPath.row].checkbox.isChecked {
@@ -71,6 +78,7 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
         } else {
             checkboxData.selections.remove(indexPath.row)
         }
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
