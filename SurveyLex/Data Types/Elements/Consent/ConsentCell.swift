@@ -51,6 +51,9 @@ class ConsentCell: SurveyElementCell {
     private func makeTitle() -> UITextView {
         let titleText = UITextView()
         titleText.text = consentInfo.title
+        if titleText.text.isEmpty {
+            titleText.text = "Consent"
+        }
         titleText.format(as: .title)
         titleText.textAlignment = .center
         titleText.translatesAutoresizingMaskIntoConstraints = false
@@ -187,6 +190,9 @@ class ConsentCell: SurveyElementCell {
         consentInfo.agreed = checkbox.isChecked
         consentInfo.completed = checkbox.isChecked
         consentInfo.parentView?.reloadDatasource()
+        
+        // Tell the fragment page controller that its information needs to be uploaded again
+        surveyPage?.uploaded = false
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {

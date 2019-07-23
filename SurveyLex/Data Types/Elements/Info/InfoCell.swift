@@ -35,6 +35,9 @@ class InfoCell: SurveyElementCell {
     private func makeTitle() -> UITextView {
         let titleText = UITextView()
         titleText.text = infoData.title
+        if titleText.text.isEmpty {
+            titleText.text = "Note"
+        }
         titleText.format(as: .title)
         titleText.textAlignment = .center
         titleText.translatesAutoresizingMaskIntoConstraints = false
