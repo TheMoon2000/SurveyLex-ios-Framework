@@ -8,26 +8,31 @@
 
 import UIKit
 
-/// A special subclass of `UIViewController` that displays a survey to the user.
+/// A subclass of `UIViewController` that displays a SurveyLex survey to the user.
 class SurveyViewController: UIPageViewController,
                             UIPageViewControllerDataSource,
                             UIPageViewControllerDelegate {
     
+    // MARK: - Instance variables
+    
     /// Stores the `Survey` instance that called this view controller.
-    internal var survey: Survey!
+    var survey: Survey!
     
     /// The data for the survey that the controller is presenting.
     var surveyData: SurveyData!
     
-    /// The current page of the survey (a survey can have multiple pages).
-    /// Updates the navigation bar according to the survey progress made by
-    /// the user.
+    /// Whether the user has completed the first submission.
+    var submittedOnce = false
+    
+    /**
+     The current page of the survey (a survey can have multiple pages), indexed from 0. Updating its value will also update the navigation bar according to the survey progress made by the user.
+     */
     var fragmentIndex = -1 {
         didSet (oldValue) {
-            surveyData.fragmentIndex = fragmentIndex
             if fragmentIndex == -1 || fragmentIndex == oldValue { return }
             if fragmentIndex == fragmentPages.count {
                 navigationItem.title = "Response Submission"
+                progressIndicator.setProgress(1.0, animated: true)
             } else {
                 navigationItem.title = surveyData.title + " (\(fragmentIndex + 1)/\(fragmentPages.count))"
                 let percentage = Float(fragmentIndex + 1) / Float(fragmentPages.count)
@@ -43,13 +48,19 @@ class SurveyViewController: UIPageViewController,
     
     /// Stores all the subviews for the survey elements, generated once
     /// before the survey is presented.
-    private var fragmentPages = [SurveyPage]()
+    var fragmentPages = [SurveyPage]()
     
     /// Contains the set of `FragmentTableController`s that have already been displayed at least once to the user.
     var visited = Set<Int>()
     
     /// The top bar that displays the survey progress.
     var progressIndicator: UIProgressView!
+    
+    /// Whether the user has already seen the submission notice dialog.
+    var submissionNoticeShown = false
+    
+    
+    // MARK: - UI Setup
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,7 +68,7 @@ class SurveyViewController: UIPageViewController,
         // Set start time
         surveyData.startTime = Date()
         
-        // Set the `surveyViewController` attribute of every fragment to self.
+        // Generate the survey pages and set the `surveyViewController` attribute of every fragment to self.
         fragmentPages = surveyData.fragments.map { fragment in
             let page = fragment.contentVC
             page.surveyViewController = self
@@ -67,7 +78,7 @@ class SurveyViewController: UIPageViewController,
         
         // Set up progress indicator in the navigation bar and load the first page.
         progressIndicator = addProgressBar()
-        fragmentIndex = surveyData.fragmentIndex
+        fragmentIndex = 0
         setViewControllers([fragmentPages[fragmentIndex]],
                            direction: .forward,
                            animated: false,
@@ -84,7 +95,7 @@ class SurveyViewController: UIPageViewController,
         let cancelButton = UIBarButtonItem(title: "Close",
                                            style: .done,
                                            target: self,
-                                           action: #selector(surveyCancelled))
+                                           action: #selector(closeSurvey))
         cancelButton.tintColor = DARKER_TINT
         navigationItem.rightBarButtonItem = cancelButton
     }
@@ -109,21 +120,56 @@ class SurveyViewController: UIPageViewController,
         return bar
     }
     
-    @objc private func surveyCancelled() {
-        let alert = UIAlertController(title: "Are you sure?",
-                                      message: "You are about the leave the survey. Any information you have entered will be discarded.",
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { action -> Void in
-            self.survey.delegate?.surveyWillClose(self.survey, completed: false)
-            self.dismiss(animated: true) {
-                self.survey.delegate?.surveyDidClose(self.survey, completed: false)
-            }
-        }))
+    @objc private func closeSurvey() {
+        
+        let updated = !fragmentPages.contains { !$0.uploaded }
+                
+        // Finished survey and everything is up to date, no message needs to be displayed
+        if updated && submittedOnce {
+            dismissSurvey()
+            return
+        }
+        
+        
+        // Prepare an alert to display.
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        if submittedOnce {
+            alert.title = "Unsaved Changes"
+            alert.message = "You may have made unsaved changes to your response since your last submission. Do you want to first submit these changes, or discard them and leave?"
+            alert.addAction(UIAlertAction(title: "Submit Changes", style: .default, handler: { action in
+                let vc = SurveySubmission()
+                vc.surveyViewController = self
+                self.setViewControllers([vc],
+                                        direction: .forward,
+                                        animated: true,
+                                        completion: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "Discard and Leave", style: .destructive, handler: { action in self.dismissSurvey() }))
+        } else {
+            alert.title = "Are you sure?"
+            alert.message = "You are about the leave the survey without submitting it. Any information you have entered will be discarded."
+            alert.addAction(UIAlertAction(title: "Exit", style: submittedOnce ? .default : .destructive, handler: { action in self.dismissSurvey() }))
+        }
+        
+        // Also dismiss the keyboard.
+        self.currentFragment.view.endEditing(true)
+        
         self.present(alert, animated: true, completion: nil)
     }
     
-    // Datasource methods for UIPageController
+    private func dismissSurvey() {
+        self.survey.delegate?.surveyWillClose(self.survey, completed: false)
+        
+        // Clear cache
+        try? FileManager.default.removeItem(at: AUDIO_CACHE_DIR)
+        
+        self.dismiss(animated: true) {
+            self.survey.delegate?.surveyDidClose(self.survey, completed: false)
+        }
+    }
+    
+    // MARK: - Datasource methods for UIPageController
     
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
         return surveyData.fragments.count
@@ -131,7 +177,9 @@ class SurveyViewController: UIPageViewController,
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
-        let index = (viewController as! SurveyPage).pageIndex
+        guard let index = (viewController as? SurveyPage)?.pageIndex else {
+            return fragmentPages.last
+        }
         
         if (index == 0) {
             return nil
@@ -171,6 +219,11 @@ class SurveyViewController: UIPageViewController,
     
     func flipPageIfNeeded(allCompleted: Bool = true) -> Bool {
         let cond = allCompleted ? currentFragment.completed : currentFragment.unlocked
+
+        if !cond {
+            return false
+        }
+                
         if cond && fragmentIndex + 1 < fragmentPages.count {
 //            fragmentIndex += 1
             self.setViewControllers([fragmentPages[fragmentIndex + 1]],
@@ -179,14 +232,33 @@ class SurveyViewController: UIPageViewController,
                                     completion: nil)
             return true
         } else if fragmentIndex + 1 == fragmentPages.count {
+            submissionNotice()
+        }
+        return false
+    }
+    
+    // MARK: - Page flip helper functions
+    
+    private func submissionNotice() {
+        if submissionNoticeShown { return }
+        
+        submissionNoticeShown = true
+        
+        let alert = UIAlertController(title: "Survey Completed!", message: "You have already completed all the required questions in the survey. If you would like to submit now, please press 'Submit'. Alternatively, you can review your responses and submit later by swiping to the right.", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Submit", style: .default) { action in
+            
             let vc = SurveySubmission()
             vc.surveyViewController = self
             self.setViewControllers([vc],
                                     direction: .forward,
                                     animated: true,
                                     completion: nil)
-        }
-        return false
+        })
+        
+        alert.addAction(UIAlertAction(title: "Review", style: .cancel, handler: nil))
+        
+        present(alert, animated: true, completion: nil)
     }
     
     
@@ -203,7 +275,7 @@ class SurveyViewController: UIPageViewController,
             var nextRow = fragmentTable.contentCells.firstIndex(of: cell)! + 1
             
             if nextRow % 2 == 1 { nextRow += 1 }
-            
+                        
             // Check if the next row exists and has not yet been completed
             let nextRowExists = nextRow < fragmentTable.contentCells.count
             if nextRowExists {
@@ -229,5 +301,9 @@ class SurveyViewController: UIPageViewController,
     func reloadDatasource() {
         dataSource = nil
         dataSource = self
+    }
+    
+    func restartSurvey() {
+        
     }
 }
