@@ -46,6 +46,12 @@ class ConsentCell: SurveyElementCell {
         agreeButton = makeAgreeButton()
         
         checkboxPressed()
+        
+        if consentInfo.agreed {
+            agreeButton.isUserInteractionEnabled = false
+            agreeButton.backgroundColor = DISABLED_BLUE
+            agreeButton.setTitle("Agreed", for: .normal)
+        }
     }
     
     private func makeTitle() -> UITextView {
