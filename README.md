@@ -1,1 +1,1 @@
-# SurveyLex iOS Front-end Survey-taking Framework
+# SurveyLex iOS Survey-taking Framework
