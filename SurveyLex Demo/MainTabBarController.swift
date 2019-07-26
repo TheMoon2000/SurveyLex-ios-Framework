@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class MainTabBarController: UITabBarController {
 
@@ -19,11 +20,9 @@ class MainTabBarController: UITabBarController {
     }
     
     private func initializeTabs() {
-        let recordTab = RecordViewController()
-        recordTab.tabBarItem = UITabBarItem(title: "Record Button", image: #imageLiteral(resourceName: "microphone_filled"), tag: 0)
         let lookupTab = SurveyIDViewController()
-        lookupTab.tabBarItem = UITabBarItem(title: "Survey Lookup Demo", image: #imageLiteral(resourceName: "search"), tag: 1)
-        viewControllers = [recordTab, lookupTab].map {
+        lookupTab.tabBarItem = UITabBarItem(title: "SurveyLex Demo", image: #imageLiteral(resourceName: "search"), tag: 0)
+        viewControllers = [lookupTab].map {
             return UINavigationController(rootViewController: $0)
         }
     }

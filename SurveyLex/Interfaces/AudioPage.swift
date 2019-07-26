@@ -26,12 +26,6 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         return completed || !audioQuestion.isRequired
     }
     
-    var uploaded: Bool {
-        return uploadedFragmentData && uploadedSample
-    }
-    
-    var needsReupload = false
-    
     // MARK: - Custom instance variables
     
     var canvas: UIScrollView!
@@ -68,14 +62,24 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     private var displayErrorMessage: Timer?
     
     /// Whether the fragment data JSON is uploaded.
-    private var uploadedFragmentData = false
+    private var uploadedFragmentData = false {
+        didSet {
+            fragmentData.uploaded = uploadedFragmentData && uploadedSample
+        }
+    }
+    
     
     /// Whether the audio WAV file is uploaded.
-    private var uploadedSample = false
+    private var uploadedSample = false {
+        didSet {
+            fragmentData.uploaded = uploadedFragmentData && uploadedSample
+        }
+    }
     
     /// The ID of the most recently uploaded audio file, returned by the server.
     private var sampleId = ""
     
+    /// The date attribute used when encoding the fragment response JSON data.
     private var recordedDate = Date()
     
     
@@ -89,7 +93,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         fragmentData = audioQuestion.fragment
         
         // Setup the path to save the audio file
-        
+        // First create intermediate folders
         try? FileManager.default.createDirectory(at: AUDIO_CACHE_DIR, withIntermediateDirectories: true, attributes: nil)
         
         saveURL = AUDIO_CACHE_DIR.appendingPathComponent(fragmentData.id + ".wav")
@@ -112,7 +116,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         // Update the page number in the navigation bar. We need to minus 1 here because the `order` property indexes fragments and questions from 1 instead of 0.
         surveyViewController?.fragmentIndex = audioQuestion.order.fragment - 1
         
-        if audioQuestion.autoStart && !completed {
+        if audioQuestion.autoStart && !audioQuestion.visited {
+            audioQuestion.visited = true
             recordButton.startRecording()
         }
     }
@@ -194,10 +199,18 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         
         self.recordButton = {
             let recorder = Recorder(fileURL: saveURL)
-            let button = RecordButton(duration: audioQuestion.duration,
+            let button: RecordButton
+            
+            if audioQuestion.recordButton != nil {
+                button = audioQuestion.recordButton!
+            } else {
+                button = RecordButton(duration: audioQuestion.duration,
                                       radius: 50,
                                       recorder: recorder)
-            button.tintColor = BUTTON_TINT
+                button.tintColor = BUTTON_TINT
+                audioQuestion.recordButton = button
+            }
+            
             button.delegate = self
             canvas.addSubview(button)
             button.centerXAnchor.constraint(equalTo: canvas.centerXAnchor).isActive = true
@@ -210,7 +223,10 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             let button = UIButton(type: .system)
             button.tintColor = BUTTON_DEEP_BLUE
             button.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
-            if audioQuestion.isRequired {
+            if recordButton.hasSuccessfulRecording {
+                button.setTitle("Clear Recording", for: .normal)
+                button.isHidden = false
+            } else if audioQuestion.isRequired {
                 button.isHidden = true
             } else {
                 button.setTitle("Skip", for: .normal)
@@ -227,7 +243,11 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             caption.textColor = UIColor(white: 0.35, alpha: 1)
             caption.font = .systemFont(ofSize: 16.5)
             caption.textAlignment = .center
-            caption.text = timeLimitString
+            if recordButton.hasSuccessfulRecording {
+                caption.isHidden = true
+            } else {
+                caption.text = timeLimitString
+            }
             caption.translatesAutoresizingMaskIntoConstraints = false
             return caption
         }()
@@ -259,7 +279,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     // MARK: - Recording delegate
     
     func didFinishRecording(_ sender: RecordButton, duration: Double) {
-        print("Recording with duration \(round(duration * 10) / 10)s saved to \(sender.saveURL).")
+        debugMessage("Recording with duration \(round(duration * 10) / 10)s saved to \(sender.saveURL).")
         
         timer?.invalidate()
         recordedDate = Date()
@@ -280,7 +300,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         audioQuestion.completed = true
 
         // Unlock the next page of the survey.
-        audioQuestion.parentView?.reloadDatasource()
+        surveyViewController?.reloadDatasource()
         
         // A new audio sample was recorded, so it needs to be uploaded.
         uploadedSample = false
@@ -298,10 +318,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         captionMessage.isHidden = false
         captionMessage.text = timeLimitString
 
-        UIView.performWithoutAnimation {
-            auxiliaryButton.setTitle("Skip", for: .normal)
-        }
-
+        auxiliaryButton.setTitle("Skip", for: .normal)
         auxiliaryButton.isHidden = audioQuestion.isRequired
 
         recordButton.clearRecording()
@@ -375,10 +392,10 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     
     func uploadResponse() {
         
-        needsReupload = false
+        fragmentData.needsReupload = false
         
         // If no changes were made (i.e. both the audio sample and the fragment response are unchanged), there is no need to re-upload anything.
-        if uploaded { return }
+        if fragmentData.uploaded { return }
         
         // If the user chooses to skip the question, then we only need to upload the fragment response to indicate this status. No file upload is needed.
         if audioQuestion.skipped {
@@ -433,7 +450,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             data, response, error in
             
             guard error == nil else {
-                print(error!)
+                debugMessage("Audio fragment (index=\(self.pageIndex)) upload failed with error: \(error!)")
+                self.uploadFailed()
                 return
             }
             
@@ -444,7 +462,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
                     self.uploadFragmentData(sampleId: sampleId)
                 }
             } else {
-                print("Cannot get sampleId from the collector API!")
+                debugMessage("Cannot get 'sampleId' from the collector API! The collector API must have updated since this file was written.")
+                self.uploadFailed()
             }
             
         }
@@ -473,18 +492,22 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             data, response, error in
             
             guard error == nil else {
-                print(error!)
-                self.needsReupload = true
+                self.uploadFailed()
                 return
             }
             
             // The current response JSON has expired since a new audio file was recorded.
             if sampleId != nil && sampleId! != self.sampleId { return }
             
-            // Successful.
-            self.uploadedFragmentData = true
-            self.uploadCompleted()
-            print("uploaded fragment \(self.pageIndex)")
+            if (try? JSON(data: data!).dictionary?["status"]?.int ?? 0) == 200 {
+                // Successful.
+                self.uploadedFragmentData = true
+                self.uploadCompleted()
+                debugMessage("fragment \(self.pageIndex) uploaded")
+            } else {
+                debugMessage("Server did not return status code 200 for audio fragment response!")
+                self.uploadFailed()
+            }
         }
         
         task.resume()

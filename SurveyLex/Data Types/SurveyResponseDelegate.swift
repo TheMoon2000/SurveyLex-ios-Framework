@@ -14,7 +14,9 @@ public protocol SurveyResponseDelegate {
     /// Called when the `Survey` instance established a connection to the server and retrieved all necessary information about the survey.
     func surveyDidLoad(_ survey: Survey)
     
-    func surveyReturnedError(_ survey: Survey, error: Survey.Error, message: String?)
+    func surveyEncounteredError(_ survey: Survey, error: Survey.Error, message: String?)
+    
+    func surveyFailedToPresent(_ survey: Survey, error: Survey.Error)
     
     /// Called when the survey is presented to the user.
     func surveyDidPresent(_ survey: Survey)
@@ -29,11 +31,13 @@ extension SurveyResponseDelegate {
     
     public func surveyDidPresent(_ survey: Survey) {}
     
+    public func surveyFailedToPresent(_ survey: Survey, error: Survey.Error) {}
+    
     public func surveyWillClose(_ survey: Survey, completed: Bool) {}
 
     public func surveyDidClose(_ survey: Survey, completed: Bool) {}
     
-    public func surveyReturnedError(_ survey: Survey, error: Survey.Error, message: String?) {
+    public func surveyEncounteredError(_ survey: Survey, error: Survey.Error, message: String?) {
         switch error {
         case .invalidRequest:
             self.invalidSurveyWarning(survey)
@@ -42,6 +46,8 @@ extension SurveyResponseDelegate {
         default:
             break
         }
+        
+        surveyFailedToPresent(survey, error: error)
     }
     
     private func invalidSurveyWarning(_ survey: Survey) {

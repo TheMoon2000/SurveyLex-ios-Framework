@@ -31,7 +31,14 @@ public class SurveyData: CustomStringConvertible {
     /// The session ID.
     let sessionID = UUID().uuidString.lowercased()
     
+    /// The same attribute as the `fragmentIndex` attribute in the survey view controller, but *DO NOT* modify this property. Instead, do it in the survey view controller.
     var fragmentIndex = 0
+    
+    /// Contains the set of `FragmentTableController`s that have already been displayed at least once to the user.
+    var visited = Set<Int>()
+    
+    /// Whether the user has completed the first submission.
+    var submittedOnce = false
     
     /// Creates a new survey form using a JSON summary of the survey.
     required public init(json: JSON) throws {

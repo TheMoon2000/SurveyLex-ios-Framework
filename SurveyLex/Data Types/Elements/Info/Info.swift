@@ -36,6 +36,9 @@ class Info: Question, CustomStringConvertible {
         return JSON() // Need to be replaced
     }
     
+    var bottomCellExpanded: Bool = false
+
+    
     // MARK: Custom instance variables
     
     /// The title of the info screen.

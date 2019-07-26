@@ -10,9 +10,9 @@ import UIKit
 
 class CheckboxItemCell: UITableViewCell {
     
-    var checkboxesData: CheckBoxes!
+    private var checkboxesData: CheckBoxes!
     var checkbox: UICheckbox!
-    weak var titleLabel: UILabel!
+    var titleLabel: UILabel!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

@@ -32,17 +32,30 @@ let API_SESSION = URL(string: "https://api.neurolex.ai/1.0/object/sessions")!
 /// The URL to the API that is responsible for receiving most types of questions. Every call to this API should deliver a user's response for one page (a.k.a. fragment) of a survey in a given session. The POST data should be of the type `application/json`.
 let API_RESPONSE = URL(string: "https://api.neurolex.ai/1.0/object/responses")!
 
-/// The URL to the API that is responsible for receiving the overview information for a specific audio sample. The POST data should be of the type `application/json`.
-let API_SAMPLE = URL(string: "https://api.neurolex.ai/1.0/object/samples")!
-
 /// The URL to the API that is responsible for receiving the .WAV audio data in a survey. The POST data should be of the type `multipart/form-data`.
-let API_AUDIO_SAMPLE = URL(string: "https://api.neurolex.ai/1.0/collector/samples")!
+let API_AUDIO_SAMPLE = URL(string: "https://api.neurolex.ai/1.0/collector/sample")!
+
+/// The URL prefix for SurveyLex surveys.
+let SURVEY_URL_PREFIX = "https://app.surveylex.com/surveys"
+
+let AUDIO_CACHE_DIR = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("SurveyLex", isDirectory: true)
 
 // MARK: Environment variables
 
 // These constants are now environment variables in `Survey` class, but their default fallback values are preserved in this file.
 let UNFOCUSED_ALPHA: CGFloat = 0.3
 let SIDE_PADDING: CGFloat = 20.0
+
+/// A global constant setting the minimum allowed duration (in seconds) for any audio question.
+let MIN_RECORDING_LENGTH = 3.0
+
+/// A global constant setting the minimum allowed max length (in seconds) for any audio question. This constant needs to be greater than `MIN_RECORDING_LENGTH`.
+let MIN_MAX_RECORDING_LENGTH = 5.0
+
+let DEBUG_MODE = true
+
+var SURVEY_CACHE = [String : SurveyData]()
+
 
 // MARK: Extensions and other constants
 
@@ -74,6 +87,25 @@ extension CGFloat {
     static let tinyPositive: CGFloat = 0.000001
 }
 
+extension Data {
+    mutating func append(string: String) {
+        let data = string.data(using: .utf8)!
+        append(data)
+    }
+}
+
+/// Display a debug message.
+func debugMessage(_ msg: String) {
+    print(msg)
+}
+
+// Custom notifications
+
+/// A notification that is triggered when a fragment finished upload
+let FRAGMENT_UPLOAD_COMPLETE = Notification.Name.init(rawValue: "Fragment upload completed")
+
+/// A notification that is triggered when a fragment failed to upload
+let FRAGMENT_UPLOAD_FAIL = Notification.Name.init("Fragment upload failed")
 
 // Attempted to generate a custom user agent string for iOS devices, but the server didn't accept this format, so the code below is not being used.
 let userAgentMetadata: JSON = {

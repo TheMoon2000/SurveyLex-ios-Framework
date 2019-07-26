@@ -11,9 +11,9 @@ import UIKit
 /// A subclass of SurveyElementCell that displays a text response question.
 class TextCell: SurveyElementCell, UITextFieldDelegate {
     
-    /// Whether the user has already focused on the cell at least once and entered a valid string.
+    /// Whether the cell should be focused or skipped from the question above.
     override var completed: Bool {
-        return textfield.returnKeyType == .done
+        return textQuestion.isRequired ? !textfield.text!.isEmpty : textfield.returnKeyType == .done
     }
     
     /// The `Text` instance which the current cell is presenting.
@@ -57,6 +57,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     private func makeTextField() -> UITextField {
         let textfield = UITextField()
         textfield.delegate = self
+        textfield.text = textQuestion.response
         textfield.borderStyle = .none
         if textQuestion.title.lowercased().contains("email") {
             textfield.keyboardType = .emailAddress
@@ -78,12 +79,14 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
                                         constant: SIDE_PADDING).isActive = true
         textfield.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
                                          constant: -SIDE_PADDING).isActive = true
-        textfield.heightAnchor.constraint(equalToConstant: 56).isActive = true
+        textfield.heightAnchor.constraint(equalToConstant: 58).isActive = true
         textfield.topAnchor.constraint(equalTo: title.bottomAnchor,
                                        constant:0).isActive = true
         let bottomConstraint = textfield.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
         bottomConstraint.priority = .init(rawValue: 999)
         bottomConstraint.isActive = true
+        
+        textfield.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         
         return textfield
     }
@@ -110,10 +113,15 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        textQuestion.response = textField.text!
         if textField.text != "" {
             textfield.returnKeyType = .done
         }
+    }
+    
+    @objc func textDidChange() {
+        textQuestion.response = textfield.text!
+        // Tell the fragment page controller that its information needs to be uploaded again
+        textQuestion.fragment?.uploaded = false
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

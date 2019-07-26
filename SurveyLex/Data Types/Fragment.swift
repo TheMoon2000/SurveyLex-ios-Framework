@@ -12,8 +12,13 @@ import SwiftyJSON
 /// Second class of survey objects. A `Fragment` is a collection of individual survey elements, intended to be presented together.
 class Fragment: CustomStringConvertible {
     
+    /// The survey data object which the fragment belongs to.
     let parent: SurveyData!
-    let fragmentData: JSON!
+    
+    let fragmentSource: JSON
+    
+    /// The JSON representation of this fragment's response data used for submission.
+    let fragmentData: JSON
     
     /// The fragment id.
     var id = ""
@@ -28,9 +33,18 @@ class Fragment: CustomStringConvertible {
     let index: Int
     
     /// The response ID for the page.
-    let responseId = UUID().uuidString
+    let responseId = UUID().uuidString.lowercased()
     
-    public init(json: JSON, index: Int, parentSurvey: SurveyData) {
+    /// The focused row in the fragment.
+    var focusedRow = 0
+    
+    /// Whether the information one this survey page is completely uploaded.
+    var uploaded = false
+    
+    /// If the initial upload failed, then `needsReupload` needs to be set to true to indicate that it needs to be uploaded again during survey submission.
+    var needsReupload = false
+    
+    public required init(json: JSON, index: Int, parentSurvey: SurveyData? = nil) {
         
         parent = parentSurvey
         
@@ -44,10 +58,11 @@ class Fragment: CustomStringConvertible {
             preconditionFailure("Malformed fragment data")
         }
         
+        self.fragmentSource = json
         self.fragmentData = data
         self.id = fragmentId
         self.index = index
-        self.type = FragmentType(rawValue: type)!
+        self.type = FragmentType(rawValue: type) ?? FragmentType.unsupported
         
         switch self.type {
         case .audio:
@@ -65,6 +80,8 @@ class Fragment: CustomStringConvertible {
             }
         case .info:
             questions.append(Info(json: data, order: (index + 1, 1), fragment: self))
+        default:
+            break
         }
     }
     
@@ -94,6 +111,7 @@ class Fragment: CustomStringConvertible {
         case textSurvey = "TEXT_SURVEYJS"
         case audio = "AUDIO_STANDARD"
         case info = "INFO"
+        case unsupported = ""
     }
     
     /// Customized description that is more debug-friendly.
@@ -107,22 +125,29 @@ class Fragment: CustomStringConvertible {
     
     /// Returns a `UIViewController` object to be used for the survey UI.
     var contentVC: SurveyPage {
-        
         switch type {
         case .audio:
             let vc = AudioPage(audioQuestion: questions.first as! Audio)
-            vc.fragmentData = self
             return vc
-        default:
+        case .consent:
+            fallthrough
+        case .info:
+            fallthrough
+        case .textSurvey:
             let fragmentPage = FragmentTableController()
             fragmentPage.fragmentData = self
             return fragmentPage
+        case .unsupported:
+            let page = UnsupportedPage()
+            page.fragmentData = self
+            return page
         }
     }
     
     /// Prepares the fragment in JSON form for submission.
     var fragmentJSON: JSON {
         var response = JSON()
+        response.dictionaryObject?["createdDate"] = ISO8601DateFormatter().string(from: Date())
         response.dictionaryObject?["responseId"] = self.responseId
         response.dictionaryObject?["fragmentId"] = self.id
         response.dictionaryObject?["fragmentType"] = type.rawValue
@@ -130,20 +155,26 @@ class Fragment: CustomStringConvertible {
         response.dictionaryObject?["sessionId"] = parent.sessionID
         response.dictionaryObject?["surveyId"] = parent.surveyId
         
+        var data = JSON()
+
         switch self.type {
         case .textSurvey:
-            var data = JSON()
             self.questions.forEach { q in
                 data.dictionaryObject?.merge(q.responseJSON.dictionaryValue) { (current, _) in
                     return current
                 }
             }
-            response.dictionaryObject?["data"] = data
-            return response
+
         case .info:
-            return JSON()
+            fallthrough
+        case .audio:
+            // Note: `sampleId` and `skipped` need to be added later in the `data` attribute
+            fallthrough
         default:
-            return response
+            break
         }
+        
+        response.dictionaryObject?["data"] = data
+        return response
     }
 }

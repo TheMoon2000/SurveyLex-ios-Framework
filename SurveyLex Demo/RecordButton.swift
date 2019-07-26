@@ -151,9 +151,6 @@ class RecordButton: UIButton {
                         self.stopRecording()
                         return;
                     }
-                    let remaining = finishTime.timeIntervalSince(Date())
-//                    self.setTitle(String(Int(remaining)), for: .normal)
-                    self.setTitle("Stop", for: .normal)
                 }
                 self.timer?.fire()
             }

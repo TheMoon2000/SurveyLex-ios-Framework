@@ -40,6 +40,9 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
         return json
     }
     
+    var bottomCellExpanded: Bool = false
+
+    
     // MARK: Custom instance variables
     
     /// The title of the rating question.
@@ -54,6 +57,7 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     /// The index of the current selection
     var selectionString = ""
     
+    var sliderValue: Float = 50.0
     
     // MARK: Setup
     

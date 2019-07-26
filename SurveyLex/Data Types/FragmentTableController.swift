@@ -7,11 +7,12 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 /// A subclass of `UITableViewController` designed to present multiple questions on a page.
 class FragmentTableController: UITableViewController, SurveyPage {
     
-    // Protocol requirements
+    // MARK: - Protocol requirements
     
     var fragmentData: Fragment!
     
@@ -25,28 +26,23 @@ class FragmentTableController: UITableViewController, SurveyPage {
         return !fragmentData.questions.contains { !$0.completed && $0.isRequired }
     }
     
-    // -------------------------
-    
-    // Custom instance variables
+    // MARK: - Custom instance variables
     
     /// An array of `SurveyElementCell`s in order, each representing a survey element in the fragment.
     var contentCells = [SurveyElementCell]()
-    
-    /// Completion status of every question.
-    private var completion: [(completed: Bool, required: Bool)] {
-        return fragmentData.questions.map { ($0.completed, $0.isRequired) }
-    }
     
     /// The index of the row that is currently focused, as seen by the user.
     var focusedRow = -1 {
         didSet (oldValue) {
             
-            // The actual focused Row
+            // Get the actual focused row.
             let topRow = focusedRow - focusedRow % 2
             
             if oldValue != -1 && topRow == oldValue - oldValue % 2 {
-                return // The focus did not change
+                return // The focus did not change, so exit
             }
+            
+            fragmentData.focusedRow = focusedRow
             
             if focusedRow != -1 {
                 let index = IndexPath(row: focusedRow, section: 0)
@@ -71,6 +67,11 @@ class FragmentTableController: UITableViewController, SurveyPage {
                 }
             }
         }
+    }
+    
+    /// Shortcut for accessing the survey data
+    private var surveyData: SurveyData? {
+        return surveyViewController?.surveyData
     }
     
     
@@ -98,33 +99,45 @@ class FragmentTableController: UITableViewController, SurveyPage {
         
         if !loadedContentCells { return }
         
+        contentCells.forEach { $0.appearHandler?(surveyViewController!) }
+        
         appearHandler()
     }
+    
     /// This function will run as soon as both `viewAppeared` and `loadedContentCells` are `true`.
     private func appearHandler() {
         
         if !viewAppeared || !loadedContentCells { return }
         
         DispatchQueue.main.async {
-            if !self.surveyViewController!.visited.contains(self.pageIndex) {
-                self.surveyViewController?.visited.insert(self.pageIndex)
+            if !self.surveyData!.visited.contains(self.pageIndex) {
+                self.surveyData?.visited.insert(self.pageIndex)
                 self.focusedRow = 0 // Focus on the first row if none is focused.
             } else if self.fragmentData.questions.count == 1 {
                 self.focusedRow = 0
-            } else if self.focusedRow != -1 {
-                var pos = UITableView.ScrollPosition.middle
-                let cell = self.contentCells[self.focusedRow]
-                if cell.frame.height > self.tableView.frame.height || self.tableView.numberOfRows(inSection: 0) == 1 {
-                    pos = .top
-                }
-                self.tableView.scrollToRow(at: IndexPath(row: self.focusedRow, section: 0), at: pos, animated: true)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                    self.contentCells[self.focusedRow].focus()
-                }
+            } else {
+                self.focusedRow = self.fragmentData.focusedRow
             }
         }
     }
     
+    func scrollToRow(row: Int) {
+        var pos = UITableView.ScrollPosition.middle
+        let cell = self.contentCells[row]
+        if cell.frame.height > self.tableView.frame.height || self.tableView.numberOfRows(inSection: 0) == 1 {
+            pos = .top
+        }
+        self.tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: pos, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.contentCells[row].focus()
+        }
+    }
+    
+    func scrollToCell(cell: SurveyElementCell) {
+        if let index = contentCells.firstIndex(of: cell) {
+            scrollToRow(row: index)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -176,12 +189,21 @@ class FragmentTableController: UITableViewController, SurveyPage {
             cell.unfocus()
             contentCells.append(cell)
             cell.cellBelow.surveyPage = self
+            if question.bottomCellExpanded {
+                cell.cellBelow.expanded = true
+            }
             
             contentCells.append(cell.cellBelow)
         }
         
-        tableView.reloadSections(IndexSet(arrayLiteral: 0), with: .none)
+        if fragmentData.questions.count == 1 {
+            tableView.reloadSections(IndexSet(arrayLiteral: 0), with: .automatic)
+        } else {
+            tableView.reloadSections(IndexSet(arrayLiteral: 0), with: .none)
+        }
     }
+    
+    // MARK: - Row actions
     
     func focus(cell: SurveyElementCell) {
         if let row = self.contentCells.firstIndex(of: cell) {
@@ -205,7 +227,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
             
             // Scroll to the newly expanded row. We need to wait for the expansion animation to finish before scrolling to the row.
             if self.contentCells[row + 1].expanded {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                     self.tableView.scrollToRow(at: targetIndex, at: .none, animated: true)
                 }
             }
@@ -214,7 +236,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
     
     func isCellFocused(cell: SurveyElementCell) -> Bool {
         let row = tableView.indexPath(for: cell)?.row ?? -1
-        return row == focusedRow
+        return (row - row % 2) == focusedRow - focusedRow % 2
     }
 
 
@@ -273,18 +295,66 @@ class FragmentTableController: UITableViewController, SurveyPage {
         focusedRow = indexPath.row
     }
     
-    /// Fixes the bug with device rotation by resetting the content offset.
+    // MARK: - Response submission
     
+    /// Uploads the current fragment to the server.
+    func uploadResponse() {
+        
+        fragmentData.needsReupload = false
+        
+        // If no changes were made to the page, then no re-upload is needed.
+        if fragmentData.uploaded { return }
+        
+        var responseRequest = URLRequest(url: API_RESPONSE)
+        responseRequest.httpMethod = "POST"
+        responseRequest.httpBody = try? fragmentData.fragmentJSON.rawData()
+        responseRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        
+        let task = CUSTOM_SESSION.dataTask(with: responseRequest) {
+            data, response, error in
+            
+            guard error == nil else {
+                debugMessage("Fragment \(self.pageIndex) upload failed with error message: \(error!)")
+                self.uploadFailed()
+                return
+            }
+            
+            // Status code 200 means 'successful'
+            if (try? JSON(data: data!).dictionary?["status"]?.int ?? 0) == 200 {
+                self.fragmentData.uploaded = true
+                print("fragment \(self.pageIndex) uploaded")
+                self.uploadCompleted()
+            } else {
+                debugMessage("Server did not return status code 200 for fragment \(self.pageIndex)!")
+                self.uploadFailed()
+            }
+        }
+        
+        task.resume()
+    }
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    /// Calls the upload method when moving to another page.
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        // Upload the fragment to the server after it disappears from view.
+        uploadResponse()
+        
+        // Call the optional disppear handler
+        contentCells.forEach { $0.disappearHandler?(surveyViewController!) }
+    }
+    
+    /// The focused row should still be focused and visible after orientation change.
+    override func viewWillTransition(to size: CGSize, with coordinator:
+        UIViewControllerTransitionCoordinator) {
         let spaceBelow = tableView.contentSize.height - tableView.contentOffset.y
         let upwardOffset = max(0, size.height - spaceBelow)
         let proposedOffset = max(0, tableView.contentOffset.y - upwardOffset)
-        tableView.reloadData()
+//        self.tableView.reloadData()
         coordinator.animate(alongsideTransition: {context in
-            self.tableView.contentOffset = CGPoint(x: 0.0, y: proposedOffset)
+//            self.tableView.contentOffset = CGPoint(x: 0.0, y: proposedOffset)
+            self.tableView.scrollToRow(at: IndexPath(row: self.focusedRow, section: 0), at: .none, animated: false)
         }, completion: nil)
- 
     }
 
 }

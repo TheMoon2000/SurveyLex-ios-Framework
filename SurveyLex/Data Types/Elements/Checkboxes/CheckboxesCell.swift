@@ -15,10 +15,9 @@ class CheckboxesCell: SurveyElementCell {
     private var title: UITextView!
     private var checkboxTable: CheckboxTable!
     
-    var modified = false
-    
+    /// A checkboxes question is considered complete by the user if it's either optional or 
     override var completed: Bool {
-        return modified
+        return !checkboxData.isRequired || !checkboxData.selections.isEmpty
     }
     
     /// Custom cell below for checkbox cell.
@@ -100,6 +99,9 @@ class CheckboxesCell: SurveyElementCell {
         
         let expand = UIImageView(image: #imageLiteral(resourceName: "expand"))
         expand.contentMode = .scaleAspectFit
+        if checkboxData.bottomCellExpanded {
+            expand.transform = CGAffineTransform(rotationAngle: .pi - .tinyPositive)
+        }
         expand.translatesAutoresizingMaskIntoConstraints = false
         expand.widthAnchor.constraint(equalToConstant: 22).isActive = true
         expand.heightAnchor.constraint(equalToConstant: 22).isActive = true
@@ -159,6 +161,7 @@ class CheckboxesCell: SurveyElementCell {
         }
         
         bottomCell.expanded.toggle()
+        checkboxData.bottomCellExpanded = bottomCell.expanded
         self.surveyPage?.expandOrCollapse(from: self)
 //        bottomCell.focus()
         if self.bottomCell.expanded {
@@ -167,7 +170,7 @@ class CheckboxesCell: SurveyElementCell {
                 self.expansionIndicator.transform = CGAffineTransform(rotationAngle: .pi - .tinyPositive)
             }
             
-        } else if !allowMenuCollapse {
+        } else if allowMenuCollapse {
             UIView.animate(withDuration: 0.25) {
                 self.expansionIndicator.transform = CGAffineTransform(rotationAngle: 0)
             }
@@ -183,7 +186,7 @@ class CheckboxesCell: SurveyElementCell {
         
         bottomCell.focus()
         
-        if !modified && !bottomCell.expanded && !suppressExpansion {
+        if !checkboxData.modified && !bottomCell.expanded && !suppressExpansion {
             toggleExpansion(expandButton)
             
             // Temporarily set `hasAutoExpanded` to true to block the button press event from being triggered.

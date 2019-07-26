@@ -99,6 +99,9 @@ class RadioGroupCell: SurveyElementCell {
         
         let expand = UIImageView(image: #imageLiteral(resourceName: "expand"))
         expand.contentMode = .scaleAspectFit
+        if radioGroup.bottomCellExpanded {
+            expand.transform = CGAffineTransform(rotationAngle: .pi - .tinyPositive)
+        }
         expand.translatesAutoresizingMaskIntoConstraints = false
         expand.widthAnchor.constraint(equalToConstant: 22).isActive = true
         expand.heightAnchor.constraint(equalToConstant: 22).isActive = true
@@ -158,6 +161,7 @@ class RadioGroupCell: SurveyElementCell {
         }
         
         bottomCell.expanded.toggle()
+        radioGroup.bottomCellExpanded = bottomCell.expanded
         self.surveyPage?.expandOrCollapse(from: self)
         bottomCell.focus()
         if self.bottomCell.expanded {
@@ -166,7 +170,7 @@ class RadioGroupCell: SurveyElementCell {
                 self.expansionIndicator.transform = CGAffineTransform(rotationAngle: .pi - .tinyPositive)
             }
             
-        } else if !allowMenuCollapse {
+        } else if allowMenuCollapse {
             UIView.animate(withDuration: 0.25) {
                 self.expansionIndicator.transform = CGAffineTransform(rotationAngle: 0)
             }

@@ -43,6 +43,9 @@ class Text: Question, CustomStringConvertible {
         return json
     }
     
+    var bottomCellExpanded: Bool = false
+
+    
     // Custom instance variables
     
     /// The prompt for the text response question.

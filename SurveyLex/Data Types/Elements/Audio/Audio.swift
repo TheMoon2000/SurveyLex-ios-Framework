@@ -32,6 +32,8 @@ class Audio: Question, CustomStringConvertible {
         return JSON() // Need to be replaced
     }
     
+    var bottomCellExpanded: Bool = false
+    
     // MARK: Custom instance variables
     
     /// The prompt of the audio question.
@@ -45,6 +47,11 @@ class Audio: Question, CustomStringConvertible {
     
     /// Whether the audio question was skipped.
     var skipped = true
+    
+    /// Whether the user has already landed on this page of the survey.
+    var visited = false
+    
+    var recordButton: RecordButton?
     
     // MARK: Setup
     

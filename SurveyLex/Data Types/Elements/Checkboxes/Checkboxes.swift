@@ -56,6 +56,10 @@ class CheckBoxes: Question, CustomStringConvertible {
     /// The indexes of the current selections.
     var selections = Set<Int>()
     
+    /// Whether the user has modified their response for this question.
+    var modified = false
+    
+    var bottomCellExpanded: Bool = false
     
     // MARK: Setup
     

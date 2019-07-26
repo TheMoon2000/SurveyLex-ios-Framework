@@ -19,7 +19,7 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Survey Lookup Demo"
+        title = "SurveyLex Demo"
         
         accessoryView = makeAccessoryView() // 1
         textView = makeTextView() // 2
@@ -38,7 +38,12 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
 //        textView.text = "b1d9d390-9b5c-11e9-a279-9f8e317e3dcc"
         
         // Comprehensive test
-        textView.text = "cc3330f0-a332-11e9-81d0-29f9b1295ce4"
+//        textView.text = "cc3330f0-a332-11e9-81d0-29f9b1295ce4"
+        
+        // Response test
+        textView.text = "a198a1d0-a89c-11e9-b466-e38db5a54ad8"
+        // Survey A
+//        textView.text = "c741cba0-acca-11e9-aeb9-2b1c6d8db2a2"
     }
     
     
@@ -114,7 +119,7 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
     
     private func makeLookupButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Lookup Survey", for: .normal)
+        button.setTitle("Launch Survey", for: .normal)
         button.layer.cornerRadius = 24
         button.tintColor = BUTTON_DEEP_BLUE
         button.layer.borderWidth = 1
@@ -142,25 +147,39 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
     }
     
     @objc func lookup(_ sender: UIButton) {
-        let survey = Survey(surveyID: textView.text,
-                            target: self)
+        
+        let survey: Survey
+        if textView.text.contains("{") {
+            survey = try! Survey(json: JSON(parseJSON: textView.text), target: self)
+        } else {
+            survey = Survey(surveyID: textView.text, target: self)
+        }
+        
+        survey.allowMenuCollapse = true
         survey.delegate = self
-        survey.loadAndPresent()
+        survey.load()
+        sender.isEnabled = false
+        sender.setTitle("Loading...", for: .normal)
     }
     
     // MARK: Delegate methods
     
     // Some protocol methods have default implementation, so be sure to check the documentation
     
-    func surveyDidClose(_ survey: Survey, completed: Bool) {
-        if !completed {
-            print("survey closed without being completed")
-        }
+    func surveyDidLoad(_ survey: Survey) {
+        survey.present()
     }
     
     func surveyDidPresent(_ survey: Survey) {
-        print("survey presented")
+        lookupButton.isEnabled = true
+        lookupButton.setTitle("Launch Survey", for: .normal)
     }
+    
+    func surveyFailedToPresent(_ survey: Survey, error: Survey.Error) {
+        lookupButton.isEnabled = true
+        lookupButton.setTitle("Lookup Survey", for: .normal)
+    }
+    
 }
 /*
 extension UITextView {

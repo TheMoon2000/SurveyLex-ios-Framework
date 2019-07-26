@@ -15,10 +15,10 @@ class RecordButton: UIButton {
     
     var recorder: Recorder!
     var maxLength = 60.0
+    var isRecording = false
     private var finishTime = Date()
-    private var isRecording = false
     
-    let minRecordingLength = 7.0
+    /// The length of most recent recording.
     var currentRecordingDuration = 0.0
     
     var hasSuccessfulRecording: Bool {
@@ -29,6 +29,8 @@ class RecordButton: UIButton {
     var timeRemaining: TimeInterval {
         return finishTime.timeIntervalSinceNow
     }
+    
+    /// A timer instance used for displaying the time remaining countdown while recording.
     private var timer: Timer?
     
     var saveURL: URL {
@@ -44,7 +46,7 @@ class RecordButton: UIButton {
         super.init(frame: .zero)
         
         // If the given duration is too short, bound it below by 10 seconds
-        self.maxLength = max(duration, 10.0)
+        self.maxLength = max(duration, MIN_MAX_RECORDING_LENGTH)
         self.recorder = recorder
         self.recorder.resetPlaybackHandler = { [weak self] status in
             self?.setImage(#imageLiteral(resourceName: "play"), for: .normal)
@@ -142,14 +144,15 @@ class RecordButton: UIButton {
             
             self.isRecording = true
             
+            self.setImage(#imageLiteral(resourceName: "stop"), for: .normal)
+            self.setImage(#imageLiteral(resourceName: "stop"), for: .highlighted)
+            
             self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
                 if self.timeRemaining <= 0 {
                     timer.invalidate()
                     self.stopRecording()
                     return
                 }
-                self.setImage(#imageLiteral(resourceName: "stop"), for: .normal)
-                self.setImage(#imageLiteral(resourceName: "stop"), for: .highlighted)
             }
             self.timer?.fire()
         }
@@ -178,7 +181,7 @@ class RecordButton: UIButton {
         
         
         // Error type 1: The recording was too short
-        if elapsed < minRecordingLength {
+        if elapsed < MIN_RECORDING_LENGTH {
             delegate?.didFailToRecord(self, error: .tooShort)
             return
         }

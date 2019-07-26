@@ -22,6 +22,7 @@ class SurveySubmission: UIViewController {
     private var buttonStack: UIStackView!
     
     private var timeoutTimer: Timer?
+    private var isDisplayingAlert = false
     
     var percentageCompleted: Float = 0.0 {
         didSet {
@@ -140,8 +141,10 @@ class SurveySubmission: UIViewController {
         
         // Add self as an observer for upload responses.
         NotificationCenter.default.addObserver(self, selector: #selector(updateProgress), name: FRAGMENT_UPLOAD_COMPLETE, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(uploadError), name: FRAGMENT_UPLOAD_FAIL, object: nil)
     }
     
+    /// Scroll to the first page of the survey.
     @objc private func review() {
         surveyViewController.setViewControllers([surveyViewController.fragmentPages[0]],
                                                 direction: .reverse,
@@ -150,7 +153,7 @@ class SurveySubmission: UIViewController {
     }
     
     @objc private func shareSurvey() {
-        let shareItem = [URL(string: SURVEY_URL_PREFIX + "/" + surveyViewController.survey.surveyID)!]
+        let shareItem: [Any] = ["I've just taken the survey '\(self.surveyViewController.surveyData.title)'! Feel free to take it at", URL(string: SURVEY_URL_PREFIX + "/" + surveyViewController.survey.surveyID)!]
         let ac = UIActivityViewController(activityItems: shareItem, applicationActivities: nil)
         present(ac, animated: true, completion: nil)
     }
@@ -168,15 +171,41 @@ class SurveySubmission: UIViewController {
         updateProgress()
     }
     
+    @objc private func uploadError() {
+        if isDisplayingAlert { return }
+        
+        let alert = UIAlertController(title: "Network Failure", message: "We are unable to upload your response. Please check your internet connection.", preferredStyle: .alert)
+        
+        // Button action
+        let handler: (UIAlertAction) -> Void = { action in
+            switch action.title {
+            case "Retry":
+                self.surveyViewController.fragmentPages.forEach { page in
+                    if page.fragmentData.needsReupload { page.uploadResponse() }
+                }
+            case "Submit Later":
+                self.review()
+            default:
+                break
+            }
+        }
+        
+        alert.addAction(UIAlertAction(title: "Retry", style: .default, handler: handler))
+        alert.addAction(UIAlertAction(title: "Submit Later", style: .cancel, handler: handler))
+        
+        self.present(alert, animated: true, completion: nil)
+        
+    }
+    
     /// Refreshes the upload progress and updates the front-end.
     @objc private func updateProgress() {
         let uploaded = surveyViewController.fragmentPages.filter { page in
             
-            if page.needsReupload {
+            if page.fragmentData.needsReupload {
                 page.uploadResponse()
             }
             
-            return page.uploaded
+            return page.fragmentData.uploaded
         }.count
         
         DispatchQueue.main.async {
@@ -187,14 +216,14 @@ class SurveySubmission: UIViewController {
                 self.finishIcon.isHidden = false
                 self.progressBar.isHidden = true
                 self.buttonStack.isHidden = false
-                self.surveyViewController.submittedOnce = true
+                self.surveyViewController.surveyData.submittedOnce = true
             } else {
                 self.spinner.startAnimating()
                 self.titleLabel.text = "Submitting response..."
                 self.progressBar.isHidden = false
                 self.finishIcon.isHidden = true
                 self.buttonStack.isHidden = true
-                self.surveyViewController.submittedOnce = false
+                self.surveyViewController.surveyData.submittedOnce = false
             }
         }
     }

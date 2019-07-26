@@ -9,6 +9,7 @@
 import UIKit
 import SwiftyJSON
 
+/// A set of features that all survey elements except audio questions adopt.
 protocol Question: class, CustomStringConvertible {
     
     /**
@@ -43,6 +44,8 @@ protocol Question: class, CustomStringConvertible {
     
     /// Prepares the user's response for this question as a JSON.
     var responseJSON: JSON { get }
+    
+    var bottomCellExpanded: Bool { get set }
 }
 
 

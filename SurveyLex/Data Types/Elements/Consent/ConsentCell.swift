@@ -37,9 +37,45 @@ class ConsentCell: SurveyElementCell {
         backgroundColor = .white
         selectionStyle = .none
         
-        title = makeTitle()
+        title = {
+            let titleText = UITextView()
+            titleText.text = consentInfo.title
+            if titleText.text.isEmpty {
+                titleText.text = "Consent"
+            }
+            titleText.format(as: .title)
+            titleText.textAlignment = .center
+            titleText.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(titleText)
+            
+            titleText.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
+                                           constant: 40).isActive = true
+            titleText.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
+                                            constant: SIDE_PADDING).isActive = true
+            titleText.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
+                                             constant: -SIDE_PADDING).isActive = true
+            
+            return titleText
+        }()
+        
         separator = makeSeparator(top: true)
-        consentText = makeConsentText()
+        consentText = {
+            let consent = UITextView()
+            consent.text = consentInfo.consentText
+            consent.format(as: .consentText)
+            consent.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(consent)
+            
+            consent.topAnchor.constraint(equalTo: separator.bottomAnchor,
+                                         constant: 20).isActive = true
+            consent.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
+                                          constant: 30).isActive = true
+            consent.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
+                                           constant: -30).isActive = true
+            
+            return consent
+        }()
+        
         bottomSeparator = makeSeparator(top: false)
         checkbox = makeCheckbox()
         prompt = makePromptText()
@@ -47,32 +83,25 @@ class ConsentCell: SurveyElementCell {
         
         checkboxPressed()
         
-        if consentInfo.agreed {
-            agreeButton.isUserInteractionEnabled = false
-            agreeButton.backgroundColor = DISABLED_BLUE
-            agreeButton.setTitle("Agreed", for: .normal)
+        appearHandler = { vc in
+            vc.reloadDatasource()
+            print("reload")
         }
-    }
-    
-    private func makeTitle() -> UITextView {
-        let titleText = UITextView()
-        titleText.text = consentInfo.title
-        if titleText.text.isEmpty {
-            titleText.text = "Consent"
+        
+        let disableAgreeButton = {
+            if self.consentInfo.completed {
+                self.agreeButton.isUserInteractionEnabled = false
+                self.agreeButton.backgroundColor = DISABLED_BLUE
+                self.agreeButton.setTitle("Agreed", for: .normal)
+                self.checkbox.isEnabled = false
+            }
         }
-        titleText.format(as: .title)
-        titleText.textAlignment = .center
-        titleText.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(titleText)
         
-        titleText.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                       constant: 40).isActive = true
-        titleText.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                        constant: SIDE_PADDING).isActive = true
-        titleText.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                         constant: -SIDE_PADDING).isActive = true
+        disappearHandler = { vc in
+            disableAgreeButton()
+        }
         
-        return titleText
+        disableAgreeButton()
     }
     
     private func makeSeparator(top: Bool) -> UIView {
@@ -95,29 +124,12 @@ class ConsentCell: SurveyElementCell {
         return separatorLine
     }
     
-    private func makeConsentText() -> UITextView {
-        let consent = UITextView()
-        consent.text = consentInfo.consentText
-        consent.format(as: .consentText)
-        consent.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(consent)
-        
-        consent.topAnchor.constraint(equalTo: separator.bottomAnchor,
-                                     constant: 20).isActive = true
-        consent.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                      constant: 30).isActive = true
-        consent.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                       constant: -30).isActive = true
-        
-        return consent
-    }
-    
     // MARK: Prompt & check box
     
     private func makeCheckbox() -> UICheckbox {
         let check = UICheckbox()
         check.format(type: .square)
-        check.isChecked = consentInfo.agreed
+        check.isChecked = consentInfo.completed
         check.translatesAutoresizingMaskIntoConstraints = false
         check.widthAnchor.constraint(equalToConstant: 20).isActive = true
         check.heightAnchor.constraint(equalToConstant: 20).isActive = true
@@ -193,12 +205,9 @@ class ConsentCell: SurveyElementCell {
             agreeButton.isEnabled = false
             agreeButton.backgroundColor = DISABLED_BLUE
         }
-        consentInfo.agreed = checkbox.isChecked
-        consentInfo.completed = checkbox.isChecked
-        consentInfo.parentView?.reloadDatasource()
         
         // Tell the fragment page controller that its information needs to be uploaded again
-        surveyPage?.uploaded = false
+        consentInfo.fragment?.uploaded = false
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {

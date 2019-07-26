@@ -12,7 +12,7 @@ import UIKit
 class RatingSliderCell: SurveyElementCell {
     
     /// The left and right insets.
-    let sideMargins: CGFloat = 30
+    let sideMargins: CGFloat = 25
     
     
     override var completed: Bool {
@@ -34,6 +34,7 @@ class RatingSliderCell: SurveyElementCell {
             let option = ratingQuestion.options[index]
             caption.text = option.text
             ratingQuestion.selectionString = option.text
+            ratingQuestion.sliderValue = currentValue
         }
     }
     
@@ -45,41 +46,37 @@ class RatingSliderCell: SurveyElementCell {
                 
         self.ratingQuestion = ratingQuestion
         
-        title = makeTextView()
+        title = {
+            let textView = UITextView()
+            textView.text = ratingQuestion.title
+            textView.format(as: .title)
+            textView.textColor = .black
+            textView.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(textView)
+            
+            textView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
+                                          constant: 20).isActive = true
+            textView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
+                                           constant: SIDE_PADDING).isActive = true
+            textView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
+                                            constant: -SIDE_PADDING).isActive = true
+            return textView
+        }()
+        
         slider = makeSlider()
         caption = makeCaption()
         addTicks()
-    }
-    
-    
-    private func makeTextView() -> UITextView {
-        let textView = UITextView()
-        textView.text = ratingQuestion.title
-        textView.format(as: .title)
-        textView.textColor = .black
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(textView)
         
-        textView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                      constant: 20).isActive = true
-        textView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                       constant: SIDE_PADDING).isActive = true
-        textView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                        constant: -SIDE_PADDING).isActive = true
-        return textView
+        currentValue = ratingQuestion.sliderValue
     }
+    
     
     private func makeSlider() -> UISlider {
         let slider = UISlider()
         slider.maximumTrackTintColor = .clear
         slider.minimumTrackTintColor = .clear
         slider.maximumValue = 100
-        slider.value = currentValue
-        slider.thumbTintColor = .lightGray
-        /*
-        slider.layer.borderWidth = 1
-        slider.layer.borderColor = UIColor.orange.cgColor
-        */
+        slider.value = ratingQuestion.sliderValue
         
         slider.translatesAutoresizingMaskIntoConstraints = false
         addSubview(slider)
@@ -171,8 +168,9 @@ class RatingSliderCell: SurveyElementCell {
         label.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
         label.topAnchor.constraint(equalTo: slider.bottomAnchor,
                                    constant: 15).isActive = true
-        label.bottomAnchor.constraint(equalTo: bottomAnchor,
-                                      constant: -15).isActive = true
+        let bottomConstraint = label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15)
+        bottomConstraint.priority = .init(999)
+        bottomConstraint.isActive = true
         
         return label
     }
@@ -185,18 +183,26 @@ class RatingSliderCell: SurveyElementCell {
         if slider.value != currentValue {
             currentValue = slider.value
             UISelectionFeedbackGenerator().selectionChanged()
+            
+            // Tell the fragment that its information needs to be uploaded again
+            ratingQuestion.fragment?.uploaded = false
         }
     }
     
     @objc private func sliderPressed() {
         surveyPage?.focus(cell: self)
         UISelectionFeedbackGenerator().selectionChanged()
+        
+        // First press requires special handling
         if slider.thumbTintColor! == .lightGray {
             let segmentLength = 100.0 / Float(ratingQuestion.options.count - 1)
             let index = Int(round(currentValue / segmentLength))
             let option = ratingQuestion.options[index]
             caption.text = option.text
             slider.thumbTintColor = BLUE_TINT
+            
+            // Tell the fragment page controller that its information needs to be uploaded again
+            ratingQuestion.fragment?.uploaded = false
         }
     }
     

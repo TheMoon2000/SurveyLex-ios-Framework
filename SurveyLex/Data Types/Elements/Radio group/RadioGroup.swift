@@ -50,6 +50,7 @@ class RadioGroup: Question, CustomStringConvertible {
     /// The index of the current selection. -1 means nothing is selected.
     var selection = -1
     
+    var bottomCellExpanded: Bool = false
     
     // MARK: Setup
     

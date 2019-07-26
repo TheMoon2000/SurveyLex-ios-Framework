@@ -36,6 +36,8 @@ class UnsupportedQuestion: Question, CustomStringConvertible {
         return JSON()
     }
     
+    var bottomCellExpanded: Bool = false
+    
     // MARK: Custom instance variables
     
     /// The title of the unsupported question.

@@ -39,9 +39,13 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
         
         // Make the pre-generaated cells
         register(MultipleChoiceCell.classForCoder(), forCellReuseIdentifier: "choice")
-        for choice in radioGroup.choices {
+        for i in 0..<radioGroup.choices.count {
             let cell = dequeueReusableCell(withIdentifier: "choice") as! MultipleChoiceCell
-            cell.titleLabel.attributedText = TextFormatter.formatted(choice, type: .plain)
+            cell.titleLabel.attributedText = TextFormatter.formatted(radioGroup.choices[i], type: .plain)
+            if i == radioGroup.selection {
+                cell.radioCircle.isChecked = true
+                cell.isSelected = true
+            }
             choiceCells.append(cell)
         }
     }

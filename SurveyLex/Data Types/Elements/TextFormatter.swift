@@ -82,7 +82,7 @@ class TextFormatter {
 
         let titleStyle = """
             body {
-                font-family: -apple-system, BlinkMacSystemFont;
+                font-family: -apple-system;
                 font-weight: 500;
                 font-size: 23px;
                 line-height: 1.4;
@@ -115,6 +115,10 @@ class TextFormatter {
             h3 { font: -apple-system-title3 }
             h4, h5, h6 { font: -apple-system-headline }
 """
+        
+        guard !newString.isEmpty else {
+            return NSAttributedString(string: "")
+        }
         
         
         switch type {
@@ -153,7 +157,7 @@ class TextFormatter {
     /// Legacy formatter used as fallback
     private static func legacy(_ string: String, type: TextType) -> NSAttributedString {
         
-        print("Warning: legacy text formatter called")
+        debugMessage("Warning: fallback text formatter called")
         
         var newString = string // This mutable string will be used instead
         

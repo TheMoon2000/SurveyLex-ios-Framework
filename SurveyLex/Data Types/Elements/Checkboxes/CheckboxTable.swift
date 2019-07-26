@@ -31,9 +31,10 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
         delegate = self
         dataSource = self
         
-        for choice in checkboxes.choices {
+        for i in 0..<checkboxes.choices.count {
             let cell = CheckboxItemCell()
-            cell.titleLabel.attributedText = TextFormatter.formatted(choice, type: .plain)
+            cell.titleLabel.attributedText = TextFormatter.formatted(checkboxes.choices[i], type: .plain)
+            cell.checkbox.isChecked = checkboxData.selections.contains(i)
             choiceCells.append(cell)
         }
     }
@@ -65,10 +66,10 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
         parentCell.surveyPage?.focus(cell: parentCell)
         
         // Tell the fragment page controller that its information needs to be uploaded again
-        parentCell.surveyPage?.uploaded = false
+        checkboxData.fragment?.uploaded = false
         
         // Cell has been modified
-        parentCell.topCell.modified = true
+        checkboxData.modified = true
         
         parentCell.topCell.surveyPage?.scrollToCell(cell: parentCell)
         

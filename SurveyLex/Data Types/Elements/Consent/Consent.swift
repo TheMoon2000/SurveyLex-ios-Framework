@@ -36,6 +36,8 @@ class Consent: Question, CustomStringConvertible {
         return JSON() // Need to be replaced
     }
     
+    var bottomCellExpanded: Bool = false
+    
     // MARK: Custom instance variables
     
     /// The title of the consent form.
@@ -46,9 +48,6 @@ class Consent: Question, CustomStringConvertible {
     
     /// The prompt for the consent form.
     let prompt: String
-    
-    /// Whether the survey taker agreed to the consent form.
-    var agreed = false
     
     
     // Setup
