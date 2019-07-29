@@ -116,6 +116,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         if textField.text != "" {
             textfield.returnKeyType = .done
         }
+        textQuestion.parentView?.reloadDatasource()
     }
     
     @objc func textDidChange() {
