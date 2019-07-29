@@ -38,27 +38,23 @@ class ConsentCell: SurveyElementCell {
         selectionStyle = .none
         
         title = {
-            let titleText = UITextView()
-            titleText.text = consentInfo.title
-            if titleText.text.isEmpty {
-                titleText.text = "Consent"
-            }
-            titleText.format(as: .title)
-            titleText.textAlignment = .center
-            titleText.translatesAutoresizingMaskIntoConstraints = false
-            addSubview(titleText)
+            let title = UITextView()
+            title.text = consentInfo.title
+            if title.text.isEmpty { title.text = "Consent" }
+            title.format(as: .title)
+            title.textAlignment = .center
+            title.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(title)
             
-            titleText.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                           constant: 40).isActive = true
-            titleText.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor,
-                                            constant: SIDE_PADDING).isActive = true
-            titleText.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                             constant: -SIDE_PADDING).isActive = true
+            title.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 40).isActive = true
+            title.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: SIDE_PADDING).isActive = true
+            title.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -SIDE_PADDING).isActive = true
             
-            return titleText
+            return title
         }()
         
         separator = makeSeparator(top: true)
+        
         consentText = {
             let consent = UITextView()
             consent.text = consentInfo.consentText
@@ -80,28 +76,6 @@ class ConsentCell: SurveyElementCell {
         checkbox = makeCheckbox()
         prompt = makePromptText()
         agreeButton = makeAgreeButton()
-        
-        checkboxPressed()
-        
-        appearHandler = { vc in
-            vc.reloadDatasource()
-            print("reload")
-        }
-        
-        let disableAgreeButton = {
-            if self.consentInfo.completed {
-                self.agreeButton.isUserInteractionEnabled = false
-                self.agreeButton.backgroundColor = DISABLED_BLUE
-                self.agreeButton.setTitle("Agreed", for: .normal)
-                self.checkbox.isEnabled = false
-            }
-        }
-        
-        disappearHandler = { vc in
-            disableAgreeButton()
-        }
-        
-        disableAgreeButton()
     }
     
     private func makeSeparator(top: Bool) -> UIView {
@@ -129,7 +103,8 @@ class ConsentCell: SurveyElementCell {
     private func makeCheckbox() -> UICheckbox {
         let check = UICheckbox()
         check.format(type: .square)
-        check.isChecked = consentInfo.completed
+        check.isChecked = consentInfo.promptChecked
+        check.isEnabled = !consentInfo.promptChecked
         check.translatesAutoresizingMaskIntoConstraints = false
         check.widthAnchor.constraint(equalToConstant: 20).isActive = true
         check.heightAnchor.constraint(equalToConstant: 20).isActive = true
@@ -170,11 +145,18 @@ class ConsentCell: SurveyElementCell {
     
     private func makeAgreeButton() -> UIButton {
         let button = UIButton()
-        button.setTitle("Agree & Continue", for: .normal)
         button.layer.cornerRadius = 4
-        button.backgroundColor = BLUE_TINT
-        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = DISABLED_BLUE
         button.setTitleColor(.white, for: .normal)
+        button.isUserInteractionEnabled = false
+
+        if consentInfo.completed {
+            button.setTitle("Agreed", for: .normal)
+        } else {
+            button.setTitle("Agree & Continue", for: .normal)
+        }
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 49).isActive = true
         button.widthAnchor.constraint(equalToConstant: 220).isActive = true
         
@@ -199,12 +181,27 @@ class ConsentCell: SurveyElementCell {
     
     @objc private func checkboxPressed() {
         if checkbox.isChecked {
-            agreeButton.isEnabled = true
+            
+            // Enabled color
             agreeButton.backgroundColor = BLUE_TINT
+            
+            // Enable tap gesture recognition
+            agreeButton.isUserInteractionEnabled = true
+            
+            // Save the check status
+            consentInfo.promptChecked = true
         } else {
-            agreeButton.isEnabled = false
+            
+            // Disabled color
             agreeButton.backgroundColor = DISABLED_BLUE
+            
+            // Disable tap gesture recognition
+            agreeButton.isUserInteractionEnabled = false
+            
+            // Save the check status
+            consentInfo.promptChecked = false
         }
+        
         
         // Tell the fragment page controller that its information needs to be uploaded again
         consentInfo.fragment?.uploaded = false

@@ -49,6 +49,9 @@ class Consent: Question, CustomStringConvertible {
     /// The prompt for the consent form.
     let prompt: String
     
+    /// This value records whether the consent form's checkbox is checked.
+    var promptChecked = false
+    
     
     // Setup
     
