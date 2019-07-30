@@ -122,7 +122,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     @objc func textDidChange() {
         textQuestion.response = textfield.text!
         // Tell the fragment page controller that its information needs to be uploaded again
-        textQuestion.fragment?.uploaded = false
+        surveyPage?.uploaded = false
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

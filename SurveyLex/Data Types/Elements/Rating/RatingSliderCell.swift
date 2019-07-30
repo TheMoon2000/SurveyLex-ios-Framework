@@ -202,7 +202,7 @@ class RatingSliderCell: SurveyElementCell {
             slider.thumbTintColor = BLUE_TINT
             
             // Tell the fragment page controller that its information needs to be uploaded again
-            ratingQuestion.fragment?.uploaded = false
+            surveyPage?.uploaded = false
         }
     }
     

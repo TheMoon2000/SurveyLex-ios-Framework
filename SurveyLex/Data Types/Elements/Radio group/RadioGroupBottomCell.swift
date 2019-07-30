@@ -63,7 +63,7 @@ class RadioGroupBottomCell: SurveyElementCell {
         if radioGroup.selection != row {
             radioGroup.selection = row
             // Tell the fragment page controller that its information needs to be uploaded again
-            radioGroup.fragment?.uploaded = false
+            surveyPage?.uploaded = false
         }
         
         if !radioGroup.completed {

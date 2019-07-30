@@ -60,7 +60,7 @@ class InfoCell: SurveyElementCell {
         addSubview(separatorLine)
         
         separatorLine.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        separatorLine.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        separatorLine.widthAnchor.constraint(equalToConstant: SEPARATOR_WIDTH).isActive = true
         separatorLine.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
         separatorLine.topAnchor.constraint(equalTo: title.bottomAnchor,
                                            constant: 20).isActive = true

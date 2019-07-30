@@ -85,7 +85,7 @@ class ConsentCell: SurveyElementCell {
         addSubview(separatorLine)
         
         separatorLine.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        separatorLine.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        separatorLine.widthAnchor.constraint(equalToConstant: SEPARATOR_WIDTH).isActive = true
         separatorLine.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
         if top {
             separatorLine.topAnchor.constraint(equalTo: title.bottomAnchor,
@@ -122,14 +122,8 @@ class ConsentCell: SurveyElementCell {
     
     private func makePromptText() -> UITextView {
         let prompt = UITextView()
-        prompt.attributedText = TextFormatter.formatted(consentInfo.prompt,
-                                                        type: .subtitle)
-        prompt.isScrollEnabled = false
-        prompt.textContainerInset = .zero
-        prompt.textContainer.lineFragmentPadding = 0
-        prompt.isEditable = false
-        prompt.dataDetectorTypes = .link
-        prompt.linkTextAttributes[.foregroundColor] = BLUE_TINT
+        prompt.text = consentInfo.prompt
+        prompt.format(as: .subtitle)
         prompt.translatesAutoresizingMaskIntoConstraints = false
         addSubview(prompt)
         
@@ -204,7 +198,7 @@ class ConsentCell: SurveyElementCell {
         
         
         // Tell the fragment page controller that its information needs to be uploaded again
-        consentInfo.fragment?.uploaded = false
+        surveyPage?.uploaded = false
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {

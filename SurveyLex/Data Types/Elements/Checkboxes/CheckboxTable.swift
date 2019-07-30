@@ -66,7 +66,7 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
         parentCell.surveyPage?.focus(cell: parentCell)
         
         // Tell the fragment page controller that its information needs to be uploaded again
-        checkboxData.fragment?.uploaded = false
+        parentCell.surveyPage?.uploaded = false
         
         // Cell has been modified
         checkboxData.modified = true
