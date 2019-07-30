@@ -25,7 +25,8 @@ class Audio: Question, CustomStringConvertible {
     }
     
     var description: String {
-        return "Audio question: <\(prompt)>"
+        let requiredString = isRequired ? " (required)" : ""
+        return "Audio question" + requiredString + ": <\(prompt)>"
     }
     
     var responseJSON: JSON {

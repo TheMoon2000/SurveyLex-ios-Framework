@@ -31,7 +31,8 @@ class CheckBoxes: Question, CustomStringConvertible {
     }
     
     var description: String {
-        return "Checkboxes: <" + choices.map { $0.description }.joined(separator: ", ") + ">"
+        let requiredString = isRequired ? " (required)" : ""
+        return "Checkboxes question" + requiredString + ": <'" + choices.map { $0.description }.joined(separator: "', '") + "'> (\(choices.count) total)"
     }
     
     func makeContentCell() -> SurveyElementCell {

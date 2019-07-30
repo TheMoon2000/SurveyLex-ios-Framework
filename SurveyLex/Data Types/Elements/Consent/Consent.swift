@@ -25,7 +25,8 @@ class Consent: Question, CustomStringConvertible {
     }
     
     var description: String {
-        return "Consent form <\(title)>"
+        let requiredString = isRequired ? " (required)" : ""
+        return "Consent form <\(title)>" + requiredString
     }
     
     func makeContentCell() -> SurveyElementCell {

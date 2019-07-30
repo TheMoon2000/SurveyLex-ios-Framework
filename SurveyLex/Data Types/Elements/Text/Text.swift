@@ -29,7 +29,8 @@ class Text: Question, CustomStringConvertible {
     }
     
     var description: String {
-        return "Text response: <\(title)>"
+        let requiredString = isRequired ? " (required)" : ""
+        return "Text response" + requiredString + ": <\(title)>"
     }
     
     func makeContentCell() -> SurveyElementCell {

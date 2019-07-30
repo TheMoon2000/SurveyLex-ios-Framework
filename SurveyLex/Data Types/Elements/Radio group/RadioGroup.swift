@@ -25,7 +25,8 @@ class RadioGroup: Question, CustomStringConvertible {
     }
     
     var description: String {
-        return "Radio group: <" + choices.map {$0.description}.joined(separator: ", ") + ">"
+        let requiredString = isRequired ? " (required)" : ""
+        return "Radio group" + requiredString + ": <" + choices.map {$0.description}.joined(separator: ", ") + ">"
     }
     
     func makeContentCell() -> SurveyElementCell {

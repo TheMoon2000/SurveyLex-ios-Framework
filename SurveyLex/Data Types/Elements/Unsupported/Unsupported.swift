@@ -25,7 +25,8 @@ class UnsupportedQuestion: Question, CustomStringConvertible {
     }
     
     var description: String {
-        return "Unsupported cell <\(title)>"
+        let requiredString = isRequired ? " (required)" : ""
+        return "Unsupported cell <\(title)>" + requiredString
     }
     
     func makeContentCell() -> SurveyElementCell {

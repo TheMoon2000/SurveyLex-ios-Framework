@@ -26,7 +26,8 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
     
     var description: String {
         let choices = "\(options.first?.text ?? "")...\(options.last?.text ?? "")"
-        return "\(title):\n  <\(choices)> (\(options.count) choices total)"
+        let requiredString = isRequired ? " (required)" : ""
+        return "Rating question '\(title)'" + requiredString + ":\n  <\(choices)> (\(options.count) choices total)"
     }
     
     func makeContentCell() -> SurveyElementCell {
