@@ -52,12 +52,17 @@ let MIN_RECORDING_LENGTH = 3.0
 /// A global constant setting the minimum allowed max length (in seconds) for any audio question. This constant needs to be greater than `MIN_RECORDING_LENGTH`.
 let MIN_MAX_RECORDING_LENGTH = 5.0
 
+/// How wide the separator lines are.
+let SEPARATOR_WIDTH: CGFloat = 90.0
+
+/// Whether debug statements are printed to the console
 let DEBUG_MODE = true
 
+/// A global variable used for storing cached survey data.
 var SURVEY_CACHE = [String : SurveyData]()
 
 
-// MARK: Extensions and other constants
+// MARK: - Extensions and other constants
 
 extension UITextView {
     
@@ -99,7 +104,7 @@ func debugMessage(_ msg: String) {
     print(msg)
 }
 
-// Custom notifications
+// MARK: - Custom notifications
 
 /// A notification that is triggered when a fragment finished upload
 let FRAGMENT_UPLOAD_COMPLETE = Notification.Name.init(rawValue: "Fragment upload completed")
