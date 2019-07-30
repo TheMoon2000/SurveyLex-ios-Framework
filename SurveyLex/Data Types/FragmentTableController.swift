@@ -129,6 +129,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
             } else {
                 self.focusedRow = self.fragmentData.focusedRow
             }
+            
         }
     }
     
@@ -161,7 +162,6 @@ class FragmentTableController: UITableViewController, SurveyPage {
         // Table setup
         tableView.allowsSelection = true
         tableView.separatorStyle = .none
-        tableView.tableFooterView = UIView(frame: .zero)
         tableView.keyboardDismissMode = .interactive
         
         // View setup
@@ -184,9 +184,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         
         // Navigation menu setup
         navigationMenu = FragmentMenu(surveyPage: self)
-        let c = navigationMenu.heightAnchor.constraint(equalToConstant: 50)
-        c.priority = .init(999)
-        c.isActive = true
+        navigationMenu.isHidden = true
         
         uploaded = fragmentData.uploaded
         
@@ -205,10 +203,10 @@ class FragmentTableController: UITableViewController, SurveyPage {
             question.parentView = surveyViewController
             
             let cell = question.makeContentCell()
-            cell.surveyPage = self
+            cell.surveyPage = self // Essential
             cell.unfocus()
             contentCells.append(cell)
-            cell.cellBelow.surveyPage = self
+            cell.cellBelow.surveyPage = self // Essential
             /*
             if question.bottomCellExpanded {
                 cell.cellBelow.expanded = true
@@ -221,6 +219,8 @@ class FragmentTableController: UITableViewController, SurveyPage {
         } else {
             tableView.reloadSections(IndexSet(arrayLiteral: 0), with: .none)
         }
+        
+        self.navigationMenu.isHidden = false
     }
     
     // MARK: - Row actions
@@ -263,90 +263,58 @@ class FragmentTableController: UITableViewController, SurveyPage {
     // MARK: - Table view data source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 52
     }
     
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return [0, 10][section]
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if section == 0 {
-            return nil
-        }
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
-        let view = UIView()
-        view.backgroundColor = .white
-        
-        let line = UIView()
-        line.backgroundColor = .init(white: 0.9, alpha: 1)
-        line.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(line)
-        
-        line.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        line.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        line.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        line.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        
-        return view
+        return navigationMenu
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return [contentCells.count, 1][section]
+        return contentCells.count
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        if indexPath.section == 0 {
-            let cell = contentCells[indexPath.row]
-            if !cell.expanded {
-                return 0.0
-            }
-            
-            return super.tableView(tableView, heightForRowAt: indexPath)
-        } else {
-            return super.tableView(tableView, heightForRowAt: indexPath)
+        let cell = contentCells[indexPath.row]
+        if !cell.expanded {
+            return 0.0
         }
+        
+        return super.tableView(tableView, heightForRowAt: indexPath)
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        if indexPath.section == 0 {
-            let cell = contentCells[indexPath.row]
+        let cell = contentCells[indexPath.row]
 
-            if !cell.expanded { return 0.0 }
-            
-            
-            let width = UIScreen.main.bounds.width - 55.0
-            let preferred = cell.preferredHeight(width: width)
-            return preferred
-        } else {
-            return UITableView.automaticDimension
-        }
-    }
+        if !cell.expanded { return 0.0 }
+        
+        
+        let width = UIScreen.main.bounds.width - 55.0
+        let preferred = cell.preferredHeight(width: width)
+        return preferred
+}
  
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         // Not very memory efficient, but we can assume that a survey
         // will never have too many question on the same page.
         
-        if indexPath.section == 0 {
-            if indexPath.row % 2 == 0 || contentCells[indexPath.row].expanded {
-                return contentCells[indexPath.row]
-            } else {
-                return SurveyElementCell()
-            }
+        if indexPath.row % 2 == 0 || contentCells[indexPath.row].expanded {
+            return contentCells[indexPath.row]
         } else {
-            return navigationMenu
+            return SurveyElementCell()
         }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
-            focusedRow = indexPath.row
-        } else {
-            tableView.deselectRow(at: indexPath, animated: false)
-        }
+        focusedRow = indexPath.row
     }
     
     // MARK: - Response submission
