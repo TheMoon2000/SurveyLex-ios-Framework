@@ -26,6 +26,8 @@ class FragmentTableController: UITableViewController, SurveyPage {
         return !fragmentData.questions.contains { !$0.completed && $0.isRequired }
     }
     
+    var navigationMenu: FragmentMenu!
+    
     // MARK: - Custom instance variables
     
     /// An array of `SurveyElementCell`s in order, each representing a survey element in the fragment.
@@ -74,6 +76,17 @@ class FragmentTableController: UITableViewController, SurveyPage {
         return surveyViewController?.surveyData
     }
     
+    var uploaded: Bool = false {
+        didSet {
+            // The value of the local `uploaded` property should always be in sync with `fragmentData.uploaded`, which is preserved after exit.
+            fragmentData.uploaded = uploaded
+            
+            // Since `uploaded` is set every time a value is changed within a fragment table, we can write code here to update the next button of the navigation menu.
+            DispatchQueue.main.async {
+                self.navigationMenu.nextButton.isEnabled = self.unlocked
+            }
+        }
+    }
     
     /// Whether the view has appeared at least once.
     private var viewAppeared = false
@@ -81,12 +94,14 @@ class FragmentTableController: UITableViewController, SurveyPage {
     /// Whether the content cells are loaded.
     var loadedContentCells = false {
         didSet (oldValue) {
+            
             // If the content cells are loaded for the first time, and the view has already appeared, then we run `appearHandler()`.
             if !oldValue && viewAppeared {
                 self.appearHandler()
             }
         }
     }
+
     
     /// Usually, the view is already loaded by the time it appears. However, if that didn't happen, then we won't call `appearHandler()` until the view has been loaded.
     override func viewDidAppear(_ animated: Bool) {
@@ -95,11 +110,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         viewAppeared = true
         
         // Update the navigation bar
-        surveyViewController?.fragmentIndex = pageIndex
-        
-        if !loadedContentCells { return }
-        
-        contentCells.forEach { $0.appearHandler?(surveyViewController!) }
+        surveyViewController!.fragmentIndex = pageIndex
         
         appearHandler()
     }
@@ -121,6 +132,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         }
     }
     
+    // MARK: - Scrolling helper functions
     func scrollToRow(row: Int) {
         var pos = UITableView.ScrollPosition.middle
         let cell = self.contentCells[row]
@@ -139,45 +151,53 @@ class FragmentTableController: UITableViewController, SurveyPage {
         }
     }
 
+    // MARK: - UI setup
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         precondition(fragmentData != nil)
         
+        // Table setup
         tableView.allowsSelection = true
         tableView.separatorStyle = .none
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.keyboardDismissMode = .interactive
         
+        // View setup
         view.backgroundColor = UIColor(white: 0.95, alpha: 1)
         
-        let label = insertLoadingLabel()
-//        tableView.isHidden = true
+        let label: UILabel = {
+            let label = UILabel()
+            label.text = "Loading content..."
+            label.textColor = .gray
+            label.font = .systemFont(ofSize: 18)
+            label.translatesAutoresizingMaskIntoConstraints = false
+            tableView.insertSubview(label, at: 0)
+            
+            label.centerXAnchor.constraint(equalTo: tableView.safeAreaLayoutGuide.centerXAnchor).isActive = true
+            label.centerYAnchor.constraint(equalTo: tableView.safeAreaLayoutGuide.centerYAnchor,
+                                           constant: -5).isActive = true
+            
+            return label
+        }()
+        
+        // Navigation menu setup
+        navigationMenu = FragmentMenu(surveyPage: self)
+        let c = navigationMenu.heightAnchor.constraint(equalToConstant: 50)
+        c.priority = .init(999)
+        c.isActive = true
+        
+        uploaded = fragmentData.uploaded
         
         // Load content cells
-        
         DispatchQueue.main.async {
             self.loadSurveyElements()
             label.isHidden = true
-//            self.tableView.isHidden = false
             self.loadedContentCells = true
         }
     }
     
-    private func insertLoadingLabel() -> UILabel {
-        let label = UILabel()
-        label.text = "Loading content..."
-        label.textColor = .gray
-        label.font = .systemFont(ofSize: 18)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        tableView.insertSubview(label, at: 0)
-        
-        label.centerXAnchor.constraint(equalTo: tableView.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        label.centerYAnchor.constraint(equalTo: tableView.safeAreaLayoutGuide.centerYAnchor,
-                                       constant: -5).isActive = true
-        
-        return label
-    }
     
     func loadSurveyElements() {
         
@@ -189,13 +209,13 @@ class FragmentTableController: UITableViewController, SurveyPage {
             cell.unfocus()
             contentCells.append(cell)
             cell.cellBelow.surveyPage = self
+            /*
             if question.bottomCellExpanded {
                 cell.cellBelow.expanded = true
-            }
+            }*/
             
             contentCells.append(cell.cellBelow)
         }
-        
         if fragmentData.questions.count == 1 {
             tableView.reloadSections(IndexSet(arrayLiteral: 0), with: .automatic)
         } else {
@@ -228,7 +248,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
             // Scroll to the newly expanded row. We need to wait for the expansion animation to finish before scrolling to the row.
             if self.contentCells[row + 1].expanded {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    self.tableView.scrollToRow(at: targetIndex, at: .none, animated: true)
+                    self.scrollToRow(row: row + 1)
                 }
             }
         }
@@ -243,33 +263,66 @@ class FragmentTableController: UITableViewController, SurveyPage {
     // MARK: - Table view data source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return [0, 10][section]
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0 {
+            return nil
+        }
+        
+        let view = UIView()
+        view.backgroundColor = .white
+        
+        let line = UIView()
+        line.backgroundColor = .init(white: 0.9, alpha: 1)
+        line.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(line)
+        
+        line.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        line.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        line.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        line.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        return view
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return contentCells.count
+        return [contentCells.count, 1][section]
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-                
-        let cell = contentCells[indexPath.row]
-        if !cell.expanded {
-            return 0
-        }
         
-        return super.tableView(tableView, heightForRowAt: indexPath)
+        if indexPath.section == 0 {
+            let cell = contentCells[indexPath.row]
+            if !cell.expanded {
+                return 0.0
+            }
+            
+            return super.tableView(tableView, heightForRowAt: indexPath)
+        } else {
+            return super.tableView(tableView, heightForRowAt: indexPath)
+        }
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        let cell = contentCells[indexPath.row]
+        if indexPath.section == 0 {
+            let cell = contentCells[indexPath.row]
 
-        if !cell.expanded { return 0 }
-        
-        
-        let width = UIScreen.main.bounds.width - 55
-        let preferred = cell.preferredHeight(width: width)
-        return preferred
+            if !cell.expanded { return 0.0 }
+            
+            
+            let width = UIScreen.main.bounds.width - 55.0
+            let preferred = cell.preferredHeight(width: width)
+            return preferred
+        } else {
+            return UITableView.automaticDimension
+        }
     }
  
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -277,22 +330,23 @@ class FragmentTableController: UITableViewController, SurveyPage {
         // Not very memory efficient, but we can assume that a survey
         // will never have too many question on the same page.
         
-        /*
-        if indexPath.row == focusedRow {
-            contentCells[indexPath.row].focus()
+        if indexPath.section == 0 {
+            if indexPath.row % 2 == 0 || contentCells[indexPath.row].expanded {
+                return contentCells[indexPath.row]
+            } else {
+                return SurveyElementCell()
+            }
         } else {
-            contentCells[indexPath.row].unfocus()
-        }*/
-                
-        if indexPath.row % 2 == 0 || contentCells[indexPath.row].expanded {
-            return contentCells[indexPath.row]
-        } else {
-            return SurveyElementCell()
+            return navigationMenu
         }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        focusedRow = indexPath.row
+        if indexPath.section == 0 {
+            focusedRow = indexPath.row
+        } else {
+            tableView.deselectRow(at: indexPath, animated: false)
+        }
     }
     
     // MARK: - Response submission
@@ -303,7 +357,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         fragmentData.needsReupload = false
         
         // If no changes were made to the page, then no re-upload is needed.
-        if fragmentData.uploaded { return }
+        if uploaded { return }
         
         var responseRequest = URLRequest(url: API_RESPONSE)
         responseRequest.httpMethod = "POST"
@@ -314,14 +368,14 @@ class FragmentTableController: UITableViewController, SurveyPage {
             data, response, error in
             
             guard error == nil else {
-                debugMessage("Fragment \(self.pageIndex) upload failed with error message: \(error!)")
+                debugMessage("Fragment \(self.pageIndex) upload failed with error message: \(error!.localizedDescription)")
                 self.uploadFailed()
                 return
             }
             
             // Status code 200 means 'successful'
             if (try? JSON(data: data!).dictionary?["status"]?.int ?? 0) == 200 {
-                self.fragmentData.uploaded = true
+                self.uploaded = true
                 print("fragment \(self.pageIndex) uploaded")
                 self.uploadCompleted()
             } else {
@@ -340,19 +394,16 @@ class FragmentTableController: UITableViewController, SurveyPage {
         // Upload the fragment to the server after it disappears from view.
         uploadResponse()
         
-        // Call the optional disppear handler
-        contentCells.forEach { $0.disappearHandler?(surveyViewController!) }
     }
     
     /// The focused row should still be focused and visible after orientation change.
     override func viewWillTransition(to size: CGSize, with coordinator:
         UIViewControllerTransitionCoordinator) {
-        let spaceBelow = tableView.contentSize.height - tableView.contentOffset.y
-        let upwardOffset = max(0, size.height - spaceBelow)
-        let proposedOffset = max(0, tableView.contentOffset.y - upwardOffset)
-//        self.tableView.reloadData()
         coordinator.animate(alongsideTransition: {context in
-//            self.tableView.contentOffset = CGPoint(x: 0.0, y: proposedOffset)
+            
+            // We reload the table because the height of some rows will be different. Strangely, this row height adjustment mechanism didn't have any effect when I tested it on iOS simulators.
+            self.tableView.reloadData()
+            // Scroll to the current row
             self.tableView.scrollToRow(at: IndexPath(row: self.focusedRow, section: 0), at: .none, animated: false)
         }, completion: nil)
     }

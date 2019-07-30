@@ -26,15 +26,20 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         return completed || !audioQuestion.isRequired
     }
     
+    var navigationMenu: FragmentMenu!
+    
     // MARK: - Custom instance variables
     
+    // MARK: UI elements
+    
+    /// The container scroll view where every other UI element resides in.
     var canvas: UIScrollView!
     
     /// A pointer to the skip button located below the record button.
     var auxiliaryButton: UIButton!
     
-    /// The `Audio` instance which the current cell is presenting.
-    var audioQuestion: Audio!
+    /// The title UI element the audio response question.
+    private var titleLabel: UITextView!
     
     /// A pointer to the record button.
     var recordButton: RecordButton!
@@ -42,10 +47,14 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     /// the `UILabel` under the record button.
     var captionMessage: UILabel!
     
+    /// A stack view that contains the caption message and the auxiliary button.
     var captionStackView: UIStackView!
     
-    /// The title UI element the audio response question.
-    private var titleLabel: UITextView!
+    
+    // MARK: Audio information
+    
+    /// The `Audio` instance which the current cell is presenting.
+    var audioQuestion: Audio!
     
     /// Produces a formatted string that displays the time limit of the audio question.
     var timeLimitString: String {
@@ -61,6 +70,14 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     /// A non-repeating timer instance that contains the code to display an error message, firing after 3 seconds.
     private var displayErrorMessage: Timer?
     
+    /// The ID of the most recently uploaded audio file, returned by the server.
+    private var sampleId = ""
+    
+    /// The date attribute used when encoding the fragment response JSON data.
+    private var recordedDate = Date()
+    
+    // MARK: Upload handling
+    
     /// Whether the fragment data JSON is uploaded.
     private var uploadedFragmentData = false {
         didSet {
@@ -75,12 +92,6 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             fragmentData.uploaded = uploadedFragmentData && uploadedSample
         }
     }
-    
-    /// The ID of the most recently uploaded audio file, returned by the server.
-    private var sampleId = ""
-    
-    /// The date attribute used when encoding the fragment response JSON data.
-    private var recordedDate = Date()
     
     
     // MARK: - UI setup
@@ -129,6 +140,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         uploadResponse()
     }
     
+    /// The method that is called by the auxiliary button.
     @objc private func auxiliaryAction() {
         if auxiliaryButton.title(for: .normal)! == "Skip" {
             
@@ -149,11 +161,12 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         }
     }
     
-    // MARK: - Setup resign active detection
-    
+    // MARK: - View controller setup
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Setup resign active detection
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(resignedActive(_:)),
@@ -161,8 +174,32 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             object: nil)
         
         // UI
-        
         view.backgroundColor = .white
+        
+        navigationMenu = {
+            let menu = FragmentMenu(surveyPage: self)
+            menu.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(menu)
+            
+            menu.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+            menu.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+            menu.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+            let heightConstraint = menu.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -52)
+            heightConstraint.priority = .init(999)
+            heightConstraint.isActive = true
+            
+            let line = UIView()
+            line.backgroundColor = .init(white: 0.9, alpha: 1)
+            line.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(line)
+            
+            line.heightAnchor.constraint(equalToConstant: 1).isActive = true
+            line.bottomAnchor.constraint(equalTo: menu.topAnchor).isActive = true
+            line.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+            line.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+            
+            return menu
+        }()
         
         self.canvas = {
             let scrollView = UIScrollView()
@@ -173,7 +210,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             scrollView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
             scrollView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+//            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -53).isActive = true
+            scrollView.bottomAnchor.constraint(equalTo: navigationMenu.topAnchor).isActive = true
             
             return scrollView
         }()
@@ -193,7 +231,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
                                          constant: -SIDE_PADDING).isActive = true
             label.topAnchor.constraint(equalTo: canvas.topAnchor,
                                        constant: 35).isActive = true
-            label.heightAnchor.constraint(greaterThanOrEqualTo: canvas.heightAnchor, constant: -285).isActive = true
+            // This constraint makes sure that the record button is always at the bottom even if the question prompt does not fill the top half of the screen.
+            label.heightAnchor.constraint(greaterThanOrEqualTo: canvas.heightAnchor, constant: -280).isActive = true
             return label
         }()
         
@@ -201,6 +240,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             let recorder = Recorder(fileURL: saveURL)
             let button: RecordButton
             
+            // Load from cache if possible
             if audioQuestion.recordButton != nil {
                 button = audioQuestion.recordButton!
             } else {
@@ -218,7 +258,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             
             return button
         }()
-        
+
         self.auxiliaryButton = {
             let button = UIButton(type: .system)
             button.tintColor = BUTTON_DEEP_BLUE
@@ -284,11 +324,15 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         timer?.invalidate()
         recordedDate = Date()
         
+        // Update the view to inform the user that this question is now completed.
+        
         captionMessage.isHidden = false
         captionMessage.text = "Your audio response was captured."
         
         auxiliaryButton.isHidden = true
         self.auxiliaryButton.setTitle("Clear Recording", for: .normal)
+        
+        navigationMenu.nextButton.isEnabled = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             self.auxiliaryButton.isHidden = false
@@ -318,8 +362,12 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         captionMessage.isHidden = false
         captionMessage.text = timeLimitString
 
+        // The user can only see the skip button if this question is optional.
         auxiliaryButton.setTitle("Skip", for: .normal)
         auxiliaryButton.isHidden = audioQuestion.isRequired
+        
+        // The user can only flip to the next question (on the next page) if this current audio question is optional.
+        navigationMenu.nextButton.isEnabled = !audioQuestion.isRequired
 
         recordButton.clearRecording()
         
@@ -348,10 +396,6 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         }
         timer!.fire() // start the countdown
         auxiliaryButton.isHidden = true // The countdown text replaces the skip button
-
-        
-        // Update completion status
-        audioQuestion.completed = false
     }
     
     func didFailToRecord(_ sender: RecordButton, error: Recorder.Error) {
@@ -360,6 +404,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         
         captionMessage.isHidden = false
         captionMessage.text = timeLimitString
+        
+        navigationMenu.nextButton.isEnabled = !audioQuestion.isRequired
         
         switch error {
         case .tooShort:
