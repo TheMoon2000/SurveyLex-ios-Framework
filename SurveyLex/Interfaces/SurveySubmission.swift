@@ -98,6 +98,9 @@ class SurveySubmission: UIViewController {
             
             button.addTarget(self, action: #selector(review), for: .touchUpInside)
             button.setTitle("Review", for: .normal)
+            button.layer.borderColor = BLUE_TINT.cgColor
+            button.tintColor = BLUE_TINT
+            button.layer.borderWidth = 1
             button.translatesAutoresizingMaskIntoConstraints = false
             
             return button
@@ -108,6 +111,8 @@ class SurveySubmission: UIViewController {
             
             button.setTitle("Share", for: .normal)
             button.addTarget(self, action: #selector(shareSurvey), for: .touchUpInside)
+            button.backgroundColor = BLUE_TINT
+            button.tintColor = .white
             button.translatesAutoresizingMaskIntoConstraints = false
             
             return button
@@ -117,8 +122,6 @@ class SurveySubmission: UIViewController {
             
             // Format the buttons in the same way
             for button in [reviewResponse!, shareButton!] {
-                button.tintColor = .white
-                button.backgroundColor = BLUE_TINT
                 button.layer.cornerRadius = 5
                 button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
             }
