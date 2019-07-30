@@ -33,12 +33,6 @@ class SurveyElementCell: UITableViewCell {
         return surveyPage?.surveyViewController?.survey.autofocus ?? true
     }
     
-    /// Optional handler to rearrange the cell just before it appears.
-    var appearHandler: ((SurveyViewController) -> ())?
-    
-    /// An optional handler to rearrange the cell after it has disappeared from view.
-    var disappearHandler: ((SurveyViewController) -> ())?
-    
     init() {
         super.init(style: .default, reuseIdentifier: nil)
         
