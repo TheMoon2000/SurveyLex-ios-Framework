@@ -9,29 +9,29 @@
 
 import UIKit
 
-class FragmentMenu: UITableViewCell {
+class FragmentMenu: UIVisualEffectView {
     
-    var surveyPage: SurveyPage!
+    /// The universal height of a fragment menu.
+    static let height: CGFloat = 52
+    
+    var parentVC: SurveyViewController!
     
     var backButton: UIButton!
     var nextButton: UIButton!
     var goToPageButton: UIButton!
     private var currentAlertVC: UIAlertController?
 
-    required init(surveyPage: SurveyPage) {
-        super.init(style: .default, reuseIdentifier: nil)
+    required init(parentVC: SurveyViewController, allowJumping: Bool) {
+        super.init(effect: UIBlurEffect(style: .regular))
         
-        selectionStyle = .none
-        self.surveyPage = surveyPage
-        
-        backgroundColor = .init(white: 0.95, alpha: 1)
+        self.parentVC = parentVC
         
         backButton = {
             let button = UIButton(type: .system)
             button.setImage(#imageLiteral(resourceName: "previous_thin"), for: .normal)
-            button.tintColor = BLUE_TINT
+            button.tintColor = parentVC.theme.medium
             button.translatesAutoresizingMaskIntoConstraints = false
-            addSubview(button)
+            contentView.addSubview(button)
             
             button.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor).isActive = true
             button.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 10).isActive = true
@@ -44,10 +44,9 @@ class FragmentMenu: UITableViewCell {
         nextButton = {
             let button = UIButton(type: .system)
             button.setImage(#imageLiteral(resourceName: "next_thin"), for: .normal)
-            button.tintColor = BLUE_TINT
-            button.isEnabled = surveyPage.unlocked
+            button.tintColor = parentVC.theme.medium
             button.translatesAutoresizingMaskIntoConstraints = false
-            addSubview(button)
+            contentView.addSubview(button)
             
             button.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor).isActive = true
             button.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -10).isActive = true
@@ -65,11 +64,12 @@ class FragmentMenu: UITableViewCell {
         
         goToPageButton = {
             let button = UIButton(type: .system)
-            button.tintColor = DARKER_TINT
+            button.tintColor = parentVC.theme.dark
+            button.isHidden = !allowJumping
             button.setTitle("Go to Page", for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
             button.translatesAutoresizingMaskIntoConstraints = false
-            addSubview(button)
+            contentView.addSubview(button)
             
             button.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
             button.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor).isActive = true
@@ -78,18 +78,42 @@ class FragmentMenu: UITableViewCell {
             
             return button
         }()
+        
+        addLines()
+    }
+    
+    private func addLines() {
+        let line = UIView()
+        line.backgroundColor = .init(white: 0.9, alpha: 1)
+        line.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(line)
+        
+        line.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        line.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        line.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        line.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        
+        let line2 = UIView()
+        line2.backgroundColor = .init(white: 0.9, alpha: 1)
+        line2.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(line2)
+        
+        line2.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        line2.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        line2.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        line2.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
     }
     
     private func numberOfFragments() -> Int {
-        return surveyPage.surveyViewController!.fragmentPages.count
+        return parentVC.fragmentPages.count
     }
     
     @objc private func goToPage() {
         
-        let lowerBound = surveyPage.surveyViewController!.survey.showLandingPage ? 0 : 1
+        let lowerBound = parentVC.survey.showLandingPage ? 0 : 1
         
         let alert = UIAlertController(title: "Go to Page", message: "Please enter a page number between \(lowerBound) and \(numberOfFragments()).", preferredStyle: .alert)
-        alert.view.tintColor = DARKER_TINT
+        alert.view.tintColor = parentVC.theme.dark
         
         currentAlertVC = alert
         
@@ -112,13 +136,13 @@ class FragmentMenu: UITableViewCell {
         // By default, the page number textfield is blank so we disable the 'Go' button.
         alert.actions.last?.isEnabled = false
 
-        surveyPage.present(alert, animated: true, completion: nil)
+        parentVC.present(alert, animated: true, completion: nil)
     }
     
     @objc private func pageNumberTextFieldValueChanged(_ sender: UITextField) {
         let alert = currentAlertVC!
         if let pageNumber = Int(sender.text!) {
-            if surveyPage.surveyViewController!.survey.showLandingPage {
+            if parentVC.survey.showLandingPage {
                 alert.actions.last?.isEnabled = pageNumber >= 0 && pageNumber <= numberOfFragments()
             } else {
                 alert.actions.last?.isEnabled = pageNumber > 0 && pageNumber <= numberOfFragments()
@@ -137,7 +161,7 @@ class FragmentMenu: UITableViewCell {
             preconditionFailure("Internal inconsistency in page number")
         }
         
-        surveyPage.surveyViewController!.goToPage(page: pageNumber - 1)
+        parentVC.goToPage(page: pageNumber - 1)
         
         currentAlertVC = nil
     }
@@ -145,13 +169,17 @@ class FragmentMenu: UITableViewCell {
     // Forward and backward buttons
     
     @objc private func flipBack() {
-        surveyPage.surveyViewController?.goToPage(page: surveyPage.pageIndex - 1)
+        parentVC.goToPage(page: parentVC.fragmentIndex - 1)
     }
     
     @objc private func flipNext() {
-        if !surveyPage.surveyViewController!.flipPageIfNeeded() {
-            if let nextVC = surveyPage.surveyViewController!.pageViewController(surveyPage.surveyViewController!, viewControllerAfter: surveyPage) {
-                surveyPage.surveyViewController!.setViewControllers([nextVC], direction: .forward, animated: true, completion: nil)
+        if parentVC.fragmentIndex == parentVC.fragmentPages.count { return }
+        if !parentVC.flipPageIfNeeded() {
+            if let nextVC = parentVC.pageViewController(parentVC, viewControllerAfter: parentVC.currentFragment!) {
+                parentVC.setViewControllers([nextVC],
+                                            direction: .forward,
+                                            animated: true,
+                                            completion: nil)
             } else {
                 debugMessage("Cannot flip to next page.")
             }
