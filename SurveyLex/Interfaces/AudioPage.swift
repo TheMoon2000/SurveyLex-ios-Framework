@@ -26,7 +26,10 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         return completed || !audioQuestion.isRequired
     }
     
-    var navigationMenu: FragmentMenu!
+    // Shortcut reference for the shared navigation menu
+    var navigationMenu: FragmentMenu {
+        return surveyViewController!.navigationMenu
+    }
     
     // MARK: - Custom instance variables
     
@@ -67,8 +70,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     /// A repeating timer instance that manages the countdown display while the user is recording.
     private var timer: Timer?
     
-    /// A non-repeating timer instance that contains the code to display an error message, firing after 3 seconds.
-    private var displayErrorMessage: Timer?
+    /// A non-repeating timer instance that contains the code to clear an error message, firing after 3 seconds.
+    private var resetCaptionDisplay: Timer?
     
     /// The ID of the most recently uploaded audio file, returned by the server.
     private var sampleId = ""
@@ -116,6 +119,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             clearRecording()
             timer?.invalidate()
             let alert = UIAlertController(title: "Recording Interrupted!", message: "Please do not leave this app in the middle of a recording, as audio capture does not work in background mode.", preferredStyle: .alert)
+            alert.view.tintColor = theme.dark
             alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
             surveyViewController?.present(alert, animated: true, completion: nil)
         }
@@ -127,6 +131,21 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         // Update the page number in the navigation bar. We need to minus 1 here because the `order` property indexes fragments and questions from 1 instead of 0.
         surveyViewController?.fragmentIndex = audioQuestion.order.fragment - 1
         
+        
+        // Update navigation menu display
+        self.navigationMenu.nextButton.isEnabled = self.unlocked
+        
+        if !recordButton.isRecording {
+            UIView.transition(with: navigationMenu,
+                              duration: 0.3,
+                              options: .curveEaseInOut,
+                              animations: {
+                                self.navigationMenu.alpha = 1.0
+                                self.navigationMenu.isUserInteractionEnabled = true
+            }, completion: nil)
+        }
+        
+        // Handle auto-start
         if audioQuestion.autoStart && !audioQuestion.visited {
             audioQuestion.visited = true
             recordButton.startRecording()
@@ -155,6 +174,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         } else {
             let roundedLength = round(recordButton.currentRecordingDuration * 10) / 10
             let alert = UIAlertController(title: "Clear recording?", message: "You are about to delete your previous recording (\(roundedLength) seconds). This cannot be undone.", preferredStyle: .actionSheet)
+            alert.view.tintColor = theme.dark
             alert.addAction(UIAlertAction(title: "Clear", style: .destructive, handler: { alert in self.clearRecording() }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             surveyViewController?.present(alert, animated: true, completion: nil)
@@ -176,31 +196,6 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         // UI
         view.backgroundColor = .white
         
-        navigationMenu = {
-            let menu = FragmentMenu(surveyPage: self)
-            menu.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(menu)
-            
-            menu.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-            menu.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-            menu.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-            let heightConstraint = menu.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -52)
-            heightConstraint.priority = .init(999)
-            heightConstraint.isActive = true
-            
-            let line = UIView()
-            line.backgroundColor = .init(white: 0.9, alpha: 1)
-            line.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(line)
-            
-            line.heightAnchor.constraint(equalToConstant: 1).isActive = true
-            line.bottomAnchor.constraint(equalTo: menu.topAnchor).isActive = true
-            line.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-            line.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-            
-            return menu
-        }()
-        
         self.canvas = {
             let scrollView = UIScrollView()
             scrollView.showsHorizontalScrollIndicator = false
@@ -210,8 +205,11 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             scrollView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
             scrollView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-//            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -53).isActive = true
-            scrollView.bottomAnchor.constraint(equalTo: navigationMenu.topAnchor).isActive = true
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+            
+            scrollView.contentInset.bottom = FragmentMenu.height
+            
+            print(view.safeAreaInsets.bottom)
             
             return scrollView
         }()
@@ -219,7 +217,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         self.titleLabel = {
             let label = UITextView()
             label.text = audioQuestion.prompt
-            label.format(as: .title)
+            label.format(as: .title, theme: theme)
             label.textAlignment = .center
             label.translatesAutoresizingMaskIntoConstraints = false
             
@@ -244,9 +242,10 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             if audioQuestion.recordButton != nil {
                 button = audioQuestion.recordButton!
             } else {
-                button = RecordButton(duration: audioQuestion.duration,
-                                      radius: 50,
-                                      recorder: recorder)
+                button = RecordButton(radius: 50,
+                                      recorder: recorder,
+                                      theme: theme)
+                button.maxLength = audioQuestion.duration
                 button.tintColor = BUTTON_TINT
                 audioQuestion.recordButton = button
             }
@@ -321,24 +320,22 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     func didFinishRecording(_ sender: RecordButton, duration: Double) {
         debugMessage("Recording with duration \(round(duration * 10) / 10)s saved to \(sender.saveURL).")
         
+        // Stop the timer.
         timer?.invalidate()
+        
+        // Record the date of this most recent recording.
         recordedDate = Date()
         
         // Update the view to inform the user that this question is now completed.
-        
         captionMessage.isHidden = false
         captionMessage.text = "Your audio response was captured."
-        
         auxiliaryButton.isHidden = true
         self.auxiliaryButton.setTitle("Clear Recording", for: .normal)
-        
-        navigationMenu.nextButton.isEnabled = true
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             self.auxiliaryButton.isHidden = false
             self.captionMessage.isHidden = true
         }
-
         
         // This is the only place where the audio question's `completion` property is set to true.
         audioQuestion.completed = true
@@ -354,6 +351,22 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         
         // A new recording is created, so the question is not skipped.
         audioQuestion.skipped = false
+        
+        // The user can proceed to the next question.
+        navigationMenu.nextButton.isEnabled = true
+        
+        UIView.transition(with: view,
+                          duration: 0.2,
+                          options: .curveEaseInOut,
+                          animations: {
+                            self.navigationMenu.alpha = 1.0
+                            self.navigationMenu.isUserInteractionEnabled = true
+                            self.canvas.contentInset.bottom = FragmentMenu.height
+                            self.canvas.contentOffset.y += FragmentMenu.height
+                          }, completion: nil)
+        
+        // The user can now close the survey
+        surveyViewController?.navigationItem.rightBarButtonItem?.isEnabled = true
     }
     
     /// Clear the current recording.
@@ -375,17 +388,23 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             // An audio question can only be skipped if it's not required. At this moment, the question is left blank and isn't required, so we should treat the question as skipped.
             audioQuestion.skipped = true
         }
+        
+        // The user's response on the current question needs to be updated.
+        uploadedFragmentData = false
     }
     
     /// Displays the time remaining message once the recording starts.
     func didBeginRecording(_ sender: RecordButton) {
+        
         let df = DateComponentsFormatter()
         df.allowedUnits = .second
         df.collapsesLargestUnit = false
         df.unitsStyle = .abbreviated
         df.zeroFormattingBehavior = .dropLeading
+        
         timer?.invalidate()
-        displayErrorMessage?.invalidate()
+        resetCaptionDisplay?.invalidate()
+        
         timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
             let timeRemaining = ceil(self.recordButton.timeRemaining)
             if timeRemaining <= 0 {
@@ -396,6 +415,21 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         }
         timer!.fire() // start the countdown
         auxiliaryButton.isHidden = true // The countdown text replaces the skip button
+        
+        // Prevent user from swiping to other pages during a recording.
+        surveyViewController?.reloadDatasource()
+        
+        UIView.transition(with: view,
+                          duration: 0.2,
+                          options: .curveEaseInOut,
+                          animations: {
+                            self.navigationMenu.alpha = 0.0
+                            self.navigationMenu.isUserInteractionEnabled = false
+                            self.canvas.contentInset.bottom = 0
+                          }, completion: nil)
+        
+        // Forbid the user from closing the survey while recording.
+        surveyViewController?.navigationItem.rightBarButtonItem?.isEnabled = false
     }
     
     func didFailToRecord(_ sender: RecordButton, error: Recorder.Error) {
@@ -405,7 +439,19 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         captionMessage.isHidden = false
         captionMessage.text = timeLimitString
         
+        // Update navigation menu next button.
         navigationMenu.nextButton.isEnabled = !audioQuestion.isRequired
+        
+        // Adjust scroll view inset.
+        UIView.transition(with: view, duration: 0.2, options: .curveEaseInOut, animations: {
+                self.navigationMenu.alpha = 1.0
+                self.navigationMenu.isUserInteractionEnabled = true
+                self.canvas.contentInset.bottom = FragmentMenu.height
+                self.canvas.contentOffset.y += FragmentMenu.height
+            }, completion: nil)
+        
+        // The user can now close the survey
+        surveyViewController?.navigationItem.rightBarButtonItem?.isEnabled = true
         
         switch error {
         case .tooShort:
@@ -415,7 +461,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             //  Update the progress bar in `SurveyViewController` to reflect that the current audio question is not (or no longer) completed
             audioQuestion.completed = false
             
-            displayErrorMessage = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { timer in
+            resetCaptionDisplay = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { timer in
                 self.captionMessage.text = self.timeLimitString
                 self.auxiliaryButton.isHidden = self.audioQuestion.isRequired
             }
@@ -423,12 +469,14 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             let alert = UIAlertController(title: "No Mic Access",
                                           message: "Please enable microphone access in Settings.",
                                           preferredStyle: .alert)
+            alert.view.tintColor = theme.dark
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             audioQuestion.parentView?.present(alert, animated: true, completion: nil)
         case .fileWrite:
             let alert = UIAlertController(title: "No Write Permission",
                                           message: "Internal error.",
                                           preferredStyle: .alert)
+            alert.view.tintColor = theme.dark
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             audioQuestion.parentView?.present(alert, animated: true, completion: nil)
         }

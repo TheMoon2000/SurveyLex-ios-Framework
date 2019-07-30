@@ -35,6 +35,9 @@ class RatingSliderCell: SurveyElementCell {
             caption.text = option.text
             ratingQuestion.selectionString = option.text
             ratingQuestion.sliderValue = currentValue
+           
+            // Tell the fragment page controller that its information needs to be uploaded again
+            surveyPage.uploaded = false
         }
     }
     
@@ -49,7 +52,7 @@ class RatingSliderCell: SurveyElementCell {
         title = {
             let textView = UITextView()
             textView.text = ratingQuestion.title
-            textView.format(as: .title)
+            textView.format(as: .title, theme: ratingQuestion.theme)
             textView.textColor = .black
             textView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(textView)
@@ -185,12 +188,12 @@ class RatingSliderCell: SurveyElementCell {
             UISelectionFeedbackGenerator().selectionChanged()
             
             // Tell the fragment that its information needs to be uploaded again
-            ratingQuestion.fragment?.uploaded = false
+            surveyPage.uploaded = false
         }
     }
     
     @objc private func sliderPressed() {
-        surveyPage?.focus(cell: self)
+        surveyPage.focus(cell: self)
         UISelectionFeedbackGenerator().selectionChanged()
         
         // First press requires special handling
@@ -199,10 +202,7 @@ class RatingSliderCell: SurveyElementCell {
             let index = Int(round(currentValue / segmentLength))
             let option = ratingQuestion.options[index]
             caption.text = option.text
-            slider.thumbTintColor = BLUE_TINT
-            
-            // Tell the fragment page controller that its information needs to be uploaded again
-            surveyPage?.uploaded = false
+            slider.thumbTintColor = surveyPage.theme.medium
         }
     }
     
@@ -218,7 +218,7 @@ class RatingSliderCell: SurveyElementCell {
     override func focus() {
         super.focus()
         UIView.performWithoutAnimation {
-            slider.thumbTintColor = ratingQuestion.completed ? BLUE_TINT : .lightGray
+            slider.thumbTintColor = ratingQuestion.completed ? surveyPage.theme.medium : .lightGray
         }
     }
     
@@ -226,7 +226,7 @@ class RatingSliderCell: SurveyElementCell {
         super.unfocus()
         if autofocus {
             UIView.performWithoutAnimation {
-                slider.thumbTintColor = ratingQuestion.completed ? DISABLED_BLUE : grayColor
+                slider.thumbTintColor = ratingQuestion.completed ? surveyPage.theme.light : grayColor
                 slider.alpha = 1.0
             }
         }
