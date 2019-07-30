@@ -23,12 +23,17 @@ public class Survey {
     
     /// The view controller that will present the survey when `present()` is called.
     public var targetVC: UIViewController?
+    
+    /// The data content of the survey.
     private(set) var surveyData: SurveyData?
+    
+    /// The image of the survey.
+    private(set) var logoImage: UIImage?
     
     /// Optional delegate that handles survey responses.
     public var delegate: SurveyResponseDelegate?
     
-    // MARK: Environment variables
+    // MARK: - Environment variables
     
     /// Whether multiple choice / checkbox menus are allowed to collapse once expanded.
     public var allowMenuCollapse = false
@@ -40,7 +45,10 @@ public class Survey {
     public var submissionMode = true
     
     /// Whether the survey data is loaded from cache.
-    private var loadedFromCache = false
+    public var loadedFromCache = false
+    
+    /// Whether a landing page is shown the first time the survey is launched.
+    public var showLandingPage = true
     
     // MARK: Survey class implementation
     
@@ -68,6 +76,7 @@ public class Survey {
         self.surveyID = surveyID
         self.targetVC = target
     }
+    
     
     /**
      A private helper method that loads the survey JSON from the API and executes a block of code upon completion.
@@ -111,13 +120,20 @@ public class Survey {
             
             do {
                 let json = try JSON(data: data!)
-                self.surveyData = try SurveyData(json: json) // Might be invalid
+                self.surveyData = try SurveyData(json: json, landingPage: self.showLandingPage)
                 debugMessage("Survey <\(self.surveyID)> is loaded from the server.")
                 SURVEY_CACHE[self.surveyID] = self.surveyData
-                DispatchQueue.main.async {
-                    completion()
+                
+                // Depending on whether there is a logo, we call the completion handler at different times
+                if let logoURL = json.dictionary?["logoUrl"]?.url {
+                    self.loadImage(logoURL: logoURL) { completion() }
+                } else {
+                    DispatchQueue.main.async {
+                        completion()
+                    }
                 }
             } catch {
+                
                 // Unable to parse JSON from url data, although connection to the server was established
                 
                 var msg: String?
@@ -128,6 +144,28 @@ public class Survey {
                     self.delegate?.surveyEncounteredError(self, error: .invalidRequest, message: msg)
                 }
             }
+        }
+        
+        task.resume()
+    }
+    
+    /// Loads the logo image of a survey using the provided URL.
+    private func loadImage(logoURL: URL, completion: @escaping (() -> ())) {
+        let task = CUSTOM_SESSION.dataTask(with: logoURL) {
+            data, response, error in
+            
+            guard error == nil else {
+                debugMessage("The provided logo image at \(logoURL) could not be downloaded. Error message: '\(error!.localizedDescription)'")
+                return
+            }
+            
+            if let image = UIImage(data: data!) {
+                self.logoImage = image
+            } else {
+                debugMessage("The provided logo image at \(logoURL) could not be read.")
+            }
+            
+            DispatchQueue.main.async { completion() }
         }
         
         task.resume()
@@ -181,7 +219,7 @@ public class Survey {
     
     /// Create a session at the beginning of the survey.
     private func createSession() {
-        let dateString = ISO8601DateFormatter().string(from: surveyData!.startTime)
+        let dateString = ISO8601DateFormatter().string(from: Date())
         
         var session = JSON()
         session.dictionaryObject?["startTime"] = dateString

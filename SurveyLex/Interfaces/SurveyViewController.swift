@@ -29,18 +29,18 @@ class SurveyViewController: UIPageViewController,
             surveyData.fragmentIndex = fragmentIndex
             if fragmentIndex == -1 {
                 navigationItem.title = surveyData.title
-                UIView.animate(withDuration: 0.3) {
+                UIView.animate(withDuration: 0.35) {
                     self.progressIndicator?.setProgress(0, animated: true)
                 }
             } else if fragmentIndex == fragmentPages.count {
                 navigationItem.title = "Response Submission"
-                UIView.animate(withDuration: 0.3) {
+                UIView.animate(withDuration: 0.35) {
                     self.progressIndicator.setProgress(1.0, animated: true)
                 }
             } else {
                 navigationItem.title = surveyData.title + " (\(fragmentIndex + 1)/\(fragmentPages.count))"
                 let percentage = Float(fragmentIndex + 1) / Float(fragmentPages.count)
-                UIView.animate(withDuration: 0.3) {
+                UIView.animate(withDuration: 0.35) {
                     self.progressIndicator?.setProgress(percentage, animated: true)
                 }
             }

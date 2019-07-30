@@ -25,14 +25,11 @@ public class SurveyData: CustomStringConvertible {
     /// An array of survey fragments, each representing a page of the survey.
     var fragments = [Fragment]()
     
-    /// The start time of the survey presentation.
-    var startTime = Date()
-    
     /// The session ID.
     let sessionID = UUID().uuidString.lowercased()
     
     /// The same attribute as the `fragmentIndex` attribute in the survey view controller, but *DO NOT* modify this property. Instead, do it in the survey view controller.
-    var fragmentIndex = 0
+    var fragmentIndex: Int
     
     /// Contains the set of `FragmentTableController`s that have already been displayed at least once to the user.
     var visited = Set<Int>()
@@ -41,7 +38,7 @@ public class SurveyData: CustomStringConvertible {
     var submittedOnce = false
     
     /// Creates a new survey form using a JSON summary of the survey.
-    required public init(json: JSON) throws {
+    required public init(json: JSON, landingPage: Bool = true) throws {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,
@@ -55,9 +52,10 @@ public class SurveyData: CustomStringConvertible {
         }
         
         self.title = title
-        // self.creator = creator
         self.surveyId = surveyId
         self.published = published
+        
+        fragmentIndex = landingPage ? -1 : 0
         
         for i in 0..<fragments.count {
             let newFragment = Fragment(json: fragments[i], index: i, parentSurvey: self)
