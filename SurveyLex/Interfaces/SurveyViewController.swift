@@ -26,21 +26,30 @@ class SurveyViewController: UIPageViewController,
      */
     var fragmentIndex = -1 {
         didSet (oldValue) {
-            if fragmentIndex == -1 || fragmentIndex == oldValue { return }
             surveyData.fragmentIndex = fragmentIndex
-            if fragmentIndex == fragmentPages.count {
+            if fragmentIndex == -1 {
+                navigationItem.title = surveyData.title
+                UIView.animate(withDuration: 0.3) {
+                    self.progressIndicator?.setProgress(0, animated: true)
+                }
+            } else if fragmentIndex == fragmentPages.count {
                 navigationItem.title = "Response Submission"
-                progressIndicator.setProgress(1.0, animated: true)
+                UIView.animate(withDuration: 0.3) {
+                    self.progressIndicator.setProgress(1.0, animated: true)
+                }
             } else {
                 navigationItem.title = surveyData.title + " (\(fragmentIndex + 1)/\(fragmentPages.count))"
                 let percentage = Float(fragmentIndex + 1) / Float(fragmentPages.count)
-                progressIndicator?.setProgress(percentage, animated: true)
+                UIView.animate(withDuration: 0.3) {
+                    self.progressIndicator?.setProgress(percentage, animated: true)
+                }
             }
         }
     }
     
     /// Convenient shortcut for accessing the current fragment page.
-    var currentFragment: SurveyPage {
+    var currentFragment: SurveyPage? {
+        if fragmentIndex == -1 || fragmentIndex == fragmentPages.count { return nil }
         return fragmentPages[fragmentIndex]
     }
     
@@ -58,9 +67,6 @@ class SurveyViewController: UIPageViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Set start time
-        surveyData.startTime = Date()
         
         // Generate the survey pages and set the `surveyViewController` attribute of every fragment to self.
         fragmentPages = surveyData.fragments.map { fragment in
@@ -85,9 +91,20 @@ class SurveyViewController: UIPageViewController,
             return bar
         }()
         
-        // Load up the first page of the survey
+        // Load up the landing page or first page of the survey
+        
         fragmentIndex = surveyData.fragmentIndex
-        setViewControllers([fragmentPages[fragmentIndex]],
+        
+        let page: UIViewController
+        if fragmentIndex == -1 {
+            let landingPage = LandingPage()
+            landingPage.surveyViewController = self
+            page = landingPage
+        } else {
+            page = fragmentPages[fragmentIndex]
+        }
+        
+        setViewControllers([page],
                            direction: .forward,
                            animated: false,
                            completion: nil)
@@ -111,6 +128,7 @@ class SurveyViewController: UIPageViewController,
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        // Call delegate method
         survey.delegate?.surveyDidPresent(survey)
     }
     
@@ -131,6 +149,7 @@ class SurveyViewController: UIPageViewController,
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         if surveyData.submittedOnce {
+            // If the user has made their first submission, then display the following dialog.
             alert.title = "Unsaved Changes"
             alert.message = "You may have made unsaved changes to your response since your last submission. Do you want to first submit these changes now?"
             alert.addAction(UIAlertAction(title: "Submit Changes", style: .default, handler: { action in
@@ -143,8 +162,9 @@ class SurveyViewController: UIPageViewController,
             }))
             alert.addAction(UIAlertAction(title: "Leave", style: .default, handler: { action in self.dismissSurvey() }))
         } else {
+            // If the user hasn't yet submitted anything, then warn them.
             alert.title = "Are you sure?"
-            alert.message = "You are about the leave the survey without submitting it. Save existing responses?"
+            alert.message = "You are about the leave the survey without submitting it. Save the current session?"
             alert.addAction(UIAlertAction(title: "Save and Exit", style: surveyData.submittedOnce ? .default : .default, handler: { action in self.dismissSurvey() }))
             alert.addAction(UIAlertAction(title: "Discard Changes and Exit", style: .destructive, handler: { action in
                 self.clearCache()
@@ -152,12 +172,14 @@ class SurveyViewController: UIPageViewController,
             }))
         }
         
-        // Also dismiss the keyboard.
-        self.currentFragment.view.endEditing(true)
+        // Also dismiss the keyboard
+        self.currentFragment?.view.endEditing(true)
         
+        // Show the alert
         self.present(alert, animated: true, completion: nil)
     }
     
+    // Call delegate methods
     private func dismissSurvey() {
         self.survey.delegate?.surveyWillClose(self.survey, completed: false)
         
@@ -166,6 +188,7 @@ class SurveyViewController: UIPageViewController,
         }
     }
     
+    /// Clears the cache of a survey. This involves deleting any WAV recordings and removing the survey data object from memory.
     private func clearCache() {
         try? FileManager.default.removeItem(at: AUDIO_CACHE_DIR)
         SURVEY_CACHE.removeValue(forKey: surveyData.surveyId)
@@ -173,31 +196,60 @@ class SurveyViewController: UIPageViewController,
     
     // MARK: - Datasource methods for UIPageController
     
-    func presentationCount(for pageViewController: UIPageViewController) -> Int {
-        return surveyData.fragments.count
-    }
-    
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
-        guard let index = (viewController as? SurveyPage)?.pageIndex else {
+        // First page has no previous page
+        if viewController is LandingPage {
+            return nil
+        }
+        
+        // Submission page's last page is the last page of the survey
+        if viewController is SurveySubmission {
             return fragmentPages.last
         }
         
-        if (index == 0) {
-            return nil
+        // Otherwise, we have an index for the survey page
+        let index = (viewController as! SurveyPage).pageIndex
+        
+        // Landing page only exists if `showLandingPage` is set to true.
+        if index == 0 {
+            if survey.showLandingPage {
+                fragmentPages[index].navigationMenu.backButton.isEnabled = true
+
+                let landingPage = LandingPage()
+                landingPage.surveyViewController = self
+                return landingPage
+            } else {
+                fragmentPages[index].navigationMenu.backButton.isEnabled = false
+
+                return nil
+            }
         }
+        
+        fragmentPages[index].navigationMenu.backButton.isEnabled = true
         
         return fragmentPages[index - 1]
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-    
-        guard let index = (viewController as? SurveyPage)?.pageIndex else {
-            return nil // There is no page after the submission page
+        
+        // First page
+        if viewController is LandingPage {
+            return fragmentPages.first
         }
         
+        // Last page
+        if viewController is SurveySubmission {
+            return nil
+        }
+    
+        // Otherwise, we have an index for this page of the survey
+        let index = (viewController as! SurveyPage).pageIndex
+        
         if let c = (fragmentPages[index] as? FragmentTableController)?.contentCells.first as? ConsentCell {
-            if !c.completed { return nil }
+            if !c.completed {
+                return nil
+            }
         }
         
         // User has not yet completed the required questions on the current page, so do not proceed with the next one.
@@ -224,35 +276,82 @@ class SurveyViewController: UIPageViewController,
     */
     
     func flipPageIfNeeded(allCompleted: Bool = true) -> Bool {
-        let cond = allCompleted ? currentFragment.completed : currentFragment.unlocked
+        let cond = allCompleted ? currentFragment!.completed : currentFragment!.unlocked
 
-        if !cond {
-            return false
-        }
-                
-        if cond && fragmentIndex + 1 < fragmentPages.count {
-//            fragmentIndex += 1
-            self.setViewControllers([fragmentPages[fragmentIndex + 1]],
-                                    direction: .forward,
-                                    animated: true,
-                                    completion: nil)
+        guard cond else { return false }
+                        
+        if fragmentIndex + 1 < fragmentPages.count {
+            DispatchQueue.main.async {
+                self.setViewControllers([self.fragmentPages[self.fragmentIndex + 1]],
+                                        direction: .forward,
+                                        animated: true,
+                                        completion: nil)
+            }
             return true
-        } else if fragmentIndex + 1 == fragmentPages.count {
+        } else if fragmentIndex + 1 == fragmentPages.count && !submissionNoticeShown {
             submissionNotice()
+            return true
         }
         return false
+    }
+    
+    /// Animate to the specific page (indexed at 0).
+    func goToPage(page: Int) {
+        
+        // If the given page number is the same as that of the current page number, no work needs to be done.
+        if page == fragmentIndex { return }
+        
+        // If the given page is -1, then it's going to be the landing page
+        if page == -1 {
+            if survey.showLandingPage {
+                let landingPage = LandingPage()
+                landingPage.surveyViewController = self
+                setViewControllers([landingPage], direction: .reverse, animated: true, completion: nil)
+            }
+            return
+        }
+        
+        // If out of bounds, do nothing (theoretically, page should already be checked before passing into this method).
+        if page >= fragmentPages.count || page < -1 {
+            debugMessage("WARNING: 'goToPage(:_)' method in SurveyViewController received out-of-bounds page number!")
+            return
+        }
+        
+        // Verify that every page is unlocked leading up to the provided page.
+        var canVisitPage = true
+        
+        for i in 0..<page {
+            if !fragmentPages[i].unlocked {
+                canVisitPage = false
+            }
+        }
+        
+        // If the provided page is still locked, then give a warning.
+        guard canVisitPage else {
+            let warning = UIAlertController(title: "Cannot Visit Page", message: "One or more of the intermediate pages are not yet completed. Please complete these pages first.", preferredStyle: .alert)
+            warning.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+            present(warning, animated: true, completion: nil)
+            return
+        }
+        
+        // Decide which animation to use (forward / reverse) and present the new page.
+        let direction: UIPageViewController.NavigationDirection = page > fragmentIndex ? .forward : .reverse
+        
+        // Present the new page using an animation
+        let newPage = fragmentPages[page]
+        setViewControllers([newPage], direction: direction, animated: true, completion: nil)
+        
     }
     
     // MARK: - Page flip helper functions
     
     private func submissionNotice() {
-        if submissionNoticeShown { return }
         
         submissionNoticeShown = true
         
         let alert = UIAlertController(title: "Survey Completed!", message: "You have already completed all the required questions in the survey. If you would like to submit now, please press 'Submit'. Alternatively, you can review your responses and submit later by swiping to the right.", preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: "Submit", style: .default) { action in
+        alert.addAction(UIAlertAction(title: "Submit Now", style: .default) { action in
             
             let vc = SurveySubmission()
             vc.surveyViewController = self
@@ -310,9 +409,5 @@ class SurveyViewController: UIPageViewController,
     func reloadDatasource() {
         dataSource = nil
         dataSource = self
-    }
-    
-    func restartSurvey() {
-        
     }
 }
