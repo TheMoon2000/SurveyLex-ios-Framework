@@ -43,7 +43,8 @@ func surveyDidLoad(_ survey: Survey) {
 
 ## Environment variables
 - `allowMenuCollapse`: A boolean indicating whether choices that are expanded can be folded up again. Default is `false`.
-- `autofocus`: Whether the current item on a page of a survey has higher opacity than other elements. Default is `true`. <img src="Screenshots/autofocus.png" width="250">
+- `autofocus`: Whether the current item on a page of a survey has higher opacity than other elements. Default is `true`.
+<img src="Screenshots/autofocus.png" width="250" style="border-color: #E5E5E5; border-width: 1px">
 - `isSubmissionMode: Bool`
 - `showLandingPage: Bool`
 - `showNavigationMenu: Bool`
