@@ -13,18 +13,20 @@ class CheckboxItemCell: UITableViewCell {
     private var checkboxesData: CheckBoxes!
     var checkbox: UICheckbox!
     var titleLabel: UILabel!
+    private var theme: Survey.Theme!
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    required init(theme: Survey.Theme) {
+        super.init(style: .default, reuseIdentifier: nil)
         
         selectionStyle = .none
+        self.theme = theme
         checkbox = makeCheckbox()
         titleLabel = makeTitle()
     }
     
     private func makeCheckbox() -> UICheckbox {
         let checkbox = UICheckbox()
-        checkbox.format(type: .square)
+        checkbox.format(type: .square, theme: theme)
         checkbox.isUserInteractionEnabled = false
         checkbox.translatesAutoresizingMaskIntoConstraints = false
         checkbox.widthAnchor.constraint(equalToConstant: 20).isActive = true
