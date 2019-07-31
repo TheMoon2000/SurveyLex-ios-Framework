@@ -52,7 +52,6 @@ class SurveySubmission: UIViewController {
             let spinner = UIActivityIndicatorView(style: .whiteLarge)
             spinner.hidesWhenStopped = true
             spinner.color = .lightGray
-            spinner.startAnimating()
             spinner.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(spinner)
             
@@ -64,7 +63,7 @@ class SurveySubmission: UIViewController {
         
         titleLabel = {
             let label = UILabel()
-            label.text = "Submit"
+            label.text = "Release to Submit"
             label.font = .systemFont(ofSize: 26)
             label.textColor = .darkGray
             label.textAlignment = .center
@@ -80,9 +79,10 @@ class SurveySubmission: UIViewController {
         
         progressBar = {
             let bar = UIProgressView()
-            bar.progressTintColor = BLUE_TINT
+            bar.progressTintColor = surveyViewController.theme.medium
             bar.trackTintColor = .init(white: 0.91, alpha: 1)
             bar.progress = 0
+            bar.isHidden = true
             bar.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(bar)
             
@@ -98,8 +98,8 @@ class SurveySubmission: UIViewController {
             
             button.addTarget(self, action: #selector(review), for: .touchUpInside)
             button.setTitle("Review", for: .normal)
-            button.layer.borderColor = BLUE_TINT.cgColor
-            button.tintColor = BLUE_TINT
+            button.layer.borderColor = surveyViewController.theme.medium.cgColor
+            button.tintColor = surveyViewController.theme.medium
             button.layer.borderWidth = 1
             button.translatesAutoresizingMaskIntoConstraints = false
             
@@ -111,7 +111,7 @@ class SurveySubmission: UIViewController {
             
             button.setTitle("Share", for: .normal)
             button.addTarget(self, action: #selector(shareSurvey), for: .touchUpInside)
-            button.backgroundColor = BLUE_TINT
+            button.backgroundColor = surveyViewController.theme.medium
             button.tintColor = .white
             button.translatesAutoresizingMaskIntoConstraints = false
             
@@ -166,18 +166,21 @@ class SurveySubmission: UIViewController {
         
         surveyViewController.fragmentIndex = surveyViewController.fragmentPages.count
         updateProgress()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
-        updateProgress()
+        UIView.transition(with: surveyViewController.navigationMenu,
+                          duration: 0.2,
+                          options: .curveEaseInOut,
+                          animations: {
+                            self.surveyViewController.navigationMenu.alpha = 0.0
+                            self.surveyViewController.navigationMenu.isUserInteractionEnabled = false
+                          }, completion: nil)
     }
-    
+
     @objc private func uploadError() {
         if isDisplayingAlert { return }
         
         let alert = UIAlertController(title: "Network Failure", message: "We are unable to upload your response. Please check your internet connection.", preferredStyle: .alert)
+        alert.view.tintColor = surveyViewController.theme.dark
         
         // Button action
         let handler: (UIAlertAction) -> Void = { action in
@@ -202,14 +205,18 @@ class SurveySubmission: UIViewController {
     
     /// Refreshes the upload progress and updates the front-end.
     @objc private func updateProgress() {
-        let uploaded = surveyViewController.fragmentPages.filter { page in
+        let uploadedFragments = surveyViewController.fragmentPages.filter { page in
             
             if page.fragmentData.needsReupload {
                 page.uploadResponse()
             }
             
             return page.fragmentData.uploaded
-        }.count
+        }
+        
+        let uploaded = uploadedFragments.count
+        
+        debugMessage("Begin submission process, with \(uploaded) / \(surveyViewController.fragmentPages.count) fragments already uploaded, at indices \(uploadedFragments.map { $0.pageIndex })")
         
         DispatchQueue.main.async {
             self.percentageCompleted = Float(uploaded) / Float(self.surveyViewController.fragmentPages.count)

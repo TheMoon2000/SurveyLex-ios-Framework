@@ -62,7 +62,7 @@ class LandingPage: UIViewController {
             let textView = UITextView()
             textView.text = "You are about to begin the [survey](\(weblink)). Swipe **left** to open up the first page and use swipe gestures to navigate through the pages."
             // This text view is NOT an actual consent form. The text style of consent form is used because it's most appropriate to display the survey instructions.
-            textView.format(as: .consentText)
+            textView.format(as: .consentText, theme: surveyViewController.theme)
             textView.textAlignment = .center
             textView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -90,6 +90,15 @@ class LandingPage: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        
+        UIView.transition(with: surveyViewController.navigationMenu,
+                          duration: 0.2,
+                          options: .curveEaseInOut,
+                          animations: {
+                            self.surveyViewController.navigationMenu.alpha = 0.0
+                            self.surveyViewController.navigationMenu.isUserInteractionEnabled = false
+                          }, completion: nil)
         
         surveyViewController.fragmentIndex = -1
     }
