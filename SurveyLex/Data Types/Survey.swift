@@ -218,7 +218,7 @@ public class Survey: CustomStringConvertible {
             self.delegate?.surveyDidPresent(self)
         }
         
-        if submissionMode && !loadedFromCache {
+        if isSubmissionMode && !loadedFromCache {
             createSession()
         } else if loadedFromCache {
             debugMessage("Same session (id=\(surveyData!.sessionID)) used for the relaunched survey.")
