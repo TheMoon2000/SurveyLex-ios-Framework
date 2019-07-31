@@ -38,7 +38,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     private func makeTitleView() -> UITextView {
         let textView = UITextView()
         textView.text = textQuestion.title
-        textView.format(as: .title)
+        textView.format(as: .title, theme: textQuestion.theme)
         textView.textColor = .black
         
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -109,7 +109,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     // MARK: Text field delegate
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        surveyPage?.focus(cell: self)
+        surveyPage.focus(cell: self)
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
@@ -122,7 +122,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     @objc func textDidChange() {
         textQuestion.response = textfield.text!
         // Tell the fragment page controller that its information needs to be uploaded again
-        surveyPage?.uploaded = false
+        surveyPage.uploaded = false
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -130,7 +130,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         if textfield.returnKeyType == .next {
             textField.returnKeyType = .done
             if !textQuestion.parentView!.toNext(from: self) {
-                surveyPage?.focus(cell: self)
+                surveyPage.focus(cell: self)
             }
         } else {
             textfield.delegate = nil
