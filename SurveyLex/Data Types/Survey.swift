@@ -30,6 +30,9 @@ public class Survey: CustomStringConvertible {
     /// The image of the survey.
     private(set) var logoImage: UIImage?
     
+    /// Whether the survey data is loaded from cache.
+    private var loadedFromCache = false
+    
     /// Optional delegate that handles survey responses.
     public var delegate: SurveyResponseDelegate?
     
@@ -42,10 +45,7 @@ public class Survey: CustomStringConvertible {
     public var autofocus = true
     
     /// Whether the current instance creates a session and counts as a view toward the survey statistics. If set to false, the user's interactions with this survey will not be submitted.
-    public var submissionMode = true
-    
-    /// Whether the survey data is loaded from cache.
-    public var loadedFromCache = false
+    public var isSubmissionMode = true
     
     /// Whether a landing page is shown the first time the survey is launched.
     public var showLandingPage = true
