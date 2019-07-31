@@ -460,16 +460,14 @@ class SurveyViewController: UIPageViewController,
             var nextRow = fragmentTable.contentCells.firstIndex(of: cell)! + 1
             
             if nextRow % 2 == 1 { nextRow += 1 }
-                        
+            
             // Check if the next row exists and has not yet been completed
             let nextRowExists = nextRow < fragmentTable.contentCells.count
             if nextRowExists {
                 let nextCell = fragmentTable.contentCells[nextRow]
-                
-                if fragmentTable.focusedRow == nextRow {
-                    return false // The next row is the currently focused row.
-                } else if !nextCell.completed {
+                if !nextCell.completed {
                     fragmentTable.focusedRow = nextRow
+                    nextCell.focus()
                     return true
                 } else {
                     return toNext(from: nextCell)
