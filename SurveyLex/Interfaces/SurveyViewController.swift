@@ -21,6 +21,12 @@ class SurveyViewController: UIPageViewController,
     /// The data for the survey that the controller is presenting.
     var surveyData: SurveyData!
     
+    var theme: Survey.Theme {
+        return survey.theme
+    }
+    
+    var navigationMenu: FragmentMenu!
+    
     /**
      The current page of the survey (a survey can have multiple pages), indexed from 0. Updating its value will also update the navigation bar according to the survey progress made by the user.
      */
@@ -62,6 +68,34 @@ class SurveyViewController: UIPageViewController,
     /// Whether the user has already seen the submission notice dialog.
     var submissionNoticeShown = false
     
+    /// Records the progress of the user's current swipe gesture. Negative values indicate a backward swipe.
+    var transitionProgress: CGFloat = 0.0 {
+        didSet {
+            // Update bar percentage
+            let barPercentage = (Float(fragmentIndex + 1) + Float(transitionProgress)) / Float(fragmentPages.count)
+            progressIndicator.setProgress(barPercentage, animated: true)
+            
+            // Update navigation menu
+            if transitionProgress < 0 {
+                // Case 1: swiping back from the first page
+                if fragmentIndex == 0 && survey.showLandingPage {
+                    navigationMenu.alpha = 1.0 + transitionProgress
+                // Case 2: swiping back from the submission page
+                } else if fragmentIndex == fragmentPages.count {
+                    navigationMenu.alpha = -transitionProgress
+                }
+            } else if transitionProgress > 0 {
+                // Case 1: swiping forward from the landing page
+                if fragmentIndex == -1 {
+                    navigationMenu.alpha = transitionProgress
+                // Case 2: swiping forward from the last survey page
+                } else if fragmentIndex == fragmentPages.count - 1 && navigationMenu.alpha == 1.0 {
+                    navigationMenu.alpha = 1 - transitionProgress
+                }
+            }
+        }
+    }
+    
     
     // MARK: - UI Setup
 
@@ -80,7 +114,7 @@ class SurveyViewController: UIPageViewController,
         progressIndicator = {
             let bar = UIProgressView(progressViewStyle: .bar)
             bar.trackTintColor = UIColor(white: 0.9, alpha: 1)
-            bar.progressTintColor = BUTTON_DEEP_BLUE
+            bar.progressTintColor = theme.medium
             bar.translatesAutoresizingMaskIntoConstraints = false
             
             view.addSubview(bar)
@@ -91,23 +125,44 @@ class SurveyViewController: UIPageViewController,
             return bar
         }()
         
+        // Setup navigation menu
+        navigationMenu = {
+            let menu = FragmentMenu(parentVC: self, allowJumping: survey.allowsJumping)
+            menu.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(menu)
+            
+            menu.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+            menu.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+            menu.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -FragmentMenu.height).isActive = true
+            menu.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
+            return menu
+        }()
+        
         // Load up the landing page or first page of the survey
         
         fragmentIndex = surveyData.fragmentIndex
         
         let page: UIViewController
         if fragmentIndex == -1 {
+            // Landing page
             let landingPage = LandingPage()
             landingPage.surveyViewController = self
             page = landingPage
+            
+            // The navigation menu is hidden for the landing page
+            navigationMenu.isHidden = true
         } else {
+            // There is no landing page
             page = fragmentPages[fragmentIndex]
+            navigationMenu.isHidden = survey.showNavigationMenu
         }
         
         setViewControllers([page],
                            direction: .forward,
                            animated: false,
                            completion: nil)
+        
         
         // Background color
         view.backgroundColor = .white
@@ -121,8 +176,11 @@ class SurveyViewController: UIPageViewController,
                                            style: .done,
                                            target: self,
                                            action: #selector(closeSurvey))
-        cancelButton.tintColor = DARKER_TINT
+        cancelButton.tintColor = theme.dark
         navigationItem.rightBarButtonItem = cancelButton
+        
+        // Prepare for transition progress detection
+        view.subviews.forEach { ($0 as? UIScrollView)?.delegate = self }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -147,6 +205,7 @@ class SurveyViewController: UIPageViewController,
         
         // Prepare an alert to display.
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
+        alert.view.tintColor = theme.dark
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         if surveyData.submittedOnce {
             // If the user has made their first submission, then display the following dialog.
@@ -214,20 +273,19 @@ class SurveyViewController: UIPageViewController,
         // Landing page only exists if `showLandingPage` is set to true.
         if index == 0 {
             if survey.showLandingPage {
-                fragmentPages[index].navigationMenu.backButton.isEnabled = true
-
                 let landingPage = LandingPage()
                 landingPage.surveyViewController = self
                 return landingPage
             } else {
-                fragmentPages[index].navigationMenu.backButton.isEnabled = false
-
                 return nil
             }
         }
         
-        fragmentPages[index].navigationMenu.backButton.isEnabled = true
-        
+        // Special case for audio questions during recording
+        if let a = (fragmentPages[index] as? AudioPage), a.recordButton.isRecording {
+            return nil
+        }
+                
         return fragmentPages[index - 1]
     }
     
@@ -246,10 +304,16 @@ class SurveyViewController: UIPageViewController,
         // Otherwise, we have an index for this page of the survey
         let index = (viewController as! SurveyPage).pageIndex
         
+        // Special case for consent page
         if let c = (fragmentPages[index] as? FragmentTableController)?.contentCells.first as? ConsentCell {
             if !c.completed {
                 return nil
             }
+        }
+        
+        // Special case for audio questions during recording
+        if let a = (fragmentPages[index] as? AudioPage), a.recordButton.isRecording {
+            return nil
         }
         
         // User has not yet completed the required questions on the current page, so do not proceed with the next one.
@@ -276,6 +340,17 @@ class SurveyViewController: UIPageViewController,
     */
     
     func flipPageIfNeeded(allCompleted: Bool = true) -> Bool {
+        
+        if fragmentIndex == -1 {
+            self.setViewControllers([fragmentPages[0]],
+                                    direction: .forward,
+                                    animated: true,
+                                    completion: nil)
+            return true
+        } else if fragmentIndex == fragmentPages.count {
+            return false // There is no next page after submission page
+        }
+        
         let cond = allCompleted ? currentFragment!.completed : currentFragment!.unlocked
 
         guard cond else { return false }
@@ -351,6 +426,8 @@ class SurveyViewController: UIPageViewController,
         
         let alert = UIAlertController(title: "Survey Completed!", message: "You have already completed all the required questions in the survey. If you would like to submit now, please press 'Submit'. Alternatively, you can review your responses and submit later by swiping to the right.", preferredStyle: .alert)
         
+        alert.view.tintColor = theme.dark
+        
         alert.addAction(UIAlertAction(title: "Submit Now", style: .default) { action in
             
             let vc = SurveySubmission()
@@ -409,5 +486,21 @@ class SurveyViewController: UIPageViewController,
     func reloadDatasource() {
         dataSource = nil
         dataSource = self
+    }
+    
+}
+
+// MARK: - Scrolling progress detection
+
+extension SurveyViewController: UIScrollViewDelegate {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        // Only update the `transitionProgress` if the menu is enabled to save CPU.
+        if survey.showNavigationMenu {
+            let point = scrollView.contentOffset
+            let percentComplete = (point.x - view.frame.size.width) / view.frame.size.width
+            transitionProgress = percentComplete
+        }
     }
 }

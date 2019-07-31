@@ -24,8 +24,6 @@ protocol SurveyPage: UIViewController {
     
     /// Upload the survey taker's response for this fragment to the server. Each type of `SurveyPage` is responsible for uploading its own responses. Upon completing an upload, the page should send a notification of type `FRAGMENT_UPLOAD_COMPLETE`.
     func uploadResponse()
-    
-    var navigationMenu: FragmentMenu! { get }
 }
 
 extension SurveyPage {
@@ -33,6 +31,10 @@ extension SurveyPage {
     /// A shortcut for referencing the current fragment index.
     var pageIndex: Int {
         return fragmentData.index
+    }
+    
+    var theme: Survey.Theme {
+        return surveyViewController?.theme ?? .blue
     }
         
     /// Broadcast a notification to the Notification Center that a fragment has been successfully submitted.
