@@ -37,6 +37,7 @@ class ConsentCell: SurveyElementCell {
         backgroundColor = .white
         selectionStyle = .none
         
+        // The title of the consent form.
         title = {
             let title = UITextView()
             title.text = consentInfo.title
@@ -53,8 +54,10 @@ class ConsentCell: SurveyElementCell {
             return title
         }()
         
+        // The separator line that lies between the title and the consent text.
         separator = makeSeparator(top: true)
         
+        // The consent text.
         consentText = {
             let consent = UITextView()
             consent.text = consentInfo.consentText
@@ -72,15 +75,91 @@ class ConsentCell: SurveyElementCell {
             return consent
         }()
         
+        // The separator line that lies between the consent text and the prompt.
         bottomSeparator = makeSeparator(top: false)
-        checkbox = makeCheckbox()
-        prompt = makePromptText()
-        agreeButton = makeAgreeButton()
+        
+        // The checkbox control in the consent form.
+        checkbox = {
+            let check = UICheckbox()
+            check.format(type: .square, theme: consentInfo.theme)
+            check.isChecked = consentInfo.promptChecked
+            check.isEnabled = !consentInfo.promptChecked
+            check.translatesAutoresizingMaskIntoConstraints = false
+            check.widthAnchor.constraint(equalToConstant: 20).isActive = true
+            check.heightAnchor.constraint(equalToConstant: 20).isActive = true
+            addSubview(check)
+            
+            check.leftAnchor.constraint(equalTo: consentText.leftAnchor,
+                                        constant: 1).isActive = true
+            check.topAnchor.constraint(equalTo: bottomSeparator.bottomAnchor,
+                                       constant: 24).isActive = true
+            
+            check.addTarget(self, action: #selector(checkboxPressed), for: .valueChanged)
+            
+            return check
+        }()
+        
+        // The prompt message that is displayed next to the checkbox.
+        prompt = {
+            let prompt = UITextView()
+            prompt.text = consentInfo.prompt
+            prompt.format(as: .subtitle, theme: consentInfo.theme)
+            prompt.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(prompt)
+            
+            prompt.topAnchor.constraint(equalTo: checkbox.topAnchor,
+                                        constant: -2).isActive = true
+            prompt.leftAnchor.constraint(equalTo: checkbox.rightAnchor,
+                                         constant: 15).isActive = true
+            prompt.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
+                                          constant: -40).isActive = true
+            
+            return prompt
+        }()
+        
+        // The agree button.
+        agreeButton = {
+            let button = UIButton()
+            button.layer.cornerRadius = 4
+            button.backgroundColor = consentInfo.theme.light
+            button.setTitleColor(.white, for: .normal)
+            
+            if consentInfo.completed {
+                button.setTitle("Agreed", for: .normal)
+                button.isUserInteractionEnabled = false
+            } else {
+                button.setTitle("Agree & Continue", for: .normal)
+                if consentInfo.promptChecked {
+                    button.backgroundColor = consentInfo.theme.medium
+                }
+            }
+            
+            button.translatesAutoresizingMaskIntoConstraints = false
+            button.heightAnchor.constraint(equalToConstant: 49).isActive = true
+            button.widthAnchor.constraint(equalToConstant: 220).isActive = true
+            
+            button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
+            button.addTarget(self,
+                             action: #selector(buttonLifted(_:)),
+                             for: [.touchCancel, .touchUpInside, .touchUpOutside, .touchDragExit])
+            button.addTarget(self, action: #selector(agreed(_:)), for: .touchUpInside)
+            
+            addSubview(button)
+            
+            button.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
+            button.topAnchor.constraint(equalTo: prompt.bottomAnchor,
+                                        constant: 32).isActive = true
+            button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
+                                           constant: -40).isActive = true
+            
+            return button
+        }()
     }
     
+    // Helper method that creates a separator.
     private func makeSeparator(top: Bool) -> UIView {
         let separatorLine = UIView()
-        separatorLine.backgroundColor = UIColor(white: 0.8, alpha: 1)
+        separatorLine.backgroundColor = UIColor(white: 0.9, alpha: 1)
         separatorLine.translatesAutoresizingMaskIntoConstraints = false
         addSubview(separatorLine)
         
@@ -96,82 +175,6 @@ class ConsentCell: SurveyElementCell {
         }
         
         return separatorLine
-    }
-    
-    // MARK: Prompt & check box
-    
-    private func makeCheckbox() -> UICheckbox {
-        let check = UICheckbox()
-        check.format(type: .square, theme: consentInfo.theme)
-        check.isChecked = consentInfo.promptChecked
-        check.isEnabled = !consentInfo.promptChecked
-        check.translatesAutoresizingMaskIntoConstraints = false
-        check.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        check.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        addSubview(check)
-        
-        check.leftAnchor.constraint(equalTo: consentText.leftAnchor,
-                                    constant: 1).isActive = true
-        check.topAnchor.constraint(equalTo: bottomSeparator.bottomAnchor,
-                                   constant: 24).isActive = true
-        
-        check.addTarget(self, action: #selector(checkboxPressed), for: .valueChanged)
-        
-        return check
-    }
-    
-    private func makePromptText() -> UITextView {
-        let prompt = UITextView()
-        prompt.text = consentInfo.prompt
-        prompt.format(as: .subtitle, theme: consentInfo.theme)
-        prompt.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(prompt)
-        
-        prompt.topAnchor.constraint(equalTo: checkbox.topAnchor,
-                                    constant: -2).isActive = true
-        prompt.leftAnchor.constraint(equalTo: checkbox.rightAnchor,
-                                     constant: 15).isActive = true
-        prompt.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor,
-                                      constant: -40).isActive = true
-        
-        return prompt
-    }
-    
-    private func makeAgreeButton() -> UIButton {
-        let button = UIButton()
-        button.layer.cornerRadius = 4
-        button.backgroundColor = consentInfo.theme.light
-        button.setTitleColor(.white, for: .normal)
-
-        if consentInfo.completed {
-            button.setTitle("Agreed", for: .normal)
-            button.isUserInteractionEnabled = false
-        } else {
-            button.setTitle("Agree & Continue", for: .normal)
-            if consentInfo.promptChecked {
-                button.backgroundColor = consentInfo.theme.medium
-            }
-        }
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.heightAnchor.constraint(equalToConstant: 49).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 220).isActive = true
-        
-        button.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchDown)
-        button.addTarget(self,
-                         action: #selector(buttonLifted(_:)),
-                         for: [.touchCancel, .touchUpInside, .touchUpOutside, .touchDragExit])
-        button.addTarget(self, action: #selector(agreed(_:)), for: .touchUpInside)
-        
-        addSubview(button)
-        
-        button.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor).isActive = true
-        button.topAnchor.constraint(equalTo: prompt.bottomAnchor,
-                                    constant: 32).isActive = true
-        button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
-                                       constant: -40).isActive = true
-        
-        return button
     }
     
     // MARK: Control handlers
