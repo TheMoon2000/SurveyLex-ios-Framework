@@ -10,7 +10,7 @@ import UIKit
 import SwiftyJSON
 
 /// An interactive interface that presents a survey (powered by SurveyLex) for the user to fill.
-public class Survey {
+public class Survey: CustomStringConvertible {
     
     /// The NeuroLex SurveyLex API URL prefix.
     private static let BASE_URL = "https://api.neurolex.ai/1.0/object/surveys/taker/"
@@ -50,17 +50,25 @@ public class Survey {
     /// Whether a landing page is shown the first time the survey is launched.
     public var showLandingPage = true
     
+    /// Whether the navigation menu is shown at the bottom of every page.
+    public var showNavigationMenu = true
+    
+    /// The user can go to another page by specifying the page number.
+    public var allowsJumping = false
+    
+    public var theme: Theme = .blue
+    
     // MARK: Survey class implementation
     
     /**
-     Initializes a new `Survey` front-end by providing a JSON data source. **This constructor is not recommended**.
+     Initializes a local `Survey` front-end by providing a JSON data source. **This constructor is only used for debugging and is not recommended**.
     
      - Parameters:
         - json: The input json source object to display.
         - target: The UIViewController that will present the survey.
      */
     public init(json: JSON, target: UIViewController) throws {
-        self.surveyData = try SurveyData(json: json)
+        self.surveyData = try SurveyData(json: json, theme: theme)
         self.surveyID = self.surveyData!.surveyId
         self.targetVC = target
     }
@@ -120,7 +128,7 @@ public class Survey {
             
             do {
                 let json = try JSON(data: data!)
-                self.surveyData = try SurveyData(json: json, landingPage: self.showLandingPage)
+                self.surveyData = try SurveyData(json: json, theme: self.theme, landingPage: self.showLandingPage)
                 debugMessage("Survey <\(self.surveyID)> is loaded from the server.")
                 SURVEY_CACHE[self.surveyID] = self.surveyData
                 
@@ -262,5 +270,72 @@ extension Survey {
         
         /// The survey has no content.
         case emptySurvey = 3
+    }
+    
+    /// A color theme for the survey.
+    public struct Theme {
+        
+        /// The color used for text-based questions and the pressed-state of most buttons.
+        var dark: UIColor
+        
+        /// The main color used for button colors, controls and hyperlinks.
+        var medium: UIColor
+        
+        /// The color used for disabled controls and others.
+        var light: UIColor
+        
+        /// The color used for highlighting choices in a multiple choice question.
+        var highlight: UIColor
+        
+        // Presets
+        /// A blue color preset theme (also the default theme).
+        public static let blue = Theme(
+            dark: UIColor(red: 84/255, green: 145/255, blue: 240/255, alpha: 1),
+            medium: UIColor(red: 112/255, green: 165/255, blue: 245/255, alpha: 1),
+            light: UIColor(red: 165/255, green: 204/255, blue: 252/255, alpha: 1),
+            highlight: UIColor(red: 232/255, green: 242/255, blue: 1, alpha: 1)
+        )
+        
+        /// A green color preset theme.
+        public static let green = Theme(
+            dark: UIColor(red: 54/255, green: 186/255, blue: 82/255, alpha: 1),
+            medium: UIColor(red: 93/255, green: 203/255, blue: 104/255, alpha: 1),
+            light: UIColor(red: 160/255, green: 228/255, blue: 155/255, alpha: 1),
+            highlight: UIColor(red: 229/255, green: 253/255, blue: 225/255, alpha: 1)
+        )
+        
+        /// A cyan color preset theme.
+        public static let cyan = Theme(
+            dark: UIColor(red: 84/255, green: 204/255, blue: 177/255, alpha: 1),
+            medium: UIColor(red: 132/255, green: 223/255, blue: 197/255, alpha: 1),
+            light: UIColor(red: 185/255, green: 239/255, blue: 228/255, alpha: 1),
+            highlight: UIColor(red: 231/255, green: 254/255, blue: 252/255, alpha: 1)
+        )
+        
+        /// A purple color preset theme.
+        public static let purple = Theme(
+            dark: UIColor(red: 155/255, green: 139/255, blue: 235/255, alpha: 1),
+            medium: UIColor(red: 175/255, green: 165/255, blue: 252/255, alpha: 1),
+            light: UIColor(red: 202/255, green: 200/255, blue: 253/255, alpha: 1),
+            highlight: UIColor(red: 231/255, green: 233/255, blue: 1, alpha: 1)
+        )
+        
+        /// Create a new color theme for surveys.
+        public init(dark: UIColor, medium: UIColor, light: UIColor, highlight: UIColor) {
+            self.dark = dark
+            self.medium = medium
+            self.light = light
+            self.highlight = highlight
+        }
+    }
+    
+    public var description: String {
+        if surveyData != nil {
+            return "Survey <\(surveyID)> with data: \(surveyData!.description)"
+        } else if surveyID != "" {
+            return "Empty Survey object <\(surveyID)>"
+        } else {
+            return "Empty Survey object"
+        }
     }
 }
