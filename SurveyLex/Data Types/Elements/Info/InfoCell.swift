@@ -88,7 +88,7 @@ class InfoCell: SurveyElementCell {
         let button = UIButton()
         button.setTitle("Continue", for: .normal)
         button.layer.cornerRadius = 4
-        button.backgroundColor = surveyPage.theme.medium
+        button.backgroundColor = infoData.theme.medium
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .white
         button.heightAnchor.constraint(equalToConstant: 49).isActive = true
@@ -114,14 +114,14 @@ class InfoCell: SurveyElementCell {
     // MARK: Control handlers
     
     @objc private func buttonPressed(_ sender: UIButton) {
-        sender.backgroundColor = surveyPage.theme.dark
+        sender.backgroundColor = infoData.theme.dark
     }
     
     @objc private func buttonLifted(_ sender: UIButton) {
         UIView.transition(with: sender,
                           duration: 0.15,
                           options: .transitionCrossDissolve,
-                          animations: { sender.backgroundColor = self.surveyPage.theme.medium
+                          animations: { sender.backgroundColor = self.infoData.theme.medium
                           },
                           completion: nil)
     }

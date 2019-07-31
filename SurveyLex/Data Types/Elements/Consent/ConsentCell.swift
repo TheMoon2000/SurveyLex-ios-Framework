@@ -189,7 +189,7 @@ class ConsentCell: SurveyElementCell {
                               duration: 0.15,
                               options: .curveEaseInOut,
                               animations: {
-                                  self.agreeButton.backgroundColor = self.surveyPage.theme.medium
+                                  self.agreeButton.backgroundColor = self.consentInfo.theme.medium
                               }, completion: nil)
             
             // Enable tap gesture recognition
@@ -204,7 +204,7 @@ class ConsentCell: SurveyElementCell {
                               duration: 0.15,
                               options: .curveEaseInOut,
                               animations: {
-                                self.agreeButton.backgroundColor = self.surveyPage.theme.light
+                                self.agreeButton.backgroundColor = self.consentInfo.theme.light
                               }, completion: nil)
             
             // Disable tap gesture recognition
@@ -220,7 +220,7 @@ class ConsentCell: SurveyElementCell {
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {
-        sender.backgroundColor = surveyPage.theme.dark
+        sender.backgroundColor = consentInfo.theme.dark
     }
     
     @objc private func buttonLifted(_ sender: UIButton) {
@@ -228,7 +228,7 @@ class ConsentCell: SurveyElementCell {
                           duration: 0.15,
                           options: .transitionCrossDissolve,
                           animations: {
-                            sender.backgroundColor = self.surveyPage.theme.medium
+                            sender.backgroundColor = self.consentInfo.theme.medium
                           },
                           completion: nil)
     }

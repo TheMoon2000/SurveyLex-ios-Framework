@@ -202,7 +202,7 @@ class RatingSliderCell: SurveyElementCell {
             let index = Int(round(currentValue / segmentLength))
             let option = ratingQuestion.options[index]
             caption.text = option.text
-            slider.thumbTintColor = surveyPage.theme.medium
+            slider.thumbTintColor = ratingQuestion.theme.medium
         }
     }
     
@@ -218,7 +218,7 @@ class RatingSliderCell: SurveyElementCell {
     override func focus() {
         super.focus()
         UIView.performWithoutAnimation {
-            slider.thumbTintColor = ratingQuestion.completed ? surveyPage.theme.medium : .lightGray
+            slider.thumbTintColor = ratingQuestion.completed ? ratingQuestion.theme.medium : .lightGray
         }
     }
     
@@ -226,7 +226,7 @@ class RatingSliderCell: SurveyElementCell {
         super.unfocus()
         if autofocus {
             UIView.performWithoutAnimation {
-                slider.thumbTintColor = ratingQuestion.completed ? surveyPage.theme.light : grayColor
+                slider.thumbTintColor = ratingQuestion.completed ? ratingQuestion.theme.light : grayColor
                 slider.alpha = 1.0
             }
         }
