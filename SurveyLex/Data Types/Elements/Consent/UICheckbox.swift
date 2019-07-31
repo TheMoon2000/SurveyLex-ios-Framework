@@ -85,7 +85,7 @@ public class UICheckbox: UIControl {
     
     /// The checkboxes fill color.
     ///
-    /// **Default:** `UIColoe.Clear`
+    /// **Default:** `UIColor.clear`
     public var checkboxFillColor: UIColor = .clear
     
     /// Sets the corner radius for the checkbox border.
@@ -290,7 +290,7 @@ public class UICheckbox: UIControl {
 }
 
 extension UICheckbox {
-    func format(type: UICheckbox.CheckmarkStyle) {
+    func format(type: UICheckbox.CheckmarkStyle, theme: Survey.Theme) {
         self.checkmarkStyle = type
         if type == .square {
             self.borderStyle = .square
@@ -299,8 +299,8 @@ extension UICheckbox {
         }
         self.borderWidth = 1.5
         self.checkmarkSize = 0.56
-        self.checkmarkColor = BLUE_TINT
-        self.checkedBorderColor = DISABLED_BLUE
+        self.checkmarkColor = theme.medium
+        self.checkedBorderColor = theme.light
         self.uncheckedBorderColor = .init(white: 0.87, alpha: 1)
         self.translatesAutoresizingMaskIntoConstraints = false
     }
