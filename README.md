@@ -1,7 +1,7 @@
 # SurveyLex iOS Survey-taking Framework
 
 ## Using the Framework
-To launch a survey, a you need to know the survey ID and the parent view controller on which the survey view controller is presenting. The survey ID of a SurveyLex survey is formatted as a UUID string, as in https://app.surveylex.com/surveys/**c741cba0-acca-11e9-aeb9-2b1c6d8db2a2**.
+To launch a survey, a you need to know the survey ID and the parent view controller on which the survey view controller is presenting. The survey ID of a SurveyLex survey is formatted as a UUID string, as in app.surveylex.com/surveys/**c741cba0-acca-11e9-aeb9-2b1c6d8db2a2**.
 
 Within the view controller, a new `Survey` object can be easily constructed and presented:
 
@@ -29,8 +29,8 @@ func surveyDidLoad(_ survey: Survey) {
 ```
 
 ## Environment variables
-- `allowMenuCollapse: Bool`
-- `autofocus: Bool`
+- `allowMenuCollapse`: A boolean indicating whether choices that are expanded can be folded up again. By default its false.
+- `autofocus`
 - `isSubmissionMode: Bool`
 - `showLandingPage: Bool`
 - `showNavigationMenu: Bool`

@@ -167,6 +167,7 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
         
         survey.allowMenuCollapse = true
         survey.delegate = self
+        survey.theme = .purple
         survey.load()
         sender.isEnabled = false
         sender.setTitle("Loading...", for: .normal)
@@ -177,7 +178,7 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
     // Some protocol methods have default implementation, so be sure to check the documentation
     
     func surveyDidLoad(_ survey: Survey) {
-        
+        survey.present()
     }
     
     func surveyDidPresent(_ survey: Survey) {
