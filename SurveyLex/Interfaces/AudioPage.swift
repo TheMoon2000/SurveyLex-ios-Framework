@@ -389,6 +389,9 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         
         // The user's response on the current question needs to be updated.
         uploadedFragmentData = false
+        
+        // Since there is no sample to upload, it doesn't require any additional upload task.
+        uploadedSample = true
     }
     
     /// Displays the time remaining message once the recording starts.
@@ -596,7 +599,6 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
                 // Successful.
                 self.uploadedFragmentData = true
                 self.uploadCompleted()
-                debugMessage("fragment \(self.pageIndex) uploaded")
             } else {
                 debugMessage("Server did not return status code 200 for audio fragment response!")
                 self.uploadFailed()

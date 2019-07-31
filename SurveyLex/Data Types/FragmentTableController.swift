@@ -363,7 +363,6 @@ class FragmentTableController: UITableViewController, SurveyPage {
             // Status code 200 means 'successful'
             if (try? JSON(data: data!).dictionary?["status"]?.int ?? 0) == 200 {
                 self.uploaded = true
-                print("fragment \(self.pageIndex) uploaded")
                 self.uploadCompleted()
             } else {
                 debugMessage("Server did not return status code 200 for fragment \(self.pageIndex)!")

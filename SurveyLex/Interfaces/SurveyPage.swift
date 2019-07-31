@@ -40,6 +40,7 @@ extension SurveyPage {
     /// Broadcast a notification to the Notification Center that a fragment has been successfully submitted.
     func uploadCompleted() {
         fragmentData.needsReupload = false
+        debugMessage("fragment \(self.pageIndex) uploaded")
         NotificationCenter.default.post(name: FRAGMENT_UPLOAD_COMPLETE, object: nil)
     }
     
