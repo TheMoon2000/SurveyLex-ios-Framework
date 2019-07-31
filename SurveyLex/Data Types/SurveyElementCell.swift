@@ -11,7 +11,7 @@ import UIKit
 class SurveyElementCell: UITableViewCell {
  
     /// Reference to the Fragment Table View Controller that displays the current survey element.
-    var surveyPage: FragmentTableController?
+    var surveyPage: FragmentTableController!
     
     /// Whether the cell is expanded. Non-expanded cells have 0 height.
     var expanded = true
