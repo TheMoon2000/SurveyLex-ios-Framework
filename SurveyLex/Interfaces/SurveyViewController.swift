@@ -89,7 +89,7 @@ class SurveyViewController: UIPageViewController,
                 if fragmentIndex == -1 {
                     navigationMenu.alpha = transitionProgress
                 // Case 2: swiping forward from the last survey page
-                } else if fragmentIndex == fragmentPages.count - 1 && navigationMenu.alpha == 1.0 {
+                } else if fragmentIndex == fragmentPages.count - 1 {
                     navigationMenu.alpha = 1 - transitionProgress
                 }
             }
