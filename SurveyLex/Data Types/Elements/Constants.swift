@@ -61,6 +61,7 @@ extension UITextView {
         self.isEditable = false
         self.isScrollEnabled = false
         self.textAlignment = .left
+        self.textDragInteraction?.isEnabled = false
         self.attributedText = TextFormatter.formatted(text, type: type)
         self.dataDetectorTypes = .link
         self.linkTextAttributes[.foregroundColor] = theme.medium
