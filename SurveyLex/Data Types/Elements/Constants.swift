@@ -13,7 +13,7 @@ import SwiftyJSON
 
 // These constants can only be changed through framework modification.
 let RECORDING = UIColor(red: 0.99, green: 0.4, blue: 0.4, alpha: 1)
-let RECORDING_PRESSED = UIColor(red: 0.93, green: 0.36, blue: 0.36, alpha: 1)
+let RECORDING_PRESSED = UIColor(red: 0.95, green: 0.36, blue: 0.36, alpha: 1)
 
 // MARK: API URLS
 
