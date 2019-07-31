@@ -32,7 +32,7 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
         dataSource = self
         
         for i in 0..<checkboxes.choices.count {
-            let cell = CheckboxItemCell()
+            let cell = CheckboxItemCell(theme: checkboxData.theme)
             cell.titleLabel.attributedText = TextFormatter.formatted(checkboxes.choices[i], type: .plain)
             cell.checkbox.isChecked = checkboxData.selections.contains(i)
             choiceCells.append(cell)
@@ -51,7 +51,7 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
     
     // Essential for calculating the correct height for the cells
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return choiceCells[indexPath.row].preferredHeight(width: parentCell.surveyPage!.tableView.safeAreaLayoutGuide.layoutFrame.width)
+        return choiceCells[indexPath.row].preferredHeight(width: parentCell.surveyPage.tableView.safeAreaLayoutGuide.layoutFrame.width)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -63,15 +63,15 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: false)
         
         // Focus the current checkbox question
-        parentCell.surveyPage?.focus(cell: parentCell)
+        parentCell.surveyPage.focus(cell: parentCell)
         
         // Tell the fragment page controller that its information needs to be uploaded again
-        parentCell.surveyPage?.uploaded = false
+        parentCell.surveyPage.uploaded = false
         
         // Cell has been modified
         checkboxData.modified = true
         
-        parentCell.topCell.surveyPage?.scrollToCell(cell: parentCell)
+        parentCell.topCell.surveyPage.scrollToCell(cell: parentCell)
         
         choiceCells[indexPath.row].checkbox.isChecked.toggle()
         if choiceCells[indexPath.row].checkbox.isChecked {
