@@ -14,7 +14,13 @@ class RecordButton: UIButton {
     var delegate: RecordingDelegate?
     
     var recorder: Recorder!
-    var maxLength = 60.0
+    var maxLength = 60.0 {
+        didSet {
+            if maxLength < MIN_MAX_RECORDING_LENGTH {
+                maxLength = MIN_MAX_RECORDING_LENGTH
+            }
+        }
+    }
     var isRecording = false
     private var finishTime = Date()
     
@@ -41,17 +47,19 @@ class RecordButton: UIButton {
         return .custom
     }
     
-    init(duration: Double, radius: CGFloat, recorder: Recorder) {
+    var theme: Survey.Theme!
+    
+    init(radius: CGFloat, recorder: Recorder, theme: Survey.Theme) {
 
         super.init(frame: .zero)
         
-        // If the given duration is too short, bound it below by 10 seconds
-        self.maxLength = max(duration, MIN_MAX_RECORDING_LENGTH)
         self.recorder = recorder
         self.recorder.resetPlaybackHandler = { [weak self] status in
             self?.setImage(#imageLiteral(resourceName: "play"), for: .normal)
             self?.setImage(#imageLiteral(resourceName: "play"), for: .highlighted)
         }
+        
+        self.theme = theme
         
         // Apply layout constraints
         self.widthAnchor.constraint(equalToConstant: radius * 2).isActive = true
@@ -62,7 +70,7 @@ class RecordButton: UIButton {
         layer.masksToBounds = true
         self.clipsToBounds = true
         
-        self.backgroundColor = BLUE_TINT
+        self.backgroundColor = theme.medium
         self.setImage(#imageLiteral(resourceName: "mic"), for: .normal)
         self.setImage(#imageLiteral(resourceName: "mic"), for: .highlighted)
         
@@ -84,12 +92,12 @@ class RecordButton: UIButton {
     }
     
     @objc private func buttonPressed() {
-        self.backgroundColor = isRecording ? RECORDING_PRESSED : DARKER_TINT
+        self.backgroundColor = isRecording ? RECORDING_PRESSED : theme.dark
     }
     
     @objc private func buttonLifted() {
         let animation = {
-            self.backgroundColor = self.isRecording ? RECORDING : BLUE_TINT
+            self.backgroundColor = self.isRecording ? RECORDING : self.theme.medium
         }
         
         UIView.transition(with: self,
@@ -172,8 +180,8 @@ class RecordButton: UIButton {
                           duration: 0.2,
                           options: .curveEaseInOut,
                           animations: {
-                            self.layer.cornerRadius = self.frame.width / 2
-                            self.backgroundColor = BLUE_TINT
+                              self.layer.cornerRadius = self.frame.width / 2
+                              self.backgroundColor = self.theme.medium
                           },
                           completion: nil)
         
