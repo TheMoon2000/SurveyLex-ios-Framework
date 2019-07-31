@@ -69,30 +69,6 @@ class UnsupportedPage: UIViewController, SurveyPage {
             return label
         }()
         
-        navigationMenu = {
-            let menu = FragmentMenu(surveyPage: self)
-            menu.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(menu)
-            
-            menu.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-            menu.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-            menu.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-            let heightConstraint = menu.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -52)
-            heightConstraint.priority = .init(999)
-            heightConstraint.isActive = true
-            
-            let line = UIView()
-            line.backgroundColor = .init(white: 0.9, alpha: 1)
-            line.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(line)
-            
-            line.heightAnchor.constraint(equalToConstant: 1).isActive = true
-            line.bottomAnchor.constraint(equalTo: menu.topAnchor).isActive = true
-            line.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-            line.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-            
-            return menu
-        }()
     }
     
     func uploadResponse() {}
