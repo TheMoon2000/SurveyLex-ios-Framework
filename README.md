@@ -43,7 +43,7 @@ func surveyDidLoad(_ survey: Survey) {
 
 ## Environment variables
 - `allowMenuCollapse`: A boolean indicating whether choices that are expanded can be folded up again. Default is `false`.
-- `autofocus`: Whether the current item on a page of a survey has higher opacity than other elements. Default is `true`.
+- `autofocus`: Whether the current item on a page of a survey has higher opacity than other elements. Default is `true`. <br>
   <img src="Screenshots/autofocus.png" width="250" style="border: 1px dashed #e5e5e5">
 - `isSubmissionMode`: A boolean indicating whether the survey maintains an active connection with the server (i.e. a session is created on open, and responses are uploaded). The opposite of submission mode is **stealth mode**, where no data ever leaves the device throughout the survey-taking process. Default is `true`.
 - `showLandingPage`: A boolean indicating whether a landing page is shown when a survey is launched. The landing page consists of the survey title, a built-in description, and shows a survey logo if the survey has one. Default is `true`.
