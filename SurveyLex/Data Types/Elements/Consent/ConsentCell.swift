@@ -131,6 +131,8 @@ class ConsentCell: SurveyElementCell {
                 button.setTitle("Agree & Continue", for: .normal)
                 if consentInfo.promptChecked {
                     button.backgroundColor = consentInfo.theme.medium
+                } else {
+                    button.isUserInteractionEnabled = false
                 }
             }
             
