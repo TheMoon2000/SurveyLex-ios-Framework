@@ -41,7 +41,7 @@ class ConsentCell: SurveyElementCell {
             let title = UITextView()
             title.text = consentInfo.title
             if title.text.isEmpty { title.text = "Consent" }
-            title.format(as: .title)
+            title.format(as: .title, theme: consent.theme)
             title.textAlignment = .center
             title.translatesAutoresizingMaskIntoConstraints = false
             addSubview(title)
@@ -58,7 +58,7 @@ class ConsentCell: SurveyElementCell {
         consentText = {
             let consent = UITextView()
             consent.text = consentInfo.consentText
-            consent.format(as: .consentText)
+            consent.format(as: .consentText, theme: consentInfo.theme)
             consent.translatesAutoresizingMaskIntoConstraints = false
             addSubview(consent)
             
@@ -102,7 +102,7 @@ class ConsentCell: SurveyElementCell {
     
     private func makeCheckbox() -> UICheckbox {
         let check = UICheckbox()
-        check.format(type: .square)
+        check.format(type: .square, theme: consentInfo.theme)
         check.isChecked = consentInfo.promptChecked
         check.isEnabled = !consentInfo.promptChecked
         check.translatesAutoresizingMaskIntoConstraints = false
@@ -123,7 +123,7 @@ class ConsentCell: SurveyElementCell {
     private func makePromptText() -> UITextView {
         let prompt = UITextView()
         prompt.text = consentInfo.prompt
-        prompt.format(as: .subtitle)
+        prompt.format(as: .subtitle, theme: consentInfo.theme)
         prompt.translatesAutoresizingMaskIntoConstraints = false
         addSubview(prompt)
         
@@ -140,14 +140,17 @@ class ConsentCell: SurveyElementCell {
     private func makeAgreeButton() -> UIButton {
         let button = UIButton()
         button.layer.cornerRadius = 4
-        button.backgroundColor = DISABLED_BLUE
+        button.backgroundColor = consentInfo.theme.light
         button.setTitleColor(.white, for: .normal)
-        button.isUserInteractionEnabled = false
 
         if consentInfo.completed {
             button.setTitle("Agreed", for: .normal)
+            button.isUserInteractionEnabled = false
         } else {
             button.setTitle("Agree & Continue", for: .normal)
+            if consentInfo.promptChecked {
+                button.backgroundColor = consentInfo.theme.medium
+            }
         }
         
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -177,7 +180,12 @@ class ConsentCell: SurveyElementCell {
         if checkbox.isChecked {
             
             // Enabled color
-            agreeButton.backgroundColor = BLUE_TINT
+            UIView.transition(with: agreeButton,
+                              duration: 0.15,
+                              options: .curveEaseInOut,
+                              animations: {
+                                  self.agreeButton.backgroundColor = self.surveyPage.theme.medium
+                              }, completion: nil)
             
             // Enable tap gesture recognition
             agreeButton.isUserInteractionEnabled = true
@@ -187,7 +195,12 @@ class ConsentCell: SurveyElementCell {
         } else {
             
             // Disabled color
-            agreeButton.backgroundColor = DISABLED_BLUE
+            UIView.transition(with: agreeButton,
+                              duration: 0.15,
+                              options: .curveEaseInOut,
+                              animations: {
+                                self.agreeButton.backgroundColor = self.surveyPage.theme.light
+                              }, completion: nil)
             
             // Disable tap gesture recognition
             agreeButton.isUserInteractionEnabled = false
@@ -198,11 +211,11 @@ class ConsentCell: SurveyElementCell {
         
         
         // Tell the fragment page controller that its information needs to be uploaded again
-        surveyPage?.uploaded = false
+        surveyPage.uploaded = false
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {
-        sender.backgroundColor = BUTTON_PRESSED
+        sender.backgroundColor = surveyPage.theme.dark
     }
     
     @objc private func buttonLifted(_ sender: UIButton) {
@@ -210,7 +223,8 @@ class ConsentCell: SurveyElementCell {
                           duration: 0.15,
                           options: .transitionCrossDissolve,
                           animations: {
-                            sender.backgroundColor = BLUE_TINT},
+                            sender.backgroundColor = self.surveyPage.theme.medium
+                          },
                           completion: nil)
     }
     
@@ -221,7 +235,7 @@ class ConsentCell: SurveyElementCell {
         }
         
         agreeButton.isUserInteractionEnabled = false
-        agreeButton.backgroundColor = DISABLED_BLUE
+        agreeButton.backgroundColor = consentInfo.theme.light
         agreeButton.setTitle("Agreed", for: .normal)
     }
 
