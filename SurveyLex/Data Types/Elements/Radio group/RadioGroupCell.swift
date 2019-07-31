@@ -55,7 +55,7 @@ class RadioGroupCell: SurveyElementCell {
     private func makeTitleView() -> UITextView {
         let titleText = UITextView()
         titleText.text = radioGroup.title
-        titleText.format(as: .title)
+        titleText.format(as: .title, theme: radioGroup.theme)
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
         
@@ -142,7 +142,7 @@ class RadioGroupCell: SurveyElementCell {
         }
         
         suppressExpansion = true
-        surveyPage?.focus(cell: self)
+        surveyPage.focus(cell: self)
         suppressExpansion = false
         
         toggleExpansion(sender)
@@ -162,7 +162,7 @@ class RadioGroupCell: SurveyElementCell {
         
         bottomCell.expanded.toggle()
         radioGroup.bottomCellExpanded = bottomCell.expanded
-        self.surveyPage?.expandOrCollapse(from: self)
+        self.surveyPage.expandOrCollapse(from: self)
         bottomCell.focus()
         if self.bottomCell.expanded {
             UIView.animate(withDuration: 0.25) {
