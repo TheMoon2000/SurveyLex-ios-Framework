@@ -127,6 +127,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
                           }, completion: nil)
         
         navigationMenu.nextButton.isEnabled = self.unlocked
+        navigationMenu.backButton.isEnabled = pageIndex > 0 || surveyViewController!.survey.showLandingPage
         
         appearHandler()
     }
@@ -183,8 +184,8 @@ class FragmentTableController: UITableViewController, SurveyPage {
         tableView.keyboardDismissMode = .interactive
         tableView.contentInset.bottom = FragmentMenu.height
         
-        // View setup
-        view.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        // Set background color
+        view.backgroundColor = UIColor(white: 0.96, alpha: 1)
         
         let label: UILabel = {
             let label = UILabel()
@@ -265,7 +266,15 @@ class FragmentTableController: UITableViewController, SurveyPage {
             // Scroll to the newly expanded row. We need to wait for the expansion animation to finish before scrolling to the row.
             if self.contentCells[row + 1].expanded {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    self.scrollToRow(row: row + 1)
+                    let visibleHeight = self.view.frame.height - (self.surveyViewController!.survey.showNavigationMenu ? FragmentMenu.height : 0)
+                    let topRemainingHeight = (visibleHeight - self.contentCells[row + 1].frame.height) / 2
+                    
+
+                    if topRemainingHeight >= cell.frame.height {
+                        self.scrollToRow(row: row + 1)
+                    } else {
+                        self.tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .top, animated: true)
+                    }
                 }
             }
         }
