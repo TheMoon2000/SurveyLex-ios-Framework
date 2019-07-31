@@ -113,7 +113,7 @@ class SurveyViewController: UIPageViewController,
         // Set up progress indicator in the navigation bar and load the first page.
         progressIndicator = {
             let bar = UIProgressView(progressViewStyle: .bar)
-            bar.trackTintColor = UIColor(white: 0.9, alpha: 1)
+            bar.trackTintColor = survey.isSubmissionMode ? theme.highlight : .init(white: 0.9, alpha: 1)
             bar.progressTintColor = survey.isSubmissionMode ? theme.medium : .lightGray
             bar.translatesAutoresizingMaskIntoConstraints = false
             
