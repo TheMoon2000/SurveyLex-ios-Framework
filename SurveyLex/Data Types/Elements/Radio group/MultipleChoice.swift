@@ -38,9 +38,8 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
         separatorColor = .init(white: 0.85, alpha: 1)
         
         // Make the pre-generaated cells
-        register(MultipleChoiceCell.classForCoder(), forCellReuseIdentifier: "choice")
         for i in 0..<radioGroup.choices.count {
-            let cell = dequeueReusableCell(withIdentifier: "choice") as! MultipleChoiceCell
+            let cell = MultipleChoiceCell(theme: radioGroup.theme)
             cell.titleLabel.attributedText = TextFormatter.formatted(radioGroup.choices[i], type: .plain)
             if i == radioGroup.selection {
                 cell.radioCircle.isChecked = true
@@ -52,7 +51,7 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     
     // Essential for calculating the correct height for the cells
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return choiceCells[indexPath.row].preferredHeight(width: parentCell.surveyPage!.tableView.safeAreaLayoutGuide.layoutFrame.width)
+        return choiceCells[indexPath.row].preferredHeight(width: parentCell.surveyPage.tableView.safeAreaLayoutGuide.layoutFrame.width)
     }
     
     // MARK: Table view data source

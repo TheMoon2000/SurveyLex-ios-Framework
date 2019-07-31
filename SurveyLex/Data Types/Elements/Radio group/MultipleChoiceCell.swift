@@ -14,11 +14,13 @@ class MultipleChoiceCell: UITableViewCell {
     var radioCircle: UICheckbox!
     var titleLabel: UILabel!
     private var highlightBackground: UIView!
+    private var theme: Survey.Theme!
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    required init(theme: Survey.Theme) {
+        super.init(style: .default, reuseIdentifier: nil)
         
         selectionStyle = .none
+        self.theme = theme
         
         highlightBackground = {
             let view = UIView()
@@ -34,11 +36,11 @@ class MultipleChoiceCell: UITableViewCell {
         
         radioCircle = {
             let circle = UICheckbox()
-            circle.format(type: .circle)
-            circle.checkmarkColor = BUTTON_DEEP_BLUE
+            circle.format(type: .circle, theme: theme)
+            circle.checkmarkColor = theme.dark
             circle.borderWidth = 2
-            circle.checkedBorderColor = BLUE_TINT
-            circle.uncheckedBorderColor = DISABLED_BLUE
+            circle.checkedBorderColor = theme.medium
+            circle.uncheckedBorderColor = theme.light
             circle.isUserInteractionEnabled = false
             circle.translatesAutoresizingMaskIntoConstraints = false
             self.addSubview(circle)
@@ -82,7 +84,7 @@ class MultipleChoiceCell: UITableViewCell {
         self.radioCircle.isChecked = selected
 
         let transition = {
-            self.highlightBackground.backgroundColor = selected ? SELECTION : UIColor.white
+            self.highlightBackground.backgroundColor = selected ? self.theme.highlight : UIColor.white
         }
         
         UIView.transition(with: self, duration: 0.2, options: .curveEaseOut, animations: {

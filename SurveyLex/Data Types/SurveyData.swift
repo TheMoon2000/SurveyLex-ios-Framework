@@ -37,8 +37,10 @@ public class SurveyData: CustomStringConvertible {
     /// Whether the user has completed the first submission.
     var submittedOnce = false
     
+    var theme: Survey.Theme!
+    
     /// Creates a new survey form using a JSON summary of the survey.
-    required public init(json: JSON, landingPage: Bool = true) throws {
+    required public init(json: JSON, theme: Survey.Theme, landingPage: Bool = true) throws {
         let dictionary = json.dictionaryValue
         
         guard let title = dictionary["title"]?.string,
@@ -52,6 +54,7 @@ public class SurveyData: CustomStringConvertible {
         }
         
         self.title = title
+        self.theme = theme
         self.surveyId = surveyId
         self.published = published
         

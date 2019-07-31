@@ -54,6 +54,7 @@ extension SurveyResponseDelegate {
         let alert = UIAlertController(title: "Survey Not Found",
                                       message: "Please check that the survey ID you provided is valid.",
                                       preferredStyle: .alert)
+        alert.view.tintColor = survey.theme.dark
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         survey.targetVC?.present(alert, animated: true, completion: nil)
     }
@@ -62,6 +63,7 @@ extension SurveyResponseDelegate {
         let alert = UIAlertController(title: "Network Failure",
                                       message: "We were unable to establish connection to the server. Please check your internet connection.",
                                       preferredStyle: .alert)
+        alert.view.tintColor = survey.theme.dark
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         survey.targetVC?.present(alert, animated: true, completion: nil)
     }
@@ -70,6 +72,7 @@ extension SurveyResponseDelegate {
         let alert = UIAlertController(title: "Empty Survey",
                                       message: "It is required that a survey has at least one page of content.",
                                       preferredStyle: .alert)
+        alert.view.tintColor = survey.theme.dark
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         survey.targetVC?.present(alert, animated: true, completion: nil)
     }
