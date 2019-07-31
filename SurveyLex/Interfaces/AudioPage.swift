@@ -499,7 +499,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         
         // Otherwise, we first need to upload the audio sample, then get the sample ID back from the server and include it in the fragment response.
         guard let audioData = try? Data(contentsOf: saveURL) else {
-            preconditionFailure("Audio file cannot be read")
+            debugMessage("Audio file at \(saveURL.path) no longer exists! Terminating upload request...")
+            return
         }
         
         let boundary = "----SurveyLex-Framework-Boundary-String"
