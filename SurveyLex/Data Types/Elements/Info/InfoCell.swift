@@ -38,7 +38,7 @@ class InfoCell: SurveyElementCell {
         if titleText.text.isEmpty {
             titleText.text = "Note"
         }
-        titleText.format(as: .title)
+        titleText.format(as: .title, theme: infoData.theme)
         titleText.textAlignment = .center
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
@@ -55,7 +55,7 @@ class InfoCell: SurveyElementCell {
     
     private func makeSeparator() -> UIView {
         let separatorLine = UIView()
-        separatorLine.backgroundColor = UIColor(white: 0.8, alpha: 1)
+        separatorLine.backgroundColor = UIColor(white: 0.9, alpha: 1)
         separatorLine.translatesAutoresizingMaskIntoConstraints = false
         addSubview(separatorLine)
         
@@ -69,12 +69,8 @@ class InfoCell: SurveyElementCell {
     
     private func makeContentText() -> UITextView {
         let content = UITextView()
-        content.attributedText = TextFormatter.formatted(infoData.content, type: .consentText)
-        content.textAlignment = .left
-        content.isEditable = false
-        content.dataDetectorTypes = .link
-        content.linkTextAttributes[.foregroundColor] = BLUE_TINT
-        content.isScrollEnabled = false
+        content.text = infoData.content
+        content.format(as: .consentText, theme: infoData.theme)
         content.translatesAutoresizingMaskIntoConstraints = false
         addSubview(content)
         
@@ -92,7 +88,7 @@ class InfoCell: SurveyElementCell {
         let button = UIButton()
         button.setTitle("Continue", for: .normal)
         button.layer.cornerRadius = 4
-        button.backgroundColor = BLUE_TINT
+        button.backgroundColor = surveyPage.theme.medium
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .white
         button.heightAnchor.constraint(equalToConstant: 49).isActive = true
@@ -118,14 +114,15 @@ class InfoCell: SurveyElementCell {
     // MARK: Control handlers
     
     @objc private func buttonPressed(_ sender: UIButton) {
-        sender.backgroundColor = BUTTON_PRESSED
+        sender.backgroundColor = surveyPage.theme.dark
     }
     
     @objc private func buttonLifted(_ sender: UIButton) {
         UIView.transition(with: sender,
                           duration: 0.15,
                           options: .transitionCrossDissolve,
-                          animations: { sender.backgroundColor = BLUE_TINT },
+                          animations: { sender.backgroundColor = self.surveyPage.theme.medium
+                          },
                           completion: nil)
     }
     
