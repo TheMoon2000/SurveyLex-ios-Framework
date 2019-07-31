@@ -10,7 +10,7 @@ This Swift framework (iOS 11.0+) is designed to natively store, display and subm
 - Rating questions
 - Info screens
 
-## Using the Framework
+## Launching a Survey
 To launch a survey, a you need to know the survey ID and the parent view controller on which the survey view controller is presenting. The survey ID of a SurveyLex survey is formatted as a UUID string, as in app.surveylex.com/surveys/**c741cba0-acca-11e9-aeb9-2b1c6d8db2a2**.
 
 Within the view controller, a new `Survey` object can be easily constructed and presented:
@@ -20,7 +20,7 @@ let survey = Survey(surveyID: "c741cba0-acca-11e9-aeb9-2b1c6d8db2a2", target: se
 survey.loadAndPresent() // Asynchronous method
 ```
 
-To update the view controller when it's loading, you can implement the optional `SurveyResponseDelegate`.
+To update the view controller when the survey is loading up, you can implement the optional `SurveyResponseDelegate`.
 
 ```swift
 
@@ -42,8 +42,8 @@ func surveyDidLoad(_ survey: Survey) {
 ```
 
 ## Environment variables
-- `allowMenuCollapse`: A boolean indicating whether choices that are expanded can be folded up again. By default its false.
-- `autofocus`
+- `allowMenuCollapse`: A boolean indicating whether choices that are expanded can be folded up again. Default is `false`.
+- `autofocus`: Whether the current item on a page of a survey has higher opacity than other elements. Default is `true`. ![](Screenshots/autofocus.png)
 - `isSubmissionMode: Bool`
 - `showLandingPage: Bool`
 - `showNavigationMenu: Bool`
