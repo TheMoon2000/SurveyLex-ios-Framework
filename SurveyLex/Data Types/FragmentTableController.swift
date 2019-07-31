@@ -26,7 +26,9 @@ class FragmentTableController: UITableViewController, SurveyPage {
         return !fragmentData.questions.contains { !$0.completed && $0.isRequired }
     }
     
-    var navigationMenu: FragmentMenu!
+    var navigationMenu: FragmentMenu {
+        return surveyViewController!.navigationMenu
+    }
     
     // MARK: - Custom instance variables
     
@@ -81,9 +83,11 @@ class FragmentTableController: UITableViewController, SurveyPage {
             // The value of the local `uploaded` property should always be in sync with `fragmentData.uploaded`, which is preserved after exit.
             fragmentData.uploaded = uploaded
             
-            // Since `uploaded` is set every time a value is changed within a fragment table, we can write code here to update the next button of the navigation menu.
-            DispatchQueue.main.async {
-                self.navigationMenu.nextButton.isEnabled = self.unlocked
+            // Since `uploaded` is set to `false` every time a value is changed within a fragment table, we can write code here to update the next button of the navigation menu.
+            if !uploaded {
+                DispatchQueue.main.async {
+                    self.navigationMenu.nextButton.isEnabled = self.unlocked
+                }
             }
         }
     }
@@ -109,8 +113,20 @@ class FragmentTableController: UITableViewController, SurveyPage {
         
         viewAppeared = true
         
-        // Update the navigation bar
+        // Update the top navigation bar
         surveyViewController!.fragmentIndex = pageIndex
+                
+        // Update navigation menu display
+        
+        UIView.transition(with: navigationMenu,
+                          duration: 0.3,
+                          options: .curveEaseInOut,
+                          animations: {
+                              self.navigationMenu.alpha = 1.0
+                              self.navigationMenu.isUserInteractionEnabled = true
+                          }, completion: nil)
+        
+        navigationMenu.nextButton.isEnabled = self.unlocked
         
         appearHandler()
     }
@@ -163,6 +179,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         tableView.allowsSelection = true
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .interactive
+        tableView.contentInset.bottom = FragmentMenu.height
         
         // View setup
         view.backgroundColor = UIColor(white: 0.95, alpha: 1)
@@ -181,11 +198,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
             
             return label
         }()
-        
-        // Navigation menu setup
-        navigationMenu = FragmentMenu(surveyPage: self)
-        navigationMenu.isHidden = true
-        
+                
         uploaded = fragmentData.uploaded
         
         // Load content cells
@@ -207,10 +220,11 @@ class FragmentTableController: UITableViewController, SurveyPage {
             cell.unfocus()
             contentCells.append(cell)
             cell.cellBelow.surveyPage = self // Essential
-            /*
+            
+            // Restore the expansion status of the bottom cells
             if question.bottomCellExpanded {
                 cell.cellBelow.expanded = true
-            }*/
+            }
             
             contentCells.append(cell.cellBelow)
         }
@@ -265,15 +279,6 @@ class FragmentTableController: UITableViewController, SurveyPage {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 52
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        
-        return navigationMenu
-    }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return contentCells.count
@@ -302,6 +307,20 @@ class FragmentTableController: UITableViewController, SurveyPage {
 }
  
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        if indexPath.section == 1 {
+            let cell = UITableViewCell()
+            cell.addSubview(navigationMenu)
+            cell.selectionStyle = .none
+            navigationMenu.translatesAutoresizingMaskIntoConstraints = false
+
+            
+            navigationMenu.leftAnchor.constraint(equalTo: cell.leftAnchor).isActive = true
+            navigationMenu.rightAnchor.constraint(equalTo: cell.rightAnchor).isActive = true
+            navigationMenu.topAnchor.constraint(equalTo: cell.topAnchor).isActive = true
+            navigationMenu.bottomAnchor.constraint(equalTo: cell.bottomAnchor).isActive = true
+            return cell
+        }
         
         // Not very memory efficient, but we can assume that a survey
         // will never have too many question on the same page.

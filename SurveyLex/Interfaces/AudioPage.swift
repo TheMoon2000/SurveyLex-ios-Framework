@@ -246,7 +246,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
                                       recorder: recorder,
                                       theme: theme)
                 button.maxLength = audioQuestion.duration
-                button.tintColor = BUTTON_TINT
+                button.tintColor = self.theme.medium
                 audioQuestion.recordButton = button
             }
             
@@ -260,7 +260,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
 
         self.auxiliaryButton = {
             let button = UIButton(type: .system)
-            button.tintColor = BUTTON_DEEP_BLUE
+            button.tintColor = theme.dark
             button.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
             if recordButton.hasSuccessfulRecording {
                 button.setTitle("Clear Recording", for: .normal)
