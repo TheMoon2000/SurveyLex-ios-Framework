@@ -48,6 +48,11 @@ protocol Question: class, CustomStringConvertible {
     var bottomCellExpanded: Bool { get set }
 }
 
+extension Question {
+    var theme: Survey.Theme {
+        return fragment?.parent.theme ?? Survey.Theme.blue
+    }
+}
 
 enum ResponseType: String {
     
