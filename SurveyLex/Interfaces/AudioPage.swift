@@ -208,9 +208,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
             
             scrollView.contentInset.bottom = FragmentMenu.height
-            
-            print(view.safeAreaInsets.bottom)
-            
+                        
             return scrollView
         }()
         
