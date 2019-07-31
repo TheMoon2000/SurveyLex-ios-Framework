@@ -36,7 +36,7 @@ class CheckboxesCell: SurveyElementCell {
         return checkboxData.parentView!.survey.allowMenuCollapse
     }
     
-    /// Whether expansion events for the bottom row are suppressed.
+    /// Whether expansion events for the bottom row are suppressed. This boolean variable is necessary to prevent the expansion event from being triggered twice when the user taps on the expansion button when the top cell is not yet focused, resulting in the first expansion event sent on `focus()` and the second event sent on `buttonActionTriggered`.
     private var suppressExpansion = false
 
     
@@ -54,7 +54,7 @@ class CheckboxesCell: SurveyElementCell {
     private func makeTitle() -> UITextView {
         let titleText = UITextView()
         titleText.text = checkboxData.title
-        titleText.format(as: .title)
+        titleText.format(as: .title, theme: checkboxData.theme)
         titleText.textColor = .black
         titleText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleText)
@@ -142,7 +142,7 @@ class CheckboxesCell: SurveyElementCell {
         }
         
         suppressExpansion = true
-        surveyPage?.focus(cell: self)
+        surveyPage.focus(cell: self)
         suppressExpansion = false
         
         toggleExpansion(sender)
@@ -162,7 +162,7 @@ class CheckboxesCell: SurveyElementCell {
         
         bottomCell.expanded.toggle()
         checkboxData.bottomCellExpanded = bottomCell.expanded
-        self.surveyPage?.expandOrCollapse(from: self)
+        self.surveyPage.expandOrCollapse(from: self)
 //        bottomCell.focus()
         if self.bottomCell.expanded {
             UIView.animate(withDuration: 0.25) {
@@ -189,7 +189,7 @@ class CheckboxesCell: SurveyElementCell {
         if !checkboxData.modified && !bottomCell.expanded && !suppressExpansion {
             toggleExpansion(expandButton)
             
-            // Temporarily set `hasAutoExpanded` to true to block the button press event from being triggered.
+            // Temporarily set `suppressExpansion` to true to block the button press event from being triggered.
             suppressExpansion = true
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 self.suppressExpansion = false
