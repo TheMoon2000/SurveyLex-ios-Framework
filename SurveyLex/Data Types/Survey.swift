@@ -44,10 +44,10 @@ public class Survey: CustomStringConvertible {
     /// Whether the current survey element has higher opacity relative to others.
     public var autofocus = true
     
-    /// Whether the current instance creates a session and counts as a view toward the survey statistics. If set to false, the user's interactions with this survey will not be submitted.
+    /// Whether the current instance creates a session and counts as a view toward the survey statistics. If set to false (i.e. stealth mode), the user's interactions with this survey will not be sent to the server.
     public var isSubmissionMode = true
     
-    /// Whether a landing page is shown the first time the survey is launched.
+    /// Whether a landing page is shown the first time the survey is opened.
     public var showLandingPage = true
     
     /// Whether the navigation menu is shown at the bottom of every page.
@@ -56,6 +56,7 @@ public class Survey: CustomStringConvertible {
     /// The user can go to another page by specifying the page number.
     public var allowsJumping = false
     
+    /// The color scheme of the survey.
     public var theme: Theme = .blue
     
     // MARK: Survey class implementation
@@ -284,40 +285,48 @@ extension Survey {
         /// The color used for disabled controls and others.
         var light: UIColor
         
-        /// The color used for highlighting choices in a multiple choice question.
+        /// The background color for some views, such as the highlight color for choices in a multiple choice question.
         var highlight: UIColor
         
         // Presets
-        /// A blue color preset theme (also the default theme).
+        /// A predefined dblue theme (also the default theme).
         public static let blue = Theme(
-            dark: UIColor(red: 84/255, green: 145/255, blue: 240/255, alpha: 1),
-            medium: UIColor(red: 112/255, green: 165/255, blue: 245/255, alpha: 1),
+            dark: UIColor(red: 79/255, green: 144/255, blue: 240/255, alpha: 1),
+            medium: UIColor(red: 104/255, green: 165/255, blue: 245/255, alpha: 1),
             light: UIColor(red: 165/255, green: 204/255, blue: 252/255, alpha: 1),
             highlight: UIColor(red: 232/255, green: 242/255, blue: 1, alpha: 1)
         )
         
-        /// A green color preset theme.
+        /// A predefined green theme.
         public static let green = Theme(
-            dark: UIColor(red: 54/255, green: 186/255, blue: 82/255, alpha: 1),
-            medium: UIColor(red: 93/255, green: 203/255, blue: 104/255, alpha: 1),
+            dark: UIColor(red: 62/255, green: 184/255, blue: 71/255, alpha: 1),
+            medium: UIColor(red: 80/255, green: 192/255, blue: 92/255, alpha: 1),
             light: UIColor(red: 160/255, green: 228/255, blue: 155/255, alpha: 1),
-            highlight: UIColor(red: 229/255, green: 253/255, blue: 225/255, alpha: 1)
+            highlight: UIColor(red: 230/255, green: 1, blue: 227/255, alpha: 1)
         )
         
-        /// A cyan color preset theme.
+        /// A predefined cyan theme.
         public static let cyan = Theme(
-            dark: UIColor(red: 84/255, green: 204/255, blue: 177/255, alpha: 1),
-            medium: UIColor(red: 132/255, green: 223/255, blue: 197/255, alpha: 1),
-            light: UIColor(red: 185/255, green: 239/255, blue: 228/255, alpha: 1),
-            highlight: UIColor(red: 231/255, green: 254/255, blue: 252/255, alpha: 1)
+            dark: UIColor(red: 75/255, green: 201/255, blue: 168/255, alpha: 1),
+            medium: UIColor(red: 116/255, green: 217/255, blue: 186/255, alpha: 1),
+            light: UIColor(red: 182/255, green: 237/255, blue: 224/255, alpha: 1),
+            highlight: UIColor(red: 228/255, green: 254/255, blue: 252/255, alpha: 1)
         )
         
-        /// A purple color preset theme.
+        /// A predefined purple theme.
         public static let purple = Theme(
             dark: UIColor(red: 155/255, green: 139/255, blue: 235/255, alpha: 1),
-            medium: UIColor(red: 175/255, green: 165/255, blue: 252/255, alpha: 1),
+            medium: UIColor(red: 175/255, green: 165/255, blue: 250/255, alpha: 1),
             light: UIColor(red: 202/255, green: 200/255, blue: 253/255, alpha: 1),
             highlight: UIColor(red: 231/255, green: 233/255, blue: 1, alpha: 1)
+        )
+        
+        /// A predefined orange theme.
+        public static let orange = Theme(
+            dark: UIColor(red: 242/255, green: 174/255, blue: 17/255, alpha: 1),
+            medium: UIColor(red: 248/255, green: 191/255, blue: 59/255, alpha: 1),
+            light: UIColor(red: 1, green: 221/255, blue: 154/255, alpha: 1),
+            highlight: UIColor(red: 1, green: 245/255, blue: 223/255, alpha: 1)
         )
         
         /// Create a new color theme for surveys.
