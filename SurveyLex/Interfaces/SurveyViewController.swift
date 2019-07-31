@@ -114,7 +114,7 @@ class SurveyViewController: UIPageViewController,
         progressIndicator = {
             let bar = UIProgressView(progressViewStyle: .bar)
             bar.trackTintColor = UIColor(white: 0.9, alpha: 1)
-            bar.progressTintColor = theme.medium
+            bar.progressTintColor = survey.isSubmissionMode ? theme.medium : .lightGray
             bar.translatesAutoresizingMaskIntoConstraints = false
             
             view.addSubview(bar)

@@ -205,6 +205,12 @@ class SurveySubmission: UIViewController {
     
     /// Refreshes the upload progress and updates the front-end.
     @objc private func updateProgress() {
+        
+        guard surveyViewController.survey.isSubmissionMode else {
+            self.titleLabel.text = "Not in Submission Mode!"
+            return
+        }
+        
         let uploadedFragments = surveyViewController.fragmentPages.filter { page in
             
             if page.fragmentData.needsReupload {

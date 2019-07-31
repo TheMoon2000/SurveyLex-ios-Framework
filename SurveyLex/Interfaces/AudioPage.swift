@@ -156,7 +156,10 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         super.viewDidDisappear(animated)
         
         // Every time the user exits the audio question, an attempt to upload the current audio response is made.
-        uploadResponse()
+        
+        if surveyViewController!.survey.isSubmissionMode {
+            uploadResponse()
+        }
     }
     
     /// The method that is called by the auxiliary button.

@@ -19,6 +19,7 @@ class FragmentMenu: UIVisualEffectView {
     var backButton: UIButton!
     var nextButton: UIButton!
     var goToPageButton: UIButton!
+    private var stealthModeLabel: UILabel!
     private var currentAlertVC: UIAlertController?
 
     required init(parentVC: SurveyViewController, allowJumping: Bool) {
@@ -77,6 +78,21 @@ class FragmentMenu: UIVisualEffectView {
             button.addTarget(self, action: #selector(goToPage), for: .touchUpInside)
             
             return button
+        }()
+        
+        stealthModeLabel = {
+            let label = UILabel()
+            label.text = "Stealth Mode"
+            label.isHidden = parentVC.survey.isSubmissionMode || !goToPageButton.isHidden
+            label.textColor = .darkGray
+            label.font = .systemFont(ofSize: 17)
+            label.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview(label)
+            
+            label.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+            label.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+            
+            return label
         }()
         
         addLines()

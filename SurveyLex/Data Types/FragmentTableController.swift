@@ -367,7 +367,10 @@ class FragmentTableController: UITableViewController, SurveyPage {
         super.viewDidDisappear(animated)
         
         // Upload the fragment to the server after it disappears from view.
-        uploadResponse()
+        
+        if surveyViewController!.survey.isSubmissionMode {
+            uploadResponse()
+        }
         
     }
     
