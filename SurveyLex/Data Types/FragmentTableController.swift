@@ -39,14 +39,14 @@ class FragmentTableController: UITableViewController, SurveyPage {
     var focusedRow = -1 {
         didSet (oldValue) {
             
+            fragmentData.focusedRow = focusedRow
+
             // Get the actual focused row.
             let topRow = focusedRow - focusedRow % 2
             
             if oldValue != -1 && topRow == oldValue - oldValue % 2 {
                 return // The focus did not change, so exit
             }
-            
-            fragmentData.focusedRow = focusedRow
             
             if focusedRow != -1 {
                 let index = IndexPath(row: focusedRow, section: 0)
@@ -142,8 +142,10 @@ class FragmentTableController: UITableViewController, SurveyPage {
                 self.focusedRow = 0 // Focus on the first row if none is focused.
             } else if self.fragmentData.questions.count == 1 {
                 self.focusedRow = 0
-            } else {
+            } else if self.focusedRow != self.fragmentData.focusedRow {
                 self.focusedRow = self.fragmentData.focusedRow
+            } else {
+                self.scrollToRow(row: self.focusedRow)
             }
             
         }
@@ -256,7 +258,8 @@ class FragmentTableController: UITableViewController, SurveyPage {
     func expandOrCollapse(from cell: SurveyElementCell) {
         if let row = self.contentCells.firstIndex(of: cell) {
             let targetIndex = IndexPath(row: row + 1, section: 0)
-                        
+            
+            self.focusedRow = row + 1
             self.tableView.reloadRows(at: [targetIndex], with: .automatic)
             
             // Scroll to the newly expanded row. We need to wait for the expansion animation to finish before scrolling to the row.
@@ -307,20 +310,6 @@ class FragmentTableController: UITableViewController, SurveyPage {
 }
  
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        if indexPath.section == 1 {
-            let cell = UITableViewCell()
-            cell.addSubview(navigationMenu)
-            cell.selectionStyle = .none
-            navigationMenu.translatesAutoresizingMaskIntoConstraints = false
-
-            
-            navigationMenu.leftAnchor.constraint(equalTo: cell.leftAnchor).isActive = true
-            navigationMenu.rightAnchor.constraint(equalTo: cell.rightAnchor).isActive = true
-            navigationMenu.topAnchor.constraint(equalTo: cell.topAnchor).isActive = true
-            navigationMenu.bottomAnchor.constraint(equalTo: cell.bottomAnchor).isActive = true
-            return cell
-        }
         
         // Not very memory efficient, but we can assume that a survey
         // will never have too many question on the same page.

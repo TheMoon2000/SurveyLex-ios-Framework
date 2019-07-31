@@ -210,7 +210,7 @@ class SurveyViewController: UIPageViewController,
         if surveyData.submittedOnce {
             // If the user has made their first submission, then display the following dialog.
             alert.title = "Unsaved Changes"
-            alert.message = "You may have made unsaved changes to your response since your last submission. Do you want to first submit these changes now?"
+            alert.message = "You may have made unsaved changes to your response since your last submission. Do you want to submit these changes now?"
             alert.addAction(UIAlertAction(title: "Submit Changes", style: .default, handler: { action in
                 let vc = SurveySubmission()
                 vc.surveyViewController = self
