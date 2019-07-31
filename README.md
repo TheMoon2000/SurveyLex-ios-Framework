@@ -1,5 +1,15 @@
 # SurveyLex iOS Survey-taking Framework
 
+## Introduction
+This Swift framework (iOS 11.0+) is designed to natively store, display and submit the most common elements in a typical online survey, and its precise architecture is engineered based on  [SurveyLex](https://www.surveylex.com), a survey-taking platform developed by [NeuroLex Laboratories Inc](https://neurolex.ai). The types survey elements that are currently supported are:
+- Consent form
+- Multiple choice questions
+- Checkbox questions
+- Text response questions
+- Audio response questions
+- Rating questions
+- Info screens
+
 ## Using the Framework
 To launch a survey, a you need to know the survey ID and the parent view controller on which the survey view controller is presenting. The survey ID of a SurveyLex survey is formatted as a UUID string, as in app.surveylex.com/surveys/**c741cba0-acca-11e9-aeb9-2b1c6d8db2a2**.
 
@@ -21,6 +31,9 @@ func launchSurvey() {
     // Code to update view controller here...
 }
 
+
+// MARK: - Survey Response delegate
+
 func surveyDidLoad(_ survey: Survey) {
     // Code to finish update view controller...
     
@@ -35,4 +48,8 @@ func surveyDidLoad(_ survey: Survey) {
 - `showLandingPage: Bool`
 - `showNavigationMenu: Bool`
 - `allowsJumping: Bool`
-- `theme: Survey.Theme`
+- `theme`: A `Survey.Theme` type variable containing the theme colors the survey should use. A few pre-defined themes are provided:
+  - `Survey.Theme.blue` (Default)
+  - `Survey.Theme.green`
+  - `Survey.Theme.cyan`
+  - `Survey.Theme.purple`
