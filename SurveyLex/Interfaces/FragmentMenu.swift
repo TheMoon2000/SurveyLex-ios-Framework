@@ -58,7 +58,7 @@ class FragmentMenu: UIVisualEffectView {
         
         for button in [backButton, nextButton] {
             button?.imageView?.contentMode = .scaleAspectFit
-            button?.widthAnchor.constraint(equalToConstant: 40).isActive = true
+            button?.widthAnchor.constraint(equalToConstant: 50).isActive = true
             button?.heightAnchor.constraint(equalToConstant: 19).isActive = true
         }
         
