@@ -145,9 +145,9 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
     override func focus() {
         super.focus()
         
-        self.textfield.delegate = nil
-        self.textfield.becomeFirstResponder()
-        self.textfield.delegate = self
+        textfield.delegate = nil
+        textfield.becomeFirstResponder()
+        textfield.delegate = self
     }
     
     override func unfocus() {
