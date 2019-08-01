@@ -49,10 +49,6 @@ let SEPARATOR_WIDTH: CGFloat = 90.0
 /// Whether debug statements are printed to the console
 let DEBUG_MODE = true
 
-/// A global variable used for storing cached survey data.
-var SURVEY_CACHE = [String : SurveyData]()
-
-
 // MARK: - Extensions and other constants
 
 extension UITextView {
