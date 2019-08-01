@@ -141,9 +141,11 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
                               options: .curveEaseInOut,
                               animations: {
                                 self.navigationMenu.alpha = 1.0
-                                self.navigationMenu.isUserInteractionEnabled = true
-            }, completion: nil)
+                              },
+                              completion: nil)
         }
+        
+        navigationMenu.enableUserInteractions(true)
         
         // Handle auto-start
         if audioQuestion.autoStart && !audioQuestion.visited {

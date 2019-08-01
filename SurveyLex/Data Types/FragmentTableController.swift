@@ -123,8 +123,9 @@ class FragmentTableController: UITableViewController, SurveyPage {
                           options: .curveEaseInOut,
                           animations: {
                               self.navigationMenu.alpha = 1.0
-                              self.navigationMenu.isUserInteractionEnabled = true
                           }, completion: nil)
+        
+        navigationMenu.enableUserInteractions(true)
         
         navigationMenu.nextButton.isEnabled = self.unlocked
         navigationMenu.backButton.isEnabled = pageIndex > 0 || surveyViewController!.survey.showLandingPage

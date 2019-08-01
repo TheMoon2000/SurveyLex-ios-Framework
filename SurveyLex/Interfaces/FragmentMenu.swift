@@ -185,10 +185,12 @@ class FragmentMenu: UIVisualEffectView {
     // Forward and backward buttons
     
     @objc private func flipBack() {
+        backButton.isUserInteractionEnabled = false
         parentVC.goToPage(page: parentVC.fragmentIndex - 1)
     }
     
     @objc private func flipNext() {
+        nextButton.isUserInteractionEnabled = false
         if parentVC.fragmentIndex == parentVC.fragmentPages.count { return }
         if !parentVC.flipPageIfNeeded() {
             if let nextVC = parentVC.pageViewController(parentVC, viewControllerAfter: parentVC.currentFragment!) {
@@ -200,6 +202,13 @@ class FragmentMenu: UIVisualEffectView {
                 debugMessage("Cannot flip to next page.")
             }
         }
+    }
+    
+    /// Shortcut for setting the user interaction status of the flip buttons.
+    func enableUserInteractions(_ enable: Bool) {
+        isUserInteractionEnabled = true
+        backButton.isUserInteractionEnabled = enable
+        nextButton.isUserInteractionEnabled = enable
     }
 
     required init?(coder aDecoder: NSCoder) {
