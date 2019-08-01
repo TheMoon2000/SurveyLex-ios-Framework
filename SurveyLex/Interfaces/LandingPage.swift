@@ -29,7 +29,7 @@ class LandingPage: UIViewController {
             logo.translatesAutoresizingMaskIntoConstraints = false
             
             logo.widthAnchor.constraint(equalToConstant: 120).isActive = true
-            logo.heightAnchor.constraint(equalToConstant: 120).isActive = true
+            logo.heightAnchor.constraint(equalToConstant: 100).isActive = true
             
             return logo
         }()
