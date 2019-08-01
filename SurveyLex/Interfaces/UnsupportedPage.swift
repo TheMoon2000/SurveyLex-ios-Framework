@@ -71,6 +71,20 @@ class UnsupportedPage: UIViewController, SurveyPage {
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        UIView.transition(with: surveyViewController!.navigationMenu,
+                          duration: 0.3,
+                          options: .curveEaseInOut,
+                          animations: {
+                              self.surveyViewController?.navigationMenu.alpha = 1.0
+                          },
+                          completion: nil)
+        
+        navigationMenu.enableUserInteractions(true)
+    }
+    
     func uploadResponse() {}
     
 
