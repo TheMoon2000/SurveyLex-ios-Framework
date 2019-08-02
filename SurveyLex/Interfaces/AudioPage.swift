@@ -31,6 +31,11 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         return surveyViewController!.navigationMenu
     }
     
+    /// An audio question allows swiping unless a recording is in progress.
+    var fixScreen: Bool {
+        return recordButton.isRecording
+    }
+    
     // MARK: - Custom instance variables
     
     // MARK: UI elements
@@ -212,7 +217,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
             
-            scrollView.contentInset.bottom = FragmentMenu.height
+            scrollView.contentInset.bottom = navigationMenu.height
                         
             return scrollView
         }()
@@ -364,8 +369,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
                           animations: {
                             self.navigationMenu.alpha = 1.0
                             self.navigationMenu.isUserInteractionEnabled = true
-                            self.canvas.contentInset.bottom = FragmentMenu.height
-                            self.canvas.contentOffset.y += FragmentMenu.height
+                            self.canvas.contentInset.bottom = self.navigationMenu.height
+                            self.canvas.contentOffset.y += self.navigationMenu.height
                           }, completion: nil)
         
         // The user can now close the survey
@@ -452,8 +457,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         UIView.transition(with: view, duration: 0.2, options: .curveEaseInOut, animations: {
                 self.navigationMenu.alpha = 1.0
                 self.navigationMenu.isUserInteractionEnabled = true
-                self.canvas.contentInset.bottom = FragmentMenu.height
-                self.canvas.contentOffset.y += FragmentMenu.height
+                self.canvas.contentInset.bottom = self.navigationMenu.height
+                self.canvas.contentOffset.y += self.navigationMenu.height
             }, completion: nil)
         
         // The user can now close the survey

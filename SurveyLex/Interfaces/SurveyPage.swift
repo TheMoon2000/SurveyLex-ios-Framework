@@ -24,6 +24,9 @@ protocol SurveyPage: UIViewController {
     
     /// Upload the survey taker's response for this fragment to the server. Each type of `SurveyPage` is responsible for uploading its own responses. Upon completing an upload, the page should send a notification of type `FRAGMENT_UPLOAD_COMPLETE`.
     func uploadResponse()
+    
+    /// Whether the screen is fixed to the current page. If `true`, the user cannot swipe to other pages.
+    var fixScreen: Bool { get }
 }
 
 extension SurveyPage {

@@ -30,6 +30,11 @@ class FragmentTableController: UITableViewController, SurveyPage {
         return surveyViewController!.navigationMenu
     }
     
+    /// A `FragmentTableController` always allows swiping.
+    var fixScreen: Bool {
+        return false
+    }
+    
     // MARK: - Custom instance variables
     
     /// An array of `SurveyElementCell`s in order, each representing a survey element in the fragment.
@@ -120,7 +125,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         
         UIView.transition(with: navigationMenu,
                           duration: 0.3,
-                          options: .curveEaseInOut,
+                          options: .curveEaseOut,
                           animations: {
                               self.navigationMenu.alpha = 1.0
                           }, completion: nil)
@@ -145,6 +150,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
             } else if self.fragmentData.questions.count == 1 {
                 self.focusedRow = 0
             } else if self.focusedRow != self.fragmentData.focusedRow {
+                // Load the focused row from cache
                 self.focusedRow = self.fragmentData.focusedRow
             } else {
                 self.scrollToRow(row: self.focusedRow)
@@ -183,7 +189,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         tableView.allowsSelection = true
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .interactive
-        tableView.contentInset.bottom = FragmentMenu.height
+        tableView.contentInset.bottom = navigationMenu.height
         
         // Set background color
         view.backgroundColor = UIColor(white: 0.96, alpha: 1)
@@ -237,8 +243,6 @@ class FragmentTableController: UITableViewController, SurveyPage {
         } else {
             tableView.reloadSections(IndexSet(arrayLiteral: 0), with: .none)
         }
-        
-        self.navigationMenu.isHidden = false
     }
     
     // MARK: - Row actions
@@ -267,7 +271,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
             // Scroll to the newly expanded row. We need to wait for the expansion animation to finish before scrolling to the row.
             if self.contentCells[row + 1].expanded {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    let visibleHeight = self.view.frame.height - (self.surveyViewController!.survey.showNavigationMenu ? FragmentMenu.height : 0)
+                    let visibleHeight = self.view.frame.height - self.navigationMenu.height
                     let topRemainingHeight = (visibleHeight - self.contentCells[row + 1].frame.height) / 2
                     
 

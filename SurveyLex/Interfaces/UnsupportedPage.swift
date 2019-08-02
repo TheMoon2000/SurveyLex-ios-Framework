@@ -27,6 +27,10 @@ class UnsupportedPage: UIViewController, SurveyPage {
     
     var navigationMenu: FragmentMenu!
     
+    var fixScreen: Bool {
+        return false
+    }
+    
     // MARK: - Custom instance variables
     
     private var canvas: UIScrollView!
