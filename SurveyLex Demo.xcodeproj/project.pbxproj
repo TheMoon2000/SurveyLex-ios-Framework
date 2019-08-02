@@ -85,8 +85,6 @@
 		CC7D7D8622C44FB100DDD3B3 /* MultipleChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5122C44FB100DDD3B3 /* MultipleChoice.swift */; };
 		CC7D7D8722C44FB100DDD3B3 /* RadioGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5222C44FB100DDD3B3 /* RadioGroupCell.swift */; };
 		CC7D7D8822C44FB100DDD3B3 /* RadioGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5222C44FB100DDD3B3 /* RadioGroupCell.swift */; };
-		CC7D7D8B22C44FB100DDD3B3 /* RatingResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5422C44FB100DDD3B3 /* RatingResponseDelegate.swift */; };
-		CC7D7D8C22C44FB100DDD3B3 /* RatingResponseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5422C44FB100DDD3B3 /* RatingResponseDelegate.swift */; };
 		CC7D7D8D22C44FB100DDD3B3 /* MultipleChoiceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5522C44FB100DDD3B3 /* MultipleChoiceCell.swift */; };
 		CC7D7D8E22C44FB100DDD3B3 /* MultipleChoiceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5522C44FB100DDD3B3 /* MultipleChoiceCell.swift */; };
 		CC7D7D8F22C44FB100DDD3B3 /* Fragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7D7D5622C44FB100DDD3B3 /* Fragment.swift */; };
@@ -209,7 +207,6 @@
 		CC7D7D5022C44FB100DDD3B3 /* RadioGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadioGroup.swift; sourceTree = "<group>"; };
 		CC7D7D5122C44FB100DDD3B3 /* MultipleChoice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipleChoice.swift; sourceTree = "<group>"; };
 		CC7D7D5222C44FB100DDD3B3 /* RadioGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RadioGroupCell.swift; sourceTree = "<group>"; };
-		CC7D7D5422C44FB100DDD3B3 /* RatingResponseDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingResponseDelegate.swift; sourceTree = "<group>"; };
 		CC7D7D5522C44FB100DDD3B3 /* MultipleChoiceCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipleChoiceCell.swift; sourceTree = "<group>"; };
 		CC7D7D5622C44FB100DDD3B3 /* Fragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fragment.swift; sourceTree = "<group>"; };
 		CC7D7D9122C44FCF00DDD3B3 /* QuestionElementsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionElementsTest.swift; sourceTree = "<group>"; };
@@ -424,7 +421,6 @@
 				CC2A8BE722D8D81600C349A5 /* RadioGroupBottomCell.swift */,
 				CC7D7D5122C44FB100DDD3B3 /* MultipleChoice.swift */,
 				CC7D7D5522C44FB100DDD3B3 /* MultipleChoiceCell.swift */,
-				CC7D7D5422C44FB100DDD3B3 /* RatingResponseDelegate.swift */,
 			);
 			path = "Radio group";
 			sourceTree = "<group>";
@@ -765,7 +761,6 @@
 				CC7D7D7B22C44FB100DDD3B3 /* ConsentCell.swift in Sources */,
 				CC1F5A3D22E7725B00D4F8D1 /* UnsupportedPage.swift in Sources */,
 				CC7D7D8F22C44FB100DDD3B3 /* Fragment.swift in Sources */,
-				CC7D7D8B22C44FB100DDD3B3 /* RatingResponseDelegate.swift in Sources */,
 				CC7D7D5722C44FB100DDD3B3 /* SurveyElementCell.swift in Sources */,
 				CC86811422EFC83300A72BBC /* FragmentMenu.swift in Sources */,
 				CC2B341C22EE87B9005F7F06 /* LandingPage.swift in Sources */,
@@ -824,7 +819,6 @@
 				CC3E5EFC22C9A26B00D603CF /* CheckboxTable.swift in Sources */,
 				CC3E5EF922C988F200D603CF /* CheckboxItemCell.swift in Sources */,
 				CC7D7D7622C44FB100DDD3B3 /* Audio.swift in Sources */,
-				CC7D7D8C22C44FB100DDD3B3 /* RatingResponseDelegate.swift in Sources */,
 				CC7D7D7A22C44FB100DDD3B3 /* Consent.swift in Sources */,
 				CC7D7D6C22C44FB100DDD3B3 /* TextFormatter.swift in Sources */,
 				CC7D7D5A22C44FB100DDD3B3 /* SurveyResponseDelegate.swift in Sources */,
