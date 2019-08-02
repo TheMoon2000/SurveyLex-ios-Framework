@@ -23,7 +23,7 @@ class LandingPage: UIViewController {
         
         // Views in top to bottom order
         logoImage = {
-            let logo = UIImageView(image: surveyViewController.survey.logoImage)
+            let logo = UIImageView(image: surveyViewController.surveyData.logo)
             if logo.image == nil { logo.isHidden = true }
             logo.contentMode = .scaleAspectFit
             logo.translatesAutoresizingMaskIntoConstraints = false
@@ -97,8 +97,10 @@ class LandingPage: UIViewController {
                           options: .curveEaseInOut,
                           animations: {
                             self.surveyViewController.navigationMenu.alpha = 0.0
-                            self.surveyViewController.navigationMenu.isUserInteractionEnabled = false
-                          }, completion: nil)
+                          },
+                          completion: nil)
+        
+        surveyViewController.navigationMenu.isUserInteractionEnabled = false
         
         surveyViewController.fragmentIndex = -1
     }

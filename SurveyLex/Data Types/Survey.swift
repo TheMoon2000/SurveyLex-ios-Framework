@@ -12,6 +12,9 @@ import SwiftyJSON
 /// An interactive interface that presents a survey (powered by SurveyLex) for the user to fill.
 public class Survey: CustomStringConvertible {
     
+    /// Used for storing cached surveys.
+    static var cached = [String : SurveyData]()
+    
     /// The NeuroLex SurveyLex API URL prefix.
     private static let BASE_URL = "https://api.neurolex.ai/1.0/object/surveys/taker/"
     
@@ -26,9 +29,6 @@ public class Survey: CustomStringConvertible {
     
     /// The data content of the survey.
     private(set) var surveyData: SurveyData?
-    
-    /// The image of the survey.
-    private(set) var logoImage: UIImage?
     
     /// Whether the survey data is loaded from cache.
     private var loadedFromCache = false
@@ -54,7 +54,10 @@ public class Survey: CustomStringConvertible {
     public var showNavigationMenu = true
     
     /// The user can go to another page by specifying the page number.
-    public var allowsJumping = false
+    public var allowJumping = false
+    
+    /// Whether incomplete sessions are cached.
+    public var useCache = true
     
     /// The color scheme of the survey.
     public var theme: Theme = .blue
@@ -96,7 +99,7 @@ public class Survey: CustomStringConvertible {
     private func load(_ completion: @escaping () -> ()) {
         if isAlreadyLoading { return } // An instance is already running
         
-        if let cache = SURVEY_CACHE[surveyID] {
+        if useCache, let cache = Survey.cached[surveyID] {
             self.loadedFromCache = true
             self.surveyData = cache
             debugMessage("Survey <\(surveyID)> is loaded from cache.")
@@ -131,7 +134,7 @@ public class Survey: CustomStringConvertible {
                 let json = try JSON(data: data!)
                 self.surveyData = try SurveyData(json: json, theme: self.theme, landingPage: self.showLandingPage)
                 debugMessage("Survey <\(self.surveyID)> is loaded from the server.")
-                SURVEY_CACHE[self.surveyID] = self.surveyData
+                Survey.cached[self.surveyID] = self.surveyData
                 
                 // Depending on whether there is a logo, we call the completion handler at different times
                 if let logoURL = json.dictionary?["logoUrl"]?.url {
@@ -169,7 +172,7 @@ public class Survey: CustomStringConvertible {
             }
             
             if let image = UIImage(data: data!) {
-                self.logoImage = image
+                self.surveyData?.logo = image
             } else {
                 debugMessage("The provided logo image at \(logoURL) could not be read.")
             }
