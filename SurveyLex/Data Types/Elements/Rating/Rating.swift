@@ -10,7 +10,7 @@ import UIKit
 import SwiftyJSON
 
 /// Represents the information for a rating question in a SurveyLex survey.
-class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
+class Rating : Question, CustomStringConvertible {
     
     // MARK: Protocol requirements
     
@@ -99,12 +99,6 @@ class Rating : Question, CustomStringConvertible, RatingResponseDelegate {
             }
         }
         
-    }
-    
-    /// Delegate method that is called when the user makes a selection.
-    func didSelectRow(row: Int) {
-        UISelectionFeedbackGenerator().selectionChanged()
-        completed = true
     }
     
 }

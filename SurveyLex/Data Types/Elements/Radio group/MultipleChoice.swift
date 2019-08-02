@@ -67,11 +67,25 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if radioGroup.selection != indexPath.row {
-            UISelectionFeedbackGenerator().selectionChanged()
+        
+        UISelectionFeedbackGenerator().selectionChanged()
+        parentCell.surveyPage.uploaded = false
+        
+        if !radioGroup.completed {
+            radioGroup.completed = true
+            if !radioGroup.parentView!.toNext(from: parentCell) {
+                
+                // The focus was not changed
+                parentCell.surveyPage.focus(cell: parentCell)
+            }
+        } else {
+            // The cell has already been selected once, so keep it focused.
+            parentCell.surveyPage.focus(cell: parentCell)
         }
-        parentCell.didSelectRow(row: indexPath.row)
+    
     }
+    
+    // TODO: Only jump to next question is every previous required question is completed.
     
     
     required init?(coder aDecoder: NSCoder) {

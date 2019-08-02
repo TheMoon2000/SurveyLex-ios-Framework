@@ -56,29 +56,6 @@ class RadioGroupBottomCell: SurveyElementCell {
         return choiceTable
     }
     
-    // MARK: MultipleChoice table selection handler
-    
-    func didSelectRow(row: Int) {
-        
-        if radioGroup.selection != row {
-            radioGroup.selection = row
-            // Tell the fragment page controller that its information needs to be uploaded again
-            surveyPage.uploaded = false
-        }
-        
-        if !radioGroup.completed {
-            radioGroup.completed = true
-            if !radioGroup.parentView!.toNext(from: self) {
-                // This is the last cell on the page, so keep it focused
-                surveyPage.focus(cell: self)
-            }
-        } else {
-            // The cell has already been selected once, so keep it focused.
-            surveyPage.focus(cell: self)
-        }
-    }
-    
-    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
