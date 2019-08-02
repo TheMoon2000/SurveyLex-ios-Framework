@@ -12,7 +12,9 @@ import UIKit
 class FragmentMenu: UIVisualEffectView {
     
     /// The universal height of a fragment menu.
-    static let height: CGFloat = 52
+    var height: CGFloat {
+        return (parentVC?.survey.showNavigationMenu ?? true) ? 50 : 0
+    }
     
     var parentVC: SurveyViewController!
     
