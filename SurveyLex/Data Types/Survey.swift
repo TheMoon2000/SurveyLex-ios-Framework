@@ -41,8 +41,8 @@ public class Survey: CustomStringConvertible {
     /// Whether multiple choice / checkbox menus are allowed to collapse once expanded.
     public var allowMenuCollapse = false
     
-    /// Whether the current survey element has higher opacity relative to others.
-    public var autofocus = true
+    /// Whether the current survey element has higher opacity relative to other items.
+    public var visibilityDifferentiation = true
     
     /// Whether the current instance creates a session and counts as a view toward the survey statistics. If set to false (i.e. stealth mode), the user's interactions with this survey will not be sent to the server.
     public var isSubmissionMode = true
@@ -304,8 +304,8 @@ extension Survey {
         public static let green = Theme(
             dark: UIColor(red: 62/255, green: 184/255, blue: 71/255, alpha: 1),
             medium: UIColor(red: 80/255, green: 192/255, blue: 92/255, alpha: 1),
-            light: UIColor(red: 160/255, green: 228/255, blue: 155/255, alpha: 1),
-            highlight: UIColor(red: 230/255, green: 1, blue: 227/255, alpha: 1)
+            light: UIColor(red: 157/255, green: 228/255, blue: 160/255, alpha: 1),
+            highlight: UIColor(red: 230/255, green: 1, blue: 232/255, alpha: 1)
         )
         
         /// A predefined cyan theme.
@@ -313,15 +313,15 @@ extension Survey {
             dark: UIColor(red: 75/255, green: 201/255, blue: 168/255, alpha: 1),
             medium: UIColor(red: 116/255, green: 217/255, blue: 186/255, alpha: 1),
             light: UIColor(red: 182/255, green: 237/255, blue: 224/255, alpha: 1),
-            highlight: UIColor(red: 228/255, green: 254/255, blue: 252/255, alpha: 1)
+            highlight: UIColor(red: 229/255, green: 1, blue: 251/255, alpha: 1)
         )
         
         /// A predefined purple theme.
         public static let purple = Theme(
-            dark: UIColor(red: 155/255, green: 139/255, blue: 235/255, alpha: 1),
-            medium: UIColor(red: 175/255, green: 165/255, blue: 250/255, alpha: 1),
-            light: UIColor(red: 202/255, green: 200/255, blue: 253/255, alpha: 1),
-            highlight: UIColor(red: 231/255, green: 233/255, blue: 1, alpha: 1)
+            dark: UIColor(red: 149/255, green: 132/255, blue: 235/255, alpha: 1),
+            medium: UIColor(red: 168/255, green: 153/255, blue: 250/255, alpha: 1),
+            light: UIColor(red: 200/255, green: 196/255, blue: 252/255, alpha: 1),
+            highlight: UIColor(red: 229/255, green: 228/255, blue: 1, alpha: 1)
         )
         
         /// A predefined orange theme.

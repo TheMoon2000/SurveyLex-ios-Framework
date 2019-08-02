@@ -224,7 +224,7 @@ class RatingSliderCell: SurveyElementCell {
     
     override func unfocus() {
         super.unfocus()
-        if autofocus {
+        if diff {
             UIView.performWithoutAnimation {
                 slider.thumbTintColor = ratingQuestion.completed ? ratingQuestion.theme.light : grayColor
                 slider.alpha = 1.0

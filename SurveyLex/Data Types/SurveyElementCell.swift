@@ -29,8 +29,8 @@ class SurveyElementCell: UITableViewCell {
     }
     
     /// Shortcut to access whether auto-focus is enabled for this survey.
-    var autofocus: Bool {
-        return surveyPage?.surveyViewController?.survey.autofocus ?? true
+    var diff: Bool {
+        return surveyPage?.surveyViewController?.survey.visibilityDifferentiation ?? true
     }
     
     init() {
@@ -47,7 +47,7 @@ class SurveyElementCell: UITableViewCell {
     
     /// Unfocuses the cell by initiating a series of visual changes.
     func unfocus() {
-        subviews.forEach { $0.alpha = autofocus ? UNFOCUSED_ALPHA : 1.0 }
+        subviews.forEach { $0.alpha = diff ? UNFOCUSED_ALPHA : 1.0 }
     }
 
     
