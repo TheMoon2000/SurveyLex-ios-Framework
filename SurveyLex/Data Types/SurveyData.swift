@@ -37,6 +37,8 @@ public class SurveyData: CustomStringConvertible {
     /// Whether the user has completed the first submission.
     var submittedOnce = false
     
+    var logo: UIImage?
+    
     var theme: Survey.Theme!
     
     /// Creates a new survey form using a JSON summary of the survey.
