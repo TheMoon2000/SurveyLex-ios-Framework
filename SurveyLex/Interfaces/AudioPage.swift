@@ -164,7 +164,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         
         // Every time the user exits the audio question, an attempt to upload the current audio response is made.
         
-        if surveyViewController!.survey.isSubmissionMode {
+        if surveyViewController!.survey.mode == .submission {
             uploadResponse()
         }
     }

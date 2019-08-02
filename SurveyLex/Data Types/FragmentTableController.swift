@@ -389,7 +389,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
         
         // Upload the fragment to the server after it disappears from view.
         
-        if surveyViewController!.survey.isSubmissionMode {
+        if surveyViewController!.survey.mode == .submission {
             uploadResponse()
         }
         

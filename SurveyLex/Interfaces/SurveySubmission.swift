@@ -206,7 +206,7 @@ class SurveySubmission: UIViewController {
     /// Refreshes the upload progress and updates the front-end.
     @objc private func updateProgress() {
         
-        guard surveyViewController.survey.isSubmissionMode else {
+        guard surveyViewController.survey.mode == .submission else {
             self.titleLabel.text = "Not in Submission Mode!"
             return
         }

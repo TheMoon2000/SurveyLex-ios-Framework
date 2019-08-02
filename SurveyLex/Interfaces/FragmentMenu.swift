@@ -67,7 +67,7 @@ class FragmentMenu: UIVisualEffectView {
         
         goToPageButton = {
             let button = UIButton(type: .system)
-            button.tintColor = parentVC.theme.dark
+            button.tintColor = parentVC.survey.mode == .submission ? parentVC.theme.dark : .gray
             button.isHidden = !allowJumping
             button.setTitle("Go to Page", for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
@@ -85,7 +85,7 @@ class FragmentMenu: UIVisualEffectView {
         stealthModeLabel = {
             let label = UILabel()
             label.text = "Stealth Mode"
-            label.isHidden = parentVC.survey.isSubmissionMode || !goToPageButton.isHidden
+            label.isHidden = !(parentVC.survey.mode == .stealth && goToPageButton.isHidden) // The opposite condition of showing
             label.textColor = .darkGray
             label.font = .systemFont(ofSize: 17)
             label.translatesAutoresizingMaskIntoConstraints = false

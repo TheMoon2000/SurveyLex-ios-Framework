@@ -44,8 +44,8 @@ public class Survey: CustomStringConvertible {
     /// Whether the current survey element has higher opacity relative to other items.
     public var visibilityDifferentiation = true
     
-    /// Whether the current instance creates a session and counts as a view toward the survey statistics. If set to false (i.e. stealth mode), the user's interactions with this survey will not be sent to the server.
-    public var isSubmissionMode = true
+    /// If set to `submission` (default), the current instance creates a session and counts as a view toward the survey statistics. Response will also be automatically uploaded. If set to `stealth`, the user's interactions with this survey will not be sent to the server.
+    public var mode: Mode = .submission
     
     /// Whether a landing page is shown the first time the survey is opened.
     public var showLandingPage = true
@@ -222,7 +222,7 @@ public class Survey: CustomStringConvertible {
             self.delegate?.surveyDidPresent(self)
         }
         
-        if isSubmissionMode && !loadedFromCache {
+        if mode == .submission && !loadedFromCache {
             createSession()
         } else if loadedFromCache {
             debugMessage("Same session (id=\(surveyData!.sessionID)) used for the relaunched survey.")
@@ -274,6 +274,15 @@ extension Survey {
         
         /// The survey has no content.
         case emptySurvey = 3
+    }
+    
+    public enum Mode : Int {
+        
+        /// No data is sent to the server. Submission is impossible.
+        case stealth = 0
+        
+        /// The default mode, where a session is created and the user response is submitted.
+        case submission = 1
     }
     
     /// A color theme for the survey.
