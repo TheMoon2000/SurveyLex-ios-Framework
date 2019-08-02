@@ -40,7 +40,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
     /// An array of `SurveyElementCell`s in order, each representing a survey element in the fragment.
     var contentCells = [SurveyElementCell]()
     
-    /// The index of the row that is currently focused, as seen by the user.
+    /// The index of the row that is currently focused, as seen by the user. Setting the focused row will cause that row to be focused.
     var focusedRow = -1 {
         didSet (oldValue) {
             
@@ -54,20 +54,16 @@ class FragmentTableController: UITableViewController, SurveyPage {
             }
             
             if focusedRow != -1 {
-                let index = IndexPath(row: focusedRow, section: 0)
                 
                 // Focus on the given cell.
                 if focusedRow < tableView.numberOfRows(inSection: 0) {
-                    var pos = UITableView.ScrollPosition.middle
-                    if contentCells[focusedRow].frame.height > tableView.frame.height || tableView.numberOfRows(inSection: 0) == 1 {
-                        pos = .top
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        self.tableView.scrollToRow(at: index, at: pos, animated: true)
+                    if contentCells[topRow].cellBelow.expanded {
+                        scrollToRow(row: focusedRow)
                     }
                     
                     // We actually call focus() on the top cell.
-                    UIView.animate(withDuration: 0.2) { self.contentCells[topRow].focus() }
+                    UIView.animate(withDuration: 0.2) { self.contentCells[topRow].focus()
+                    }
                 }
             }
             if oldValue != -1 {
@@ -160,15 +156,34 @@ class FragmentTableController: UITableViewController, SurveyPage {
     }
     
     // MARK: - Scrolling helper functions
+    
+    /// Scroll the given row to the center of the view if it fits; otherwise, the top cell will be scrolled to the top of the screen.
     func scrollToRow(row: Int) {
-        var pos = UITableView.ScrollPosition.middle
-        let cell = self.contentCells[row]
-        if cell.frame.height > self.tableView.frame.height || self.tableView.numberOfRows(inSection: 0) == 1 {
-            pos = .top
+        
+        if row == -1 { return }
+        
+        let topRow = row - row % 2
+        let bottomRow = topRow + 1
+        
+        func centerRow(row: Int) {
+            var pos = UITableView.ScrollPosition.middle
+            let cell = self.contentCells[row]
+            if cell.frame.height > self.tableView.frame.height || self.tableView.numberOfRows(inSection: 0) == 1 {
+                pos = .top
+            }
+            self.tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: pos, animated: true)
         }
-        self.tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: pos, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.contentCells[row].focus()
+        
+        if contentCells[bottomRow].expanded {
+            let visibleHeight = self.view.frame.height - self.navigationMenu.height
+            let topRemainingHeight = (visibleHeight - contentCells[bottomRow].frame.height) / 2
+            if topRemainingHeight >= contentCells[topRow].frame.height {
+                centerRow(row: bottomRow)
+            } else {
+                self.tableView.scrollToRow(at: IndexPath(row: topRow, section: 0), at: .top, animated: true)
+            }
+        } else {
+            centerRow(row: topRow)
         }
     }
     
@@ -271,15 +286,7 @@ class FragmentTableController: UITableViewController, SurveyPage {
             // Scroll to the newly expanded row. We need to wait for the expansion animation to finish before scrolling to the row.
             if self.contentCells[row + 1].expanded {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    let visibleHeight = self.view.frame.height - self.navigationMenu.height
-                    let topRemainingHeight = (visibleHeight - self.contentCells[row + 1].frame.height) / 2
-                    
-
-                    if topRemainingHeight >= cell.frame.height {
-                        self.scrollToRow(row: row + 1)
-                    } else {
-                        self.tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .top, animated: true)
-                    }
+                    self.scrollToRow(row: row)
                 }
             }
         }
