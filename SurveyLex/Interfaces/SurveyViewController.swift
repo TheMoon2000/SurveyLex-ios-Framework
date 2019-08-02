@@ -9,9 +9,7 @@
 import UIKit
 
 /// A subclass of `UIViewController` that displays a SurveyLex survey to the user.
-class SurveyViewController: UIPageViewController,
-                            UIPageViewControllerDataSource,
-                            UIPageViewControllerDelegate {
+class SurveyViewController: UIPageViewController {
     
     // MARK: - Instance variables
     
@@ -32,12 +30,17 @@ class SurveyViewController: UIPageViewController,
      */
     var fragmentIndex = -1 {
         didSet (oldValue) {
+            
+            // We always keep a copy of the current fragment index in `surveyData` because `surveyData` is preserved between different launches of the same survey and is used to recover the current page.
             surveyData.fragmentIndex = fragmentIndex
+            
+            // Fragment index -1 is reserved for the landing page.
             if fragmentIndex == -1 {
                 navigationItem.title = surveyData.title
                 UIView.animate(withDuration: 0.35) {
                     self.progressIndicator?.setProgress(0, animated: true)
                 }
+            // Fragment `fragmentPages.count` is reserved for the submission page.
             } else if fragmentIndex == fragmentPages.count {
                 navigationItem.title = "Response Submission"
                 UIView.animate(withDuration: 0.35) {
@@ -75,6 +78,10 @@ class SurveyViewController: UIPageViewController,
             let barPercentage = (Float(fragmentIndex + 1) + Float(transitionProgress)) / Float(fragmentPages.count)
             progressIndicator.setProgress(barPercentage, animated: true)
             
+            if (currentFragment?.fixScreen ?? false) {
+                return
+            }
+            
             // Update navigation menu
             if transitionProgress < 0 {
                 // Case 1: swiping back from the first page
@@ -109,6 +116,17 @@ class SurveyViewController: UIPageViewController,
             return page
         }
         
+        // Detect keyboard show & hide events
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow(_:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide(_:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil)
         
         // Set up progress indicator in the navigation bar and load the first page.
         progressIndicator = {
@@ -127,13 +145,13 @@ class SurveyViewController: UIPageViewController,
         
         // Setup navigation menu
         navigationMenu = {
-            let menu = FragmentMenu(parentVC: self, allowJumping: survey.allowsJumping)
+            let menu = FragmentMenu(parentVC: self, allowJumping: survey.allowJumping)
             menu.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(menu)
             
             menu.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
             menu.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-            menu.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -FragmentMenu.height).isActive = true
+            menu.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -menu.height).isActive = true
             menu.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
 
             return menu
@@ -149,14 +167,13 @@ class SurveyViewController: UIPageViewController,
             let landingPage = LandingPage()
             landingPage.surveyViewController = self
             page = landingPage
-            
-            // The navigation menu is hidden for the landing page
-            navigationMenu.isHidden = true
         } else {
             // There is no landing page
             page = fragmentPages[fragmentIndex]
-            navigationMenu.isHidden = survey.showNavigationMenu
         }
+        
+        // If `showNavigationMenu` is false, hide the menu completely.
+        navigationMenu.isHidden = !survey.showNavigationMenu
         
         setViewControllers([page],
                            direction: .forward,
@@ -169,7 +186,6 @@ class SurveyViewController: UIPageViewController,
         
         // Set page view datasource and delegate
         dataSource = self
-        delegate = self
         
         // Setup navigation bar appearance for cancel button
         let cancelButton = UIBarButtonItem(title: "Close",
@@ -221,10 +237,16 @@ class SurveyViewController: UIPageViewController,
             }))
             alert.addAction(UIAlertAction(title: "Leave", style: .default, handler: { action in self.dismissSurvey() }))
         } else {
+            
             // If the user hasn't yet submitted anything, then warn them.
             alert.title = "Are you sure?"
-            alert.message = "You are about the leave the survey without submitting it. Save the current session?"
-            alert.addAction(UIAlertAction(title: "Save and Exit", style: surveyData.submittedOnce ? .default : .default, handler: { action in self.dismissSurvey() }))
+            
+            if survey.useCache {
+                alert.message = "You are about the leave the survey without submitting it."
+                alert.addAction(UIAlertAction(title: "Save and Exit", style: surveyData.submittedOnce ? .default : .default, handler: { action in self.dismissSurvey() }))
+            } else {
+                alert.message = "You are about to leave the survey and discard all changes."
+            }
             alert.addAction(UIAlertAction(title: "Discard Changes and Exit", style: .destructive, handler: { action in
                 self.clearCache()
                 self.dismissSurvey()
@@ -250,84 +272,7 @@ class SurveyViewController: UIPageViewController,
     /// Clears the cache of a survey. This involves deleting any WAV recordings and removing the survey data object from memory.
     private func clearCache() {
         try? FileManager.default.removeItem(at: AUDIO_CACHE_DIR)
-        SURVEY_CACHE.removeValue(forKey: surveyData.surveyId)
-    }
-    
-    // MARK: - Datasource methods for UIPageController
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        
-        // First page has no previous page
-        if viewController is LandingPage {
-            return nil
-        }
-        
-        // Submission page's last page is the last page of the survey
-        if viewController is SurveySubmission {
-            return fragmentPages.last
-        }
-        
-        // Otherwise, we have an index for the survey page
-        let index = (viewController as! SurveyPage).pageIndex
-        
-        // Landing page only exists if `showLandingPage` is set to true.
-        if index == 0 {
-            if survey.showLandingPage {
-                let landingPage = LandingPage()
-                landingPage.surveyViewController = self
-                return landingPage
-            } else {
-                return nil
-            }
-        }
-        
-        // Special case for audio questions during recording
-        if let a = (fragmentPages[index] as? AudioPage), a.recordButton.isRecording {
-            return nil
-        }
-                
-        return fragmentPages[index - 1]
-    }
-    
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        
-        // First page
-        if viewController is LandingPage {
-            return fragmentPages.first
-        }
-        
-        // Last page
-        if viewController is SurveySubmission {
-            return nil
-        }
-    
-        // Otherwise, we have an index for this page of the survey
-        let index = (viewController as! SurveyPage).pageIndex
-        
-        // Special case for consent page
-        if let c = (fragmentPages[index] as? FragmentTableController)?.contentCells.first as? ConsentCell {
-            if !c.completed {
-                return nil
-            }
-        }
-        
-        // Special case for audio questions during recording
-        if let a = (fragmentPages[index] as? AudioPage), a.recordButton.isRecording {
-            return nil
-        }
-        
-        // User has not yet completed the required questions on the current page, so do not proceed with the next one.
-        if (!fragmentPages[index].unlocked) {
-            return nil
-        }
-        
-        if index + 1 < fragmentPages.count {
-            return fragmentPages[index + 1]
-        } else {
-            let vc = SurveySubmission()
-            vc.surveyViewController = self
-            return vc
-        }
+        Survey.cached.removeValue(forKey: surveyData.surveyId)
     }
     
     /**
@@ -445,13 +390,14 @@ class SurveyViewController: UIPageViewController,
     
     
     /**
-     Flips the page only if the provided cell is the last cell in the current fragment and all questions in the current fragment are completed. Needs to be called before focus().
+     Flips the page only if the provided cell is the last cell in the current fragment and all questions in the current fragment are completed. This method should be called every time the user finished a question.
      
      - Returns: A boolean indicating whether the focus cell has changed.
      */
     
     func toNext(from cell: SurveyElementCell) -> Bool {
         
+        // (1) Datasource is reloaded
         DispatchQueue.main.async {
             self.reloadDatasource()
         }
@@ -467,7 +413,10 @@ class SurveyViewController: UIPageViewController,
                 let nextCell = fragmentTable.contentCells[nextRow]
                 if !nextCell.completed {
                     fragmentTable.focusedRow = nextRow
-                    nextCell.focus()
+                    // (2) We must focus on the cell asynchronously because (1) needs to happen first, otherwise keyboard will be hidden for text questions.
+                    DispatchQueue.main.async {
+                        nextCell.focus()
+                    }
                     return true
                 } else {
                     return toNext(from: nextCell)
@@ -499,6 +448,117 @@ extension SurveyViewController: UIScrollViewDelegate {
             let point = scrollView.contentOffset
             let percentComplete = (point.x - view.frame.size.width) / view.frame.size.width
             transitionProgress = percentComplete
+        }
+    }
+}
+
+// MARK: - Datasource methods for UIPageController
+
+extension SurveyViewController: UIPageViewControllerDataSource {
+    
+    /// Here, we would like to figure out what the previous page of the page view controller will be, based on what the current page is.
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        
+        // First page has no previous page.
+        if viewController is LandingPage {
+            return nil
+        }
+        
+        // A submission page's last page is the last page of the survey.
+        if viewController is SurveySubmission {
+            return fragmentPages.last
+        }
+        
+        // Otherwise, we know that the current page must be a page of the survey, so it must have an index!
+        let index = (viewController as! SurveyPage).pageIndex
+        
+        // Landing page only exists if `showLandingPage` is set to true. Otherwise, we cannot go left on the first page of the survey.
+        if index == 0 {
+            if survey.showLandingPage {
+                let landingPage = LandingPage()
+                landingPage.surveyViewController = self
+                return landingPage
+            } else {
+                return nil
+            }
+        }
+        
+        // Special case for audio questions during recording.
+        if let a = (fragmentPages[index] as? AudioPage), a.recordButton.isRecording {
+            return nil
+        }
+        
+        // Otherwise, the previous page is nothing more than the previous item in the array of survey pages.
+        return fragmentPages[index - 1]
+    }
+    
+    /// Here, we would like to figure out what the next page of the page view controller will be, based on what the current page is.
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        
+        // The next page for a landing page is always the first page of the survey.
+        if viewController is LandingPage {
+            return fragmentPages.first
+        }
+        
+        // There is no next page for a submission page.
+        if viewController is SurveySubmission {
+            return nil
+        }
+        
+        // Otherwise, the current page must be a subclass of `SurveyPage` and so we have an index for it!
+        let index = (viewController as! SurveyPage).pageIndex
+        
+        // Special case for consent page - only allow page flip is user agreed to the consent form.
+        if let c = (fragmentPages[index] as? FragmentTableController)?.contentCells.first as? ConsentCell {
+            if !c.completed {
+                return nil
+            }
+        }
+        
+        // If the screen is fixed, then do not allow page flip.
+        if fragmentPages[index].fixScreen {
+            return nil
+        }
+        
+        // User has not yet completed the required questions on the current page, so do not proceed with the next one.
+        if (!fragmentPages[index].unlocked) {
+            return nil
+        }
+        
+        // If the current index points to the last page of the survey, the next page will be a submission page.
+        if index + 1 == fragmentPages.count {
+            let vc = SurveySubmission()
+            vc.surveyViewController = self
+            return vc
+        }
+        
+        // Otherwise, the next page is simply the next item in the array of survey pages.
+        return fragmentPages[index + 1]
+
+    }
+}
+
+// MARK: - Adjust scroll view inset depending on the keyboard status
+
+extension SurveyViewController {
+
+    /// If the keyboard is showing, then the navigation menu is covered by the keyboard, so any bottom inset should be set to 0. Remember, the whole point of insetting the bottom of a scroll view is to make room for the navigation menu.
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        if let tblvc = currentFragment as? FragmentTableController {
+            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
+                tblvc.tableView.contentInset.bottom = 0
+                tblvc.tableView.scrollIndicatorInsets.bottom = 0
+            }, completion: nil)
+        }
+    }
+    
+    /// If the keyboard is hidden, then we need to pad some extra space for the navigation menu at the bottom of the scroll view. The height of the navigation menu is 0 if `showNavigation = false` for the survey.
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        if let tblvc = currentFragment as? FragmentTableController {
+            UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
+                tblvc.tableView.contentInset.bottom = self.navigationMenu.height
+                tblvc.tableView.scrollIndicatorInsets.bottom = self.navigationMenu.height
+            }, completion: nil)
         }
     }
 }
