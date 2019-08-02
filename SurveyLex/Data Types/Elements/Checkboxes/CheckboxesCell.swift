@@ -15,9 +15,9 @@ class CheckboxesCell: SurveyElementCell {
     private var title: UITextView!
     private var checkboxTable: CheckboxTable!
     
-    /// A checkboxes question is considered complete by the user if it's either optional or 
+    /// A checkboxes question is considered completed if it's modified at least once.
     override var completed: Bool {
-        return !checkboxData.isRequired || !checkboxData.selections.isEmpty
+        return checkboxData.modified
     }
     
     /// Custom cell below for checkbox cell.

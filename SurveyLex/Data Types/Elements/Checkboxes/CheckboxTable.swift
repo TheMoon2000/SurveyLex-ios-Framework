@@ -71,8 +71,6 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
         // Cell has been modified
         checkboxData.modified = true
         
-        parentCell.topCell.surveyPage.scrollToCell(cell: parentCell)
-        
         choiceCells[indexPath.row].checkbox.isChecked.toggle()
         if choiceCells[indexPath.row].checkbox.isChecked {
             checkboxData.selections.insert(indexPath.row)

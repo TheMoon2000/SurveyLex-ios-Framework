@@ -17,11 +17,7 @@ class CheckBoxes: Question, CustomStringConvertible {
     var fragment: Fragment?
     var isRequired = false
     var completed: Bool {
-        if !isRequired {
-            return true
-        } else {
-            return !selections.isEmpty
-        }
+        return !isRequired || !selections.isEmpty
     }
     var parentView: SurveyViewController?
     var order: (fragment: Int, question: Int)
