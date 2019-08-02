@@ -137,7 +137,6 @@ class RecordButton: UIButton {
             // Has mic access, continue to record
             
             self.finishTime = Date().addingTimeInterval(self.maxLength)
-            self.delegate?.didBeginRecording(self)
             
             let animation = {
                 self.layer.cornerRadius = 8
@@ -163,6 +162,7 @@ class RecordButton: UIButton {
                 }
             }
             self.timer?.fire()
+            self.delegate?.didBeginRecording(self)
         }
     }
     
