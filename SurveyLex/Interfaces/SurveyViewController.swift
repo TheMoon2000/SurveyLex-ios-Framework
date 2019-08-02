@@ -416,6 +416,7 @@ class SurveyViewController: UIPageViewController {
                     // (2) We must focus on the cell asynchronously because (1) needs to happen first, otherwise keyboard will be hidden for text questions.
                     DispatchQueue.main.async {
                         nextCell.focus()
+                        fragmentTable.scrollToRow(row: nextRow)
                     }
                     return true
                 } else {
