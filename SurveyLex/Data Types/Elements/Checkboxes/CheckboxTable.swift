@@ -65,6 +65,9 @@ class CheckboxTable: UITableView, UITableViewDelegate, UITableViewDataSource {
         // Focus the current checkbox question
         parentCell.surveyPage.focus(cell: parentCell)
         
+        // In case the focus was not changed, we scroll to the checkboxes. Calling this method twice does no harm because the animations are identical.
+        parentCell.surveyPage.scrollToCell(cell: parentCell)
+        
         // Tell the fragment page controller that its information needs to be uploaded again
         parentCell.surveyPage.uploaded = false
         
