@@ -101,6 +101,13 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         }
     }
     
+    // MARK: - Other variables
+
+    
+    /// It is unfortunate that the bottom inset that works in one orientation doesn't work in another, so we must adjust the inset on orientation change.
+    var bottomOffset: CGFloat {
+        return UIDevice.current.orientation.isLandscape ? 0 : self.view.frame.height - self.view.safeAreaLayoutGuide.layoutFrame.maxY
+    }
     
     // MARK: - UI setup
     
@@ -146,6 +153,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
                               options: .curveEaseInOut,
                               animations: {
                                 self.navigationMenu.alpha = 1.0
+                                self.canvas.contentInset.bottom = self.navigationMenu.height + self.bottomOffset
                               },
                               completion: nil)
         }
@@ -209,6 +217,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         self.canvas = {
             let scrollView = UIScrollView()
             scrollView.showsHorizontalScrollIndicator = false
+            scrollView.scrollIndicatorInsets.bottom = self.navigationMenu.height
+            scrollView.contentInset.bottom = self.navigationMenu.height + bottomOffset
             scrollView.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(scrollView)
             
@@ -216,9 +226,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             scrollView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-            
-            scrollView.contentInset.bottom = navigationMenu.height
-                        
+                                    
             return scrollView
         }()
         
@@ -238,7 +246,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             label.topAnchor.constraint(equalTo: canvas.topAnchor,
                                        constant: 35).isActive = true
             // This constraint makes sure that the record button is always at the bottom even if the question prompt does not fill the top half of the screen.
-            label.heightAnchor.constraint(greaterThanOrEqualTo: canvas.heightAnchor, constant: -280).isActive = true
+            label.heightAnchor.constraint(greaterThanOrEqualTo: canvas.heightAnchor, constant: -280 - navigationMenu.height).isActive = true
             return label
         }()
         
@@ -363,15 +371,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         // The user can proceed to the next question.
         navigationMenu.nextButton.isEnabled = true
         
-        UIView.transition(with: view,
-                          duration: 0.2,
-                          options: .curveEaseInOut,
-                          animations: {
-                            self.navigationMenu.alpha = 1.0
-                            self.navigationMenu.isUserInteractionEnabled = true
-                            self.canvas.contentInset.bottom = self.navigationMenu.height
-                            self.canvas.contentOffset.y += self.navigationMenu.height
-                          }, completion: nil)
+        resetNavigationMenu()
         
         // The user can now close the survey
         surveyViewController?.navigationItem.rightBarButtonItem?.isEnabled = true
@@ -430,14 +430,18 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         // Prevent user from swiping to other pages during a recording.
         surveyViewController?.reloadDatasource()
         
-        UIView.transition(with: view,
-                          duration: 0.2,
-                          options: .curveEaseInOut,
-                          animations: {
-                            self.navigationMenu.alpha = 0.0
-                            self.navigationMenu.isUserInteractionEnabled = false
-                            self.canvas.contentInset.bottom = 0
-                          }, completion: nil)
+        UIView.transition(
+            with: view,
+            duration: 0.2,
+            options: .curveEaseInOut,
+            animations: {
+                self.navigationMenu.alpha = 0.0
+                self.navigationMenu.isUserInteractionEnabled = false
+                self.canvas.contentInset.bottom = 0
+                self.canvas.scrollIndicatorInsets.bottom = 0
+            },
+            completion: nil
+        )
         
         // Forbid the user from closing the survey while recording.
         surveyViewController?.navigationItem.rightBarButtonItem?.isEnabled = false
@@ -452,14 +456,8 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         
         // Update navigation menu next button.
         navigationMenu.nextButton.isEnabled = !audioQuestion.isRequired
-        
-        // Adjust scroll view inset.
-        UIView.transition(with: view, duration: 0.2, options: .curveEaseInOut, animations: {
-                self.navigationMenu.alpha = 1.0
-                self.navigationMenu.isUserInteractionEnabled = true
-                self.canvas.contentInset.bottom = self.navigationMenu.height
-                self.canvas.contentOffset.y += self.navigationMenu.height
-            }, completion: nil)
+
+        resetNavigationMenu()
         
         // The user can now close the survey
         surveyViewController?.navigationItem.rightBarButtonItem?.isEnabled = true
@@ -491,6 +489,32 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             audioQuestion.parentView?.present(alert, animated: true, completion: nil)
         }
+    }
+    
+    private func resetNavigationMenu() {
+        
+        // The height of the visible frame of the canvas after the navigation menu shows up.
+        let visibleCanvasHeight = canvas.safeAreaLayoutGuide.layoutFrame.height - navigationMenu.height
+        
+        let offsetHeight = min(
+            navigationMenu.height,
+            max(0, canvas.contentSize.height - visibleCanvasHeight)
+        )
+        
+        // Adjust scroll view inset.
+        UIView.transition(
+            with: view,
+            duration: 0.2,
+            options: .curveEaseInOut,
+            animations: {
+                self.navigationMenu.alpha = 1.0
+                self.navigationMenu.isUserInteractionEnabled = true
+                self.canvas.contentInset.bottom = self.navigationMenu.height + self.bottomOffset
+                self.canvas.scrollIndicatorInsets.bottom = self.navigationMenu.height
+                self.canvas.contentOffset.y += offsetHeight
+            },
+            completion: nil
+        )
     }
     
     // MARK: - Upload
@@ -623,6 +647,17 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        
+        if recordButton.isRecording { return }
+        
+        coordinator.animate(
+            alongsideTransition: {context in
+                self.canvas.contentInset.bottom = self.navigationMenu.height + self.bottomOffset
+            },
+            completion: nil)
     }
 
 }
