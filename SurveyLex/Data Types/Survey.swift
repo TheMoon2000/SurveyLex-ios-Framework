@@ -314,7 +314,7 @@ extension Survey {
             dark: UIColor(red: 62/255, green: 184/255, blue: 71/255, alpha: 1),
             medium: UIColor(red: 80/255, green: 192/255, blue: 92/255, alpha: 1),
             light: UIColor(red: 157/255, green: 228/255, blue: 160/255, alpha: 1),
-            highlight: UIColor(red: 230/255, green: 1, blue: 232/255, alpha: 1)
+            highlight: UIColor(red: 230/255, green: 254/255, blue: 229/255, alpha: 1)
         )
         
         /// A predefined cyan theme.
@@ -335,10 +335,10 @@ extension Survey {
         
         /// A predefined orange theme.
         public static let orange = Theme(
-            dark: UIColor(red: 242/255, green: 174/255, blue: 17/255, alpha: 1),
-            medium: UIColor(red: 248/255, green: 191/255, blue: 59/255, alpha: 1),
-            light: UIColor(red: 1, green: 221/255, blue: 154/255, alpha: 1),
-            highlight: UIColor(red: 1, green: 245/255, blue: 223/255, alpha: 1)
+            dark: UIColor(red: 239/255, green: 188/255, blue: 20/255, alpha: 1),
+            medium: UIColor(red: 254/255, green: 202/255, blue: 56/255, alpha: 1),
+            light: UIColor(red: 1, green: 221/255, blue: 138/255, alpha: 1),
+            highlight: UIColor(red: 1, green: 245/255, blue: 216/255, alpha: 1)
         )
         
         /// Create a new color theme for surveys.

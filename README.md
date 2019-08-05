@@ -10,7 +10,7 @@ This Swift framework (iOS 11.0+) is designed to natively store, display and subm
 - Rating questions
 - Info screens
 
-Once a component is completed for the first time, the next component will altomatically be focused, with the exception of checkbox questions (because we don't know when the user is done with the question). If a user comes back to a question that they have already modified, the survey will not jump to the next question.
+Once a component is completed for the first time, the next component will altomatically be focused, with the exception of checkbox questions (because we don't know when the user is done with the question). When the last question is done and all required questions are complete, the page is automatically flipped. If a user comes back to a question that they have already modified, the survey will not jump to the next question.
 
 <img src="Screenshots/overview.gif" width="240">
 
@@ -66,15 +66,32 @@ func surveyDidLoad(_ survey: Survey) {
 - `showNavigationMenu`: A boolean indicating whether a navigation menu is shown at the bottom of the survey for flipping pages (see the bottom of most screenshot). *Note that you can always use swipe gestures to flip pages*. Default is `true`.
 - `allowJumping`: Whether the user can see a 'Go to Page' button in the navigation menu that allows them to jump to any unlocked page. Default is `false`. See screenshots below for details.
     
-    <img src="Screenshots/gotopage.png" width="240"> <img src="Screenshots/gotopage_menu.png" width="240"> <img src="Screenshots/gotopage_warning.png" width="240">
+    <img src="Screenshots/gotopage.png" width="240">
+    <img src="Screenshots/gotopage_menu.png" width="240">
+    <img src="Screenshots/gotopage_warning.png" width="240">
     
     As shown, the number entered must be a non-negative integer with 0 being the landing page (or a positive integer if the landing page is disabled) and the `Go` button will only be enabled if the page number points to a valid index. If the provided page number is in bounds but the page is not yet unlocked, the alert on the last image is shown.
 - `useCache`: This framework has the ability to cache partial responses and show them when the server is re-presented. When set to `true`, This functionality is enabled. Default is `true`.
 - `theme`: A `Survey.Theme` type variable containing the theme colors the survey should use. A few pre-defined themes are provided:
   - `Survey.Theme.blue` (Default)
   - `Survey.Theme.green`
+  
+    <img src="Screenshots/green_1.png" width="240">
+    <img src="Screenshots/green_2.png" width="240">
+  
   - `Survey.Theme.orange`
+  
+    <img src="Screenshots/orange_1.png" width="240">
+    <img src="Screenshots/orange_2.png" width="240">
+  
   - `Survey.Theme.cyan`
+  
+    <img src="Screenshots/cyan_1.png" width="240">
+    <img src="Screenshots/cyan_2.png" width="240">
+  
   - `Survey.Theme.purple`
+  
+    <img src="Screenshots/purple_1.png" width="240">
+    <img src="Screenshots/purple_2.png" width="240">
   
   - You can built your own theme by using the `Survey.Theme()` constructor, specifying four colors: **dark**, **medium**, **light**, and **highlight**.
