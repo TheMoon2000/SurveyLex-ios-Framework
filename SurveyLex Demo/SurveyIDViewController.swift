@@ -168,8 +168,7 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
         survey.allowMenuCollapse = true
         survey.delegate = self
         survey.allowJumping = true
-        survey.mode = .stealth
-        survey.theme = .blue
+        survey.theme = .purple
         survey.load()
         sender.isEnabled = false
         sender.setTitle("Loading...", for: .normal)

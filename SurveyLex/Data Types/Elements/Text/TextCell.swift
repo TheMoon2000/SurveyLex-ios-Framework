@@ -58,6 +58,7 @@ class TextCell: SurveyElementCell, UITextFieldDelegate {
         let textfield = UITextField()
         textfield.delegate = self
         textfield.text = textQuestion.response
+        textfield.tintColor = textQuestion.theme.medium
         textfield.borderStyle = .none
         if textQuestion.title.lowercased().contains("email") {
             textfield.keyboardType = .emailAddress
