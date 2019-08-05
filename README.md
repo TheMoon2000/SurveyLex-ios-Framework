@@ -12,7 +12,7 @@ This Swift framework (iOS 11.0+) is designed to natively store, display and subm
 
 Once a component is completed, the next component will altomatically be focused, with the exception of checkbox questions (because we don't know when the user is done with the question).
 
-![Demo](Screenshots/overview.gif)
+<img src="Screenshots/overview.gif" width="250">
 
 ## Launching a Survey
 To launch a survey, a you need to know the survey ID and the parent view controller on which the survey view controller is presenting. The survey ID of a SurveyLex survey is formatted as a UUID string, as in app.surveylex.com/surveys/**c741cba0-acca-11e9-aeb9-2b1c6d8db2a2**.
