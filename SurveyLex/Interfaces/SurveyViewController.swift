@@ -299,7 +299,7 @@ class SurveyViewController: UIPageViewController {
         let cond = allCompleted ? currentFragment!.completed : currentFragment!.unlocked
 
         guard cond else { return false }
-                        
+        
         if fragmentIndex + 1 < fragmentPages.count {
             DispatchQueue.main.async {
                 self.setViewControllers([self.fragmentPages[self.fragmentIndex + 1]],

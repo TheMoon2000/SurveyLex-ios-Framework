@@ -458,6 +458,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         navigationMenu.nextButton.isEnabled = !audioQuestion.isRequired
 
         resetNavigationMenu()
+        surveyViewController?.reloadDatasource()
         
         // The user can now close the survey
         surveyViewController?.navigationItem.rightBarButtonItem?.isEnabled = true

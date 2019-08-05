@@ -194,7 +194,7 @@ class FragmentMenu: UIVisualEffectView {
     @objc private func flipNext() {
         nextButton.isUserInteractionEnabled = false
         if parentVC.fragmentIndex == parentVC.fragmentPages.count { return }
-        if !parentVC.flipPageIfNeeded() {
+        if !parentVC.flipPageIfNeeded(allCompleted: false) {
             if let nextVC = parentVC.pageViewController(parentVC, viewControllerAfter: parentVC.currentFragment!) {
                 parentVC.setViewControllers([nextVC],
                                             direction: .forward,
