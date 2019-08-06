@@ -49,6 +49,10 @@ func surveyDidLoad(_ survey: Survey) {
 
 ## Environment variables
 - `allowMenuCollapse`: A boolean indicating whether choices that are expanded can be folded up again. Default is `false`.
+
+    <img src="Screenshots/collapse.gif" width="240">
+    <img src="Screenshots/no_collapse.png" width="240">
+
 - `visibilityDifferentiation`: Whether the current item on a page of a survey has higher opacity than other elements. Default is `true`. <br>
 
     <img src="Screenshots/autofocus.png" width="240">
