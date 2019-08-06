@@ -56,6 +56,7 @@ func surveyDidLoad(_ survey: Survey) {
 - `visibilityDifferentiation`: Whether the current item on a page of a survey has higher opacity than other elements. Default is `true`. <br>
 
     <img src="Screenshots/autofocus.png" width="240">
+    <img src="Screenshots/no_autofocus.png" width="240">
   
 - `mode`: A `Survey.Mode` property that is either `submission` or `stealth`. In submission mode, the survey maintains an active connection with the server (i.e. a session is created on open, and responses are uploaded). The other mode is **stealth mode**, where no data ever leaves the device throughout the survey-taking process, a bit analogous to incognito mode in a web browser (see image below). Default is `submission`.
 
