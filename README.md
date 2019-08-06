@@ -57,6 +57,8 @@ func surveyDidLoad(_ survey: Survey) {
 
     <img src="Screenshots/autofocus.png" width="240">
     <img src="Screenshots/no_autofocus.png" width="240">
+    
+    With (left) and without (right) visibility differentiation.
   
 - `mode`: A `Survey.Mode` property that is either `submission` or `stealth`. In submission mode, the survey maintains an active connection with the server (i.e. a session is created on open, and responses are uploaded). The other mode is **stealth mode**, where no data ever leaves the device throughout the survey-taking process, a bit analogous to incognito mode in a web browser (see image below). Default is `submission`.
 
