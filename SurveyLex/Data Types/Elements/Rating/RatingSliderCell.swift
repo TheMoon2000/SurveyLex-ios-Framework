@@ -23,9 +23,9 @@ class RatingSliderCell: SurveyElementCell {
     let grayColor = UIColor(white: 0.85, alpha: 1)
     
     /// The text view for the title of the rating question.
-    var title: UITextView!
-    var slider: UISlider!
-    var caption: UILabel!
+    private var title: UITextView!
+    private var slider: UISlider!
+    private var caption: UILabel!
     var ratingQuestion: Rating!
     var currentValue: Float = 50.0 {
         didSet {
@@ -40,6 +40,8 @@ class RatingSliderCell: SurveyElementCell {
             surveyPage.uploaded = false
         }
     }
+    
+    private var thumbWidth: CGFloat = 0
     
     
     // MARK: UI Setup
@@ -107,8 +109,9 @@ class RatingSliderCell: SurveyElementCell {
         ticks.bottomAnchor.constraint(equalTo: slider.bottomAnchor).isActive = true
         
         let segmentCount = CGFloat(ratingQuestion.options.count) - 1
-        let thumbWidth = slider.thumbRect(forBounds: slider.bounds,
-                                          trackRect: slider.trackRect(forBounds: slider.bounds), value: 0).width - 4
+        thumbWidth = slider.thumbRect(
+            forBounds: slider.bounds,
+            trackRect: slider.trackRect(forBounds: slider.bounds), value: 0).width - 4.2
         
         let track = UIView()
         track.backgroundColor = grayColor
@@ -182,7 +185,13 @@ class RatingSliderCell: SurveyElementCell {
     
     @objc private func sliderChanged() {
         let segment: Float = 100.0 / (Float(ratingQuestion.options.count) - 1)
-        slider.value = round(slider.value / segment) * segment
+        
+        let halfThumb = thumbWidth / 2 / slider.frame.width * 100
+        
+        // Note: we need to recalculate the actual slider value as appeared to the user, because our custom track is narrower than the default track.
+        let apparentSliderValue = max(0, CGFloat(slider.value) - halfThumb) * slider.frame.width / (slider.frame.width - thumbWidth)
+                
+        slider.value = round(Float(apparentSliderValue) / segment) * segment
         if slider.value != currentValue {
             currentValue = slider.value
             UISelectionFeedbackGenerator().selectionChanged()
@@ -207,7 +216,6 @@ class RatingSliderCell: SurveyElementCell {
     }
     
     @objc private func sliderLifted() {
-        surveyPage.scrollToCell(cell: self)
         if !ratingQuestion.completed {
             ratingQuestion.completed = true
             let _ = !ratingQuestion.parentView!.toNext(from: self)
