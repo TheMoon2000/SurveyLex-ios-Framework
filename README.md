@@ -69,6 +69,7 @@ func surveyDidLoad(_ survey: Survey) {
 - `showLandingPage`: A boolean indicating whether a landing page is shown when a survey is launched. The landing page consists of the survey title, a built-in description, and shows a survey logo if the survey has one. An example of a landing page without a logo is shown in the GIF above. Below is an example of a landing page for a survey with a logo (displayed using **aspect fit**). Default is `true`.
 
     <img src="Screenshots/landing_page.png" width="240">
+    <img src="Screenshots/landing_no_logo.png" width="240">
 
 - `showNavigationMenu`: A boolean indicating whether a navigation menu is shown at the bottom of the survey for flipping pages (see the bottom of most screenshot). *Note that you can always use swipe gestures to flip pages*. Default is `true`.
 - `allowJumping`: Whether the user can see a 'Go to Page' button in the navigation menu that allows them to jump to any unlocked page. Default is `false`. See screenshots below for details.
