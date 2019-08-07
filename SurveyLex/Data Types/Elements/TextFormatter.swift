@@ -20,15 +20,16 @@ class TextFormatter {
         var newString = string // This mutable string will be used instead
         
         // Convert all the special expressions into hyperlinks
-        let linkDetector = try! NSRegularExpression(pattern: "\\[!\\[.*\\]\\(.*\\)\\]\\(.+\\)", options: .dotMatchesLineSeparators)
+        let linkDetector = try! NSRegularExpression(pattern: "!\\[.*\\]\\(.*\\)", options: [])
         let matches = linkDetector.matches(in: newString,
                                            options: .init(),
                                            range: NSMakeRange(0, newString.count))
-        for match in matches {
+        for match in matches.reversed() {
             let matchString = String(newString[Range(match.range, in: newString)!])
             let components = matchString.components(separatedBy: ["(", ")"])
             let link = components[components.count - 2]
-            newString = newString.replacingOccurrences(of: matchString, with: link)
+            let newText = "[Media: [Link](\(link))]"
+            newString = newString.replacingOccurrences(of: matchString, with: newText)
         }
         
         let bodyStyle = """

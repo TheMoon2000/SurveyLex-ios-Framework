@@ -41,10 +41,10 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
 //        textView.text = "cc3330f0-a332-11e9-81d0-29f9b1295ce4"
         
         // Response test
-        textView.text = "a198a1d0-a89c-11e9-b466-e38db5a54ad8"
+//        textView.text = "a198a1d0-a89c-11e9-b466-e38db5a54ad8"
         
         // Voiceome Survey A
-//        textView.text = "c741cba0-acca-11e9-aeb9-2b1c6d8db2a2"
+        textView.text = "c741cba0-acca-11e9-aeb9-2b1c6d8db2a2"
         
         // Voiceome Survey B
 //        textView.text = "ec001370-acca-11e9-aeb9-2b1c6d8db2a2"
@@ -168,6 +168,7 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
         // Survey configuration
         survey.allowMenuCollapse = true
         survey.delegate = self
+        survey.mode = .stealth
         survey.allowJumping = true
         survey.load()
         
