@@ -68,6 +68,8 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        radioGroup.selection = indexPath.row
+        
         if !radioGroup.completed {
             radioGroup.completed = true
             if !radioGroup.parentView!.toNext(from: parentCell) {

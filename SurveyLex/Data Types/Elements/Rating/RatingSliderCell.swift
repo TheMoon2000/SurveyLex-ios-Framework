@@ -207,6 +207,7 @@ class RatingSliderCell: SurveyElementCell {
     }
     
     @objc private func sliderLifted() {
+        surveyPage.scrollToCell(cell: self)
         if !ratingQuestion.completed {
             ratingQuestion.completed = true
             let _ = !ratingQuestion.parentView!.toNext(from: self)
