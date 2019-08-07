@@ -16,6 +16,11 @@ class SurveyElementCell: UITableViewCell {
     /// Whether the cell is expanded. Non-expanded cells have 0 height.
     var expanded = true
     
+    /// Whether there is content to expand. It's false for all element types except checkboxes and multiple choice questions.
+    var hasCellBelow: Bool {
+        return false
+    }
+    
     /// The completion status of the cell. This boolean property is different from the `completed` status of the question for which the cell presents. The `completion` status of a `SurveyElementCell` indicates whether the user has already gone through this question, regardless of whether a non-empty response is given (e.g. the case of checkboxes), whereas `completion` in the case of a `Question` means that the response it currently holds is non-empty (e.g. for checkboxes at least one needs to be checked).
     var completed: Bool {
         return false

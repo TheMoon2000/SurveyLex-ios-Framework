@@ -57,8 +57,10 @@ class FragmentTableController: UITableViewController, SurveyPage {
                 
                 // Focus on the given cell.
                 if focusedRow < tableView.numberOfRows(inSection: 0) {
-                    if contentCells[topRow].cellBelow.expanded {
-                        scrollToRow(row: focusedRow)
+                    if contentCells[topRow].cellBelow.expanded || !contentCells[topRow].hasCellBelow {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self.scrollToRow(row: self.focusedRow)
+                        }
                     }
                     
                     // We actually call focus() on the top cell.

@@ -25,6 +25,10 @@ class CheckboxesCell: SurveyElementCell {
         return bottomCell
     }
     
+    override var hasCellBelow: Bool {
+        return true
+    }
+    
     
     // UI elements responsible for the expansion trigger.
     private var expansionIndicator: UIImageView!

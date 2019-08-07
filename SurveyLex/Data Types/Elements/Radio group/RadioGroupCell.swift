@@ -21,6 +21,10 @@ class RadioGroupCell: SurveyElementCell {
         return bottomCell
     }
     
+    override var hasCellBelow: Bool {
+        return true
+    }
+    
     /// The `RadioGroup` instance which the current cell is presenting.
     var radioGroup: RadioGroup!
     
