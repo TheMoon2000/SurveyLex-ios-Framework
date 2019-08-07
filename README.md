@@ -108,3 +108,6 @@ A unique feature in SurveyLex surveys is that you can submit audio responses. Th
 
 ### Potential Issues
 - By default, an iOS app blocks links that use the HTTP protocol. Therefore, when designing surveys, embedded links need to use the HTTPS protocol. Alternatively, the app should enable the HTTP protocol by going to **Info.plist -> App Transport Security Settings -> Allow Arbitrary Loads -> True**.
+- Due to the small size of mobile screens, sometimes embedded images from surveys don't show up properly. To deal with this problem, media are embedded by their links, and require users to tap on them to view the media.
+
+    <img src="Screenshots/media_link_fold.png" width="240">
