@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A generic class for a survey element (except audio questions, which use the `AudioPage` class).
 class SurveyElementCell: UITableViewCell {
  
     /// Reference to the Fragment Table View Controller that displays the current survey element.

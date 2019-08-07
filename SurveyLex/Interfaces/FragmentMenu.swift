@@ -9,6 +9,7 @@
 
 import UIKit
 
+/// A view used as a navigation menu at the bottom of a survey.
 class FragmentMenu: UIVisualEffectView {
     
     /// The universal height of a fragment menu.
@@ -20,7 +21,7 @@ class FragmentMenu: UIVisualEffectView {
     
     var backButton: UIButton!
     var nextButton: UIButton!
-    var goToPageButton: UIButton!
+    private var goToPageButton: UIButton!
     private var stealthModeLabel: UILabel!
     private var currentAlertVC: UIAlertController?
 

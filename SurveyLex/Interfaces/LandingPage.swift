@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// The view controller responsible for showing a landing page.
 class LandingPage: UIViewController {
     
     var surveyViewController: SurveyViewController!

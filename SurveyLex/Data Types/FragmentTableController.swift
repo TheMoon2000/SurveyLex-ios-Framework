@@ -191,7 +191,9 @@ class FragmentTableController: UITableViewController, SurveyPage {
     
     func scrollToCell(cell: SurveyElementCell) {
         if let index = contentCells.firstIndex(of: cell) {
-            scrollToRow(row: index)
+            if cell.frame.height <= self.tableView.frame.height {
+                scrollToRow(row: index)
+            }
         }
     }
 
@@ -396,6 +398,8 @@ class FragmentTableController: UITableViewController, SurveyPage {
         }
         
     }
+    
+    // MARK: -
     
     /// The focused row should still be focused and visible after orientation change.
     override func viewWillTransition(to size: CGSize, with coordinator:

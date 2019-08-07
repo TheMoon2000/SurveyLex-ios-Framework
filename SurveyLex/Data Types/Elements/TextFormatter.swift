@@ -9,12 +9,34 @@
 import UIKit
 import Down
 
+/// An internal class for the framework designed to format markdown text into NSAttributedText, with the help of the framework `Down`.
 class TextFormatter {
     
+    /// The style to format the given markdown string.
     enum TextType {
-        case title, consentText, subtitle, plain
+        
+        /// Used for all titles and audio question prompts.
+        case title
+        
+        /// Used for consent texts and info texts.
+        case consentText
+        
+        /// Used for the checkbox prompt on a consent form.
+        case subtitle
+        
+        /// Used for radio group questions and checkbox choices.
+        case plain
     }
     
+    /**
+     Format the given string using the given text type.
+     
+     - Parameters:
+         - string: The raw markdown string.
+         - type: The type of text the markdown string is.
+     
+     - Returns: An attributed string containin the markdown.
+    */
     static func formatted(_ string: String, type: TextType) -> NSAttributedString {
         
         var newString = string // This mutable string will be used instead
@@ -32,18 +54,6 @@ class TextFormatter {
             newString = newString.replacingOccurrences(of: matchString, with: newText)
         }
         
-        let bodyStyle = """
-            body {
-                font-family: -apple-system;
-                font-size: 19px;
-                line-height: 1.5;
-                letter-spacing: 2%;
-            }
-
-            h1, h2, h3, h4, h5, h6 {
-                font-weight: 500;
-            }
-"""
         let consentStyle = """
             body {
                 font-family: -apple-system;
@@ -126,6 +136,8 @@ class TextFormatter {
         case .consentText:
             do {
                 let down = try Down(markdownString: newString).toAttributedString(.default, stylesheet: consentStyle)
+                
+                // As of Down 0.6.2, the framework always produces an attributed string with an extra blank line at the end. To remove that line, we return the substring that excludes the last character ('\r').
                 return down.attributedSubstring(from: NSMakeRange(0, down.length - 1))
             } catch {
                 return legacy(string, type: .consentText)
@@ -173,9 +185,7 @@ class TextFormatter {
             let link = components[components.count - 2]
             newString = newString.replacingOccurrences(of: matchString, with: link)
         }
-        
-        newString = linkFormat(regex: "\\*\\*.+\\*\\*", input: newString)
-        
+                
         let attrTxt = NSMutableAttributedString(string: newString)
         
         let pgStyle = NSMutableParagraphStyle()
@@ -203,24 +213,5 @@ class TextFormatter {
             ], range: NSMakeRange(0, newString.count))
         
         return attrTxt
-    }
-    
-    private static func linkFormat(regex: String, input: String) -> String {
-        
-        var newString = input
-        
-        let detector = try! NSRegularExpression(pattern: regex, options: .dotMatchesLineSeparators)
-        let matches = detector.matches(in: newString,
-                                       options: .init(),
-                                       range: NSMakeRange(0, newString.count))
-        for match in matches {
-            let matchString = String(newString[Range(match.range, in: newString)!])
-            let start = matchString.index(matchString.startIndex, offsetBy: 2)
-            let end = matchString.index(matchString.endIndex, offsetBy: -2)
-            let link = matchString[start..<end]
-            newString = newString.replacingOccurrences(of: matchString, with: link)
-        }
-        
-        return newString
     }
 }

@@ -18,7 +18,7 @@ end
 
 target 'SurveyLex' do
   pod 'SwiftyJSON'
-  pod 'Down'
+  pod 'Down', '~> 0.6.2'
 end
 
 target 'SurveyLexTests' do
