@@ -158,6 +158,10 @@ class SurveySubmission: UIViewController {
     @objc private func shareSurvey() {
         let shareItem: [Any] = ["I've just taken the survey '\(self.surveyViewController.surveyData.title)'! Feel free to take it at", URL(string: SURVEY_URL_PREFIX + "/" + surveyViewController.survey.surveyID)!]
         let ac = UIActivityViewController(activityItems: shareItem, applicationActivities: nil)
+        if let ppc = ac.popoverPresentationController {
+            ppc.sourceView = shareButton
+            ppc.sourceRect = shareButton.frame
+        }
         present(ac, animated: true, completion: nil)
     }
     

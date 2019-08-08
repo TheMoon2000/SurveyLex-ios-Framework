@@ -190,7 +190,6 @@ class RatingSliderCell: SurveyElementCell {
         
         // Note: we need to recalculate the actual slider value as appeared to the user, because our custom track is narrower than the default track.
         let apparentSliderValue = max(0, CGFloat(slider.value) - halfThumb) * slider.frame.width / (slider.frame.width - thumbWidth)
-        print(apparentSliderValue)
                 
         slider.value = round(Float(apparentSliderValue) / segment) * segment
         if slider.value != currentValue {

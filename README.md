@@ -107,6 +107,13 @@ func surveyDidLoad(_ survey: Survey) {
 ### Audio Questions
 A unique feature in SurveyLex surveys is that you can submit audio responses. The interface for audio questions can be seen in many screenshots. When you first arrive at the screen, you will have the option to record (some audio questions start automatically depending on how it was configured). Once done, you will be able to playback the recording (same button), or clear the previous recording. For required audio questions, you must have a valid recording before moving to the next page.
 
+### Sharing
+You can share a completed survey to any app.
+
+<img src="Screenshots/share.png" width="240">
+
+(The screenshot above is taken on my iPhone 8)
+
 ### Potential Issues
 - By default, an iOS app blocks links that use the HTTP protocol. Therefore, when designing surveys, embedded links need to use the HTTPS protocol. Alternatively, the app should enable the HTTP protocol by going to **Info.plist -> App Transport Security Settings -> Allow Arbitrary Loads -> True**.
 - Due to the small size of mobile screens, sometimes embedded images from surveys don't show up properly. To deal with this problem, media are embedded by their links, and require users to tap on them to view the media.

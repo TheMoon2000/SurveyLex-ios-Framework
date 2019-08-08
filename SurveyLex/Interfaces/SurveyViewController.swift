@@ -484,8 +484,8 @@ extension SurveyViewController: UIPageViewControllerDataSource {
         }
         
         // Special case for audio questions during recording.
-        if let a = (fragmentPages[index] as? AudioPage), a.recordButton.isRecording {
-            return nil
+        if let ar = (fragmentPages[index] as? AudioPage)?.recordButton, ar.isRecording {
+            return nil	
         }
         
         // Otherwise, the previous page is nothing more than the previous item in the array of survey pages.

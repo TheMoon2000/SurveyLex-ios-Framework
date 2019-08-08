@@ -68,7 +68,11 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        radioGroup.selection = indexPath.row
+        if indexPath.row != radioGroup.selection {
+            UISelectionFeedbackGenerator().selectionChanged()
+            radioGroup.selection = indexPath.row
+            parentCell.surveyPage.uploaded = false
+        }
         
         if !radioGroup.completed {
             radioGroup.completed = true
@@ -78,11 +82,6 @@ class MultipleChoiceView: UITableView, UITableViewDelegate, UITableViewDataSourc
                 parentCell.surveyPage.focus(cell: parentCell)
             }
         } else {
-            
-            if indexPath.row != radioGroup.selection {
-                UISelectionFeedbackGenerator().selectionChanged()
-                parentCell.surveyPage.uploaded = false
-            }
             
             // The cell has already been selected once, so keep it focused.
             parentCell.surveyPage.focus(cell: parentCell)

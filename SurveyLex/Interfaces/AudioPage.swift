@@ -348,7 +348,7 @@ class AudioPage: UIViewController, SurveyPage, RecordingDelegate {
         auxiliaryButton.isHidden = true
         self.auxiliaryButton.setTitle("Clear Recording", for: .normal)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.auxiliaryButton.isHidden = false
             self.captionMessage.isHidden = true
         }

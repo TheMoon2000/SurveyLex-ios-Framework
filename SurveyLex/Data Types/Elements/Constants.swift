@@ -46,7 +46,7 @@ let MIN_MAX_RECORDING_LENGTH = 5.0
 /// How wide the separator lines are.
 let SEPARATOR_WIDTH: CGFloat = 90.0
 
-/// Whether debug statements are printed to the console
+/// Whether debug statements are printed to the console.
 let DEBUG_MODE = true
 
 // MARK: - Extensions and other constants
@@ -89,7 +89,9 @@ extension Data {
 
 /// Display a debug message.
 func debugMessage(_ msg: String) {
-    print(msg)
+    if DEBUG_MODE {
+        print(msg)
+    }
 }
 
 // MARK: - Custom notifications

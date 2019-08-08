@@ -168,7 +168,8 @@ class SurveyIDViewController: UIViewController, SurveyResponseDelegate {
         // Survey configuration
         survey.allowMenuCollapse = true
         survey.delegate = self
-//        survey.mode = .stealth
+        survey.mode = .submission
+//        survey.theme = .purple
         survey.load()
         
         sender.isEnabled = false
