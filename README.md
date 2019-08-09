@@ -80,6 +80,12 @@ func surveyDidLoad(_ survey: Survey) {
     
     As shown, the number entered must be a non-negative integer with 0 being the landing page (or a positive integer if the landing page is disabled) and the `Go` button will only be enabled if the page number points to a valid index. If the provided page number is in bounds but the page is not yet unlocked, the alert on the last image is shown.
 - `useCache`: This framework has the ability to cache partial responses and show them when the servey is re-presented. When set to `true`, This functionality is enabled. Default is `true`.
+
+    <img src="Screenshots/with_cache.png" width="240">
+    <img src="Screenshots/without_cache.png" width="240">
+    
+    The screenshots above compare the difference in `useCache = true` (default) and `useCache = false`.
+
 - `theme`: A `Survey.Theme` type variable containing the theme colors the survey should use. A few pre-defined themes are provided:
   - `Survey.Theme.blue` (Default)
   - `Survey.Theme.green`
