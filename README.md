@@ -104,15 +104,31 @@ func surveyDidLoad(_ survey: Survey) {
   
   - You can built your own theme by using the `Survey.Theme()` constructor, specifying four colors: **dark**, **medium**, **light**, and **highlight**.
 
+## Other remarks
+
 ### Audio Questions
 A unique feature in SurveyLex surveys is that you can submit audio responses. The interface for audio questions can be seen in many screenshots. When you first arrive at the screen, you will have the option to record (some audio questions start automatically depending on how it was configured). Once done, you will be able to playback the recording (same button), or clear the previous recording. For required audio questions, you must have a valid recording before moving to the next page.
+
+**Note**: You should not leave the app during a recording, or else it will fail and give the following message:
+
+<img src="Screenshots/recording_interrupted.png" width="240">
+
+### Survey submission
+After the user completes a page and moves on to the next, the previous page will be submitted as a fragment response. Therefore, if internet connection is good enough, by the time the user finishes the last page of the survey, all the previous pages are already submitted so the final submission will be very fast. If the user goes back and modify a response, the associated fragment response will be updated and reuploaded in background.
+
+If any of the pages were not successfully auto-uploaded during survey-taking due to lack of internet connection, these pages will be marked as `needReupload`, and will be submitted together in the very end on the submission page.
+
+If the user has no internet connection during submission, they will see the following alert and they can retry until internet connection becomes available.
+
+<img src="Screenshots/submission_failure.png" width="240">
+
 
 ### Sharing
 You can share a completed survey to any app.
 
 <img src="Screenshots/share.png" width="240">
 
-(The screenshot above is taken on my iPhone 8)
+(The screenshot above was taken on my iPhone 8)
 
 ### Potential Issues
 - By default, an iOS app blocks links that use the HTTP protocol. Therefore, when designing surveys, embedded links need to use the HTTPS protocol. Alternatively, the app should enable the HTTP protocol by going to **Info.plist -> App Transport Security Settings -> Allow Arbitrary Loads -> True**.
